@@ -1,4 +1,5 @@
 ﻿@page "/kliendid"
+@inject IServiceProvider ServiceProvider
 
 <div class="container">
     <h1>Kliendid</h1>
@@ -65,5 +66,11 @@
 
 
 @code {
-    private IList<Customer> customers = new List<Customer>();
+    private IList<Customer> customers;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var service = ServiceProvider.GetService<IListCustomersService>();
+        customers = await service.FilterPage();
+    }
 }
