@@ -1,0 +1,69 @@
+﻿@page "/kliendid"
+
+<div class="container">
+    <h1>Kliendid</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-7">
+            <button class="btn btn-primary">Lisa uus klient</button>
+        </div>
+        <div class="col-md-5 input-group text-md-right">
+            <input class="form-control" type="text" placeholder="Kliendi nimi" />
+            <div class="input-group-btn">
+                <button class="btn btn-default">
+                    <i class="oi oi-magnifying-glass" title="search" />
+                </button>
+            </div>
+            <div class="input-group-btn">
+                <button class="btn btn-default">
+                    <i class="oi oi-x" title="clear" />
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (customers == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th>Nimi</th>
+                    <th>Riik</th>
+                    <th>Linn</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in customers)
+                {
+                    <tr>
+                        <td>@customer.Name</td>
+                        <td>@customer.PayerAddress.Country.Name</td>
+                        <td>@customer.PayerAddress.City</td>
+                        <td>
+                            <button class="btn btn-default btn-sm">
+                                <i class="oi oi-eye text-primary" />
+                            </button>
+                            <button class="btn btn-default btn-sm">
+                                <i class="oi oi-pencil text-warning" />
+                            </button>
+                            <button class="btn btn-default btn-sm">
+                                <i class="oi oi-trash text-danger" />
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+</div>
+
+
+@code {
+    private IList<Customer> customers = new List<Customer>();
+}
