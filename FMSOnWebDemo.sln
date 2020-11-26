@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.BlazorServerApp", "FMS.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.Domain", "FMS.Domain\FMS.Domain.csproj", "{A7AD9C52-2FA7-47F9-9C24-6498DD1852B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.Dal", "FMS.Dal\FMS.Dal.csproj", "{A5CDFB83-8E63-44E4-A407-048AE13884C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{A7AD9C52-2FA7-47F9-9C24-6498DD1852B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7AD9C52-2FA7-47F9-9C24-6498DD1852B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7AD9C52-2FA7-47F9-9C24-6498DD1852B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5CDFB83-8E63-44E4-A407-048AE13884C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5CDFB83-8E63-44E4-A407-048AE13884C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5CDFB83-8E63-44E4-A407-048AE13884C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5CDFB83-8E63-44E4-A407-048AE13884C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
