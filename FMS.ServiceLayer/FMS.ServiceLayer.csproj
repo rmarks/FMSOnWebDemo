@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FMS.Dal\FMS.Dal.csproj" />
     <ProjectReference Include="..\FMS.Domain\FMS.Domain.csproj" />
+    <ProjectReference Include="..\FMS.ServiceLayer.Dtos\FMS.ServiceLayer.Dtos.csproj" />
   </ItemGroup>
 
 </Project>

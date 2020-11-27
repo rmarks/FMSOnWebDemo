@@ -1,11 +1,10 @@
 ﻿using FMS.Domain.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using FMS.ServiceLayer.Dtos;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
     public interface IListCustomersService
     {
-        Task<IList<Customer>> FilterPage();
+        PagedList<Customer> FilterPage(CustomerListOptions options);
     }
 }

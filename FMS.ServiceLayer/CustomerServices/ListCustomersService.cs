@@ -1,9 +1,9 @@
 ﻿using FMS.Dal;
 using FMS.Domain.Models;
+using FMS.ServiceLayer.Dtos;
+using FMS.ServiceLayer.Extensions;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
@@ -16,15 +16,22 @@ namespace FMS.ServiceLayer.CustomerServices
             _context = context;
         }
 
-        public async Task<IList<Customer>> FilterPage()
+        public PagedList<Customer> FilterPage(CustomerListOptions options)
         {
+            string search = options.SearchString;
+
             var queryable = _context.Customers
-                .AsNoTracking()
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                queryable = queryable.Where(c => c.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            return queryable
                 .Include(c => c.Addresses).ThenInclude(a => a.Country)
                 .OrderBy(c => c.Name)
-                .Take(10);
-
-            return await queryable.ToListAsync();
+                .GetPagedList(options.CurrentPage, options.PageSize);
         }
     }
 }

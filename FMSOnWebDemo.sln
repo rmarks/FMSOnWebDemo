@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.BlazorServerApp", "FMS.BlazorServerApp\FMS.BlazorServerApp.csproj", "{E599A978-72FC-44F4-9B6E-D89CB66B06F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.BlazorServerApp", "FMS.BlazorServerApp\FMS.BlazorServerApp.csproj", "{E599A978-72FC-44F4-9B6E-D89CB66B06F0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.Domain", "FMS.Domain\FMS.Domain.csproj", "{A7AD9C52-2FA7-47F9-9C24-6498DD1852B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.Dal", "FMS.Dal\FMS.Dal.csproj", "{A5CDFB83-8E63-44E4-A407-048AE13884C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.Dal", "FMS.Dal\FMS.Dal.csproj", "{A5CDFB83-8E63-44E4-A407-048AE13884C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.ServiceLayer", "FMS.ServiceLayer\FMS.ServiceLayer.csproj", "{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.ServiceLayer", "FMS.ServiceLayer\FMS.ServiceLayer.csproj", "{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.ServiceLayer.Dtos", "FMS.ServiceLayer.Dtos\FMS.ServiceLayer.Dtos.csproj", "{4F716826-8A3D-45FD-82AC-84F8D5A05C26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F716826-8A3D-45FD-82AC-84F8D5A05C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F716826-8A3D-45FD-82AC-84F8D5A05C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F716826-8A3D-45FD-82AC-84F8D5A05C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F716826-8A3D-45FD-82AC-84F8D5A05C26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

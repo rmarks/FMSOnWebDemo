@@ -1,5 +1,7 @@
-﻿@page "/kliendid"
+﻿@page "/customers/list"
+@page "/customers/list/{CurrentPage:int}"
 @inject IServiceProvider ServiceProvider
+@inject NavigationManager NavManager
 
 <div class="container">
     <h1>Kliendid</h1>
@@ -9,13 +11,13 @@
             <button class="btn btn-primary">Lisa uus klient</button>
         </div>
         <div class="col-md-5 input-group text-md-right">
-            <input class="form-control" type="text" placeholder="Kliendi nimi" />
+            <input class="form-control" type="text" placeholder="Kliendi nimi" @bind="options.SearchString" @onkeyup="SearchBoxKeyPress" />
             <div class="input-group-btn">
-                <button class="btn btn-default">
+                <button class="btn btn-default" @onclick="SearchClick">
                     <i class="oi oi-magnifying-glass" title="search" />
                 </button>
             </div>
-            <div class="input-group-btn">
+            <div class="input-group-btn" @onclick="ClearSearch">
                 <button class="btn btn-default">
                     <i class="oi oi-x" title="clear" />
                 </button>
@@ -23,7 +25,7 @@
         </div>
     </div>
 
-    @if (customers == null)
+    @if (pagedCustomers?.List == null)
     {
         <p><em>Loading...</em></p>
     }
@@ -39,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var customer in customers)
+                @foreach (var customer in pagedCustomers.List)
                 {
                     <tr>
                         <td>@customer.Name</td>
@@ -60,17 +62,56 @@
                 }
             </tbody>
         </table>
+        <Pager Result="pagedCustomers" PageChanged="PagerPageChanged" />
     }
 
 </div>
 
 
 @code {
-    private IList<Customer> customers;
+    private PagedList<Customer> pagedCustomers;
+    private CustomerListOptions options = new CustomerListOptions { SearchString = string.Empty, PageSize = 10 };
 
-    protected override async Task OnInitializedAsync()
+    [Parameter]
+    public int CurrentPage { get; set; }
+
+    protected override void OnParametersSet()
     {
-        var service = ServiceProvider.GetService<IListCustomersService>();
-        customers = await service.FilterPage();
+        UpdateList();
     }
+
+    private void UpdateList()
+    {
+        options.CurrentPage = CurrentPage == 0 ? 1 : CurrentPage;
+
+        var service = ServiceProvider.GetService<IListCustomersService>();
+        pagedCustomers = service.FilterPage(options);
+    }
+
+    #region event handlers
+    private void SearchBoxKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SearchClick();
+        }
+    }
+
+    private void SearchClick()
+    {
+        CurrentPage = 1;
+        UpdateList();
+    }
+
+    private void ClearSearch()
+    {
+        options.SearchString = string.Empty;
+        SearchClick();
+    }
+
+    private void PagerPageChanged(int currentPage)
+    {
+        NavManager.NavigateTo($"/customers/list/{currentPage}");
+    }
+    #endregion
 }
