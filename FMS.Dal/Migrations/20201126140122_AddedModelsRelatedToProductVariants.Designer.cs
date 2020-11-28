@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
-    [DbContext(typeof(FMSDbContext))]
+    [DbContext(typeof(FMSContext))]
     [Migration("20201126140122_AddedModelsRelatedToProductVariants")]
     partial class AddedModelsRelatedToProductVariants
     {

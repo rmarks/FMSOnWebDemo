@@ -9,9 +9,9 @@ namespace FMS.ServiceLayer.CustomerServices
 {
     public class ListCustomersService : IListCustomersService
     {
-        private readonly FMSDbContext _context;
+        private readonly FMSContext _context;
 
-        public ListCustomersService(FMSDbContext context)
+        public ListCustomersService(FMSContext context)
         {
             _context = context;
         }

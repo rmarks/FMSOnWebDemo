@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.Dal", "FMS.Dal\FMS.Dal.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.ServiceLayer", "FMS.ServiceLayer\FMS.ServiceLayer.csproj", "{2F80EB49-271E-44FB-8E12-D5CB6620A4B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FMS.ServiceLayer.Dtos", "FMS.ServiceLayer.Dtos\FMS.ServiceLayer.Dtos.csproj", "{4F716826-8A3D-45FD-82AC-84F8D5A05C26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FMS.ServiceLayer.Dtos", "FMS.ServiceLayer.Dtos\FMS.ServiceLayer.Dtos.csproj", "{4F716826-8A3D-45FD-82AC-84F8D5A05C26}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

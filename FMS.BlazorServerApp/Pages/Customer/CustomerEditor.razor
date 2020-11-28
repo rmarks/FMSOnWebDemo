@@ -1,0 +1,25 @@
+﻿@page "/customers/edit/{Id:int}"
+@inject IServiceProvider ServiceProvider
+
+<div class="d-flex justify-content-between bg-light border-bottom px-4 py-2">
+    <h3 class="align-self-center m-0">Muuda klienti</h3>
+    <div>
+        <NavLink class="btn btn-primary" href="/customers/list">Tagasi</NavLink>
+        <button class="btn btn-success ml-2">Salvesta</button>
+    </div>
+</div>
+
+<h1>@customer.Name</h1>
+
+
+@code {
+    Customer customer = new Customer();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        customer = await ServiceProvider.GetService<IGetCustomerService>().GetCustomer(Id);
+    }
+}

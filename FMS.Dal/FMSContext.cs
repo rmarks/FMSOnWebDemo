@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FMS.Dal
 {
-    public class FMSDbContext : DbContext
+    public class FMSContext : DbContext
     {
-        public FMSDbContext(DbContextOptions<FMSDbContext> options) : base(options)
+        public FMSContext(DbContextOptions<FMSContext> options) : base(options)
         {
         }
 

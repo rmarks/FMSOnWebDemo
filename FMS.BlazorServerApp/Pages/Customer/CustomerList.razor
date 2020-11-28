@@ -3,8 +3,14 @@
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 
+<div class="d-flex justify-content-between bg-light border-bottom px-4 py-2 mb-4">
+    <h3 class="align-self-center m-0">Kliendid</h3>
+    <div>
+
+    </div>
+</div>
+
 <div class="container">
-    <h1>Kliendid</h1>
 
     <div class="row mb-3">
         <div class="col-md-7">
@@ -48,12 +54,12 @@
                         <td>@customer.PayerAddress.Country.Name</td>
                         <td>@customer.PayerAddress.City</td>
                         <td>
-                            <button class="btn btn-default btn-sm">
+                            <NavLink class="btn btn-default btn-sm" href="@GetDetailsUrl(customer.Id)">
                                 <i class="oi oi-eye text-primary" />
-                            </button>
-                            <button class="btn btn-default btn-sm">
+                            </NavLink>
+                            <NavLink class="btn btn-default btn-sm" href="@GetEditUrl(customer.Id)">
                                 <i class="oi oi-pencil text-warning" />
-                            </button>
+                            </NavLink>
                             <button class="btn btn-default btn-sm">
                                 <i class="oi oi-trash text-danger" />
                             </button>
@@ -74,6 +80,9 @@
 
     [Parameter]
     public int CurrentPage { get; set; }
+
+    string GetDetailsUrl(int id) => $"/customers/details/{id}";
+    string GetEditUrl(int id) => $"/customers/edit/{id}";
 
     protected override void OnParametersSet()
     {

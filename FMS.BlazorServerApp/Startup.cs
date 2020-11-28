@@ -35,7 +35,7 @@ namespace FMS.BlazorServerApp
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
-            services.AddDbContext<FMSDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:FMSDb"]), ServiceLifetime.Transient);
+            services.AddDbContext<FMSContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:FMSDb"]), ServiceLifetime.Transient);
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(ListCustomersService)))
                 .Where(c => c.Name.EndsWith("Service"))
