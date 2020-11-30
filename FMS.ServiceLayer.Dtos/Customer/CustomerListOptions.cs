@@ -2,6 +2,6 @@
 {
     public class CustomerListOptions : PagedArgsBase
     {
-        public string SearchString { get; set; }
+        public string SearchString { get; set; } = string.Empty;
     }
 }

@@ -1,4 +1,5 @@
 using FMS.BlazorServerApp.Data;
+using FMS.BlazorServerApp.Shared;
 using FMS.Dal;
 using FMS.ServiceLayer.CustomerServices;
 using Microsoft.AspNetCore.Builder;
@@ -36,6 +37,8 @@ namespace FMS.BlazorServerApp
             services.AddSingleton<WeatherForecastService>();
 
             services.AddDbContext<FMSContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:FMSDb"]), ServiceLifetime.Transient);
+
+            services.AddScoped<AppState>();
 
             services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(ListCustomersService)))
                 .Where(c => c.Name.EndsWith("Service"))

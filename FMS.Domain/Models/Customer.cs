@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace FMS.Domain.Models
@@ -37,7 +38,11 @@ namespace FMS.Domain.Models
 
 
         //temp
-        public CustomerAddress PayerAddress => Addresses.FirstOrDefault(a => a.IsBilling);
+        [NotMapped]
+        public CustomerAddress PayerAddress => Addresses.FirstOrDefault(a => a.IsBilling) ?? new CustomerAddress { Country = new Country() };
+        
+        [NotMapped]
+        public List<CustomerAddress> ConsigneeAddresses => Addresses.Where(a => !a.IsBilling).ToList() ?? new List<CustomerAddress>();
 
 
         //legacy system fields

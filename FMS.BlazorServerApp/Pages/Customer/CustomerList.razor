@@ -1,7 +1,7 @@
 ﻿@page "/customers/list"
-@page "/customers/list/{CurrentPage:int}"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
+@inject AppState AppState 
 
 <div class="d-flex justify-content-between bg-light border-bottom px-4 py-2 mb-4">
     <h3 class="align-self-center m-0">Kliendid</h3>
@@ -76,26 +76,33 @@
 
 @code {
     private PagedList<Customer> pagedCustomers;
-    private CustomerListOptions options = new CustomerListOptions { SearchString = string.Empty, PageSize = 10 };
-
-    [Parameter]
-    public int CurrentPage { get; set; }
-
-    string GetDetailsUrl(int id) => $"/customers/details/{id}";
-    string GetEditUrl(int id) => $"/customers/edit/{id}";
+    private CustomerListOptions options = new CustomerListOptions { PageSize = 11, CurrentPage = 1 };
 
     protected override void OnParametersSet()
     {
+        if (AppState.BackToCustomerList)
+        {
+            AppState.BackToCustomerList = false;
+
+            if (AppState.CustomerListOptions != null)
+                options = AppState.CustomerListOptions;
+        }
+
         UpdateList();
     }
 
+    #region Helpers
     private void UpdateList()
     {
-        options.CurrentPage = CurrentPage == 0 ? 1 : CurrentPage;
+        AppState.CustomerListOptions = options;
 
         var service = ServiceProvider.GetService<IListCustomersService>();
         pagedCustomers = service.FilterPage(options);
     }
+
+    string GetDetailsUrl(int id) => $"/customers/details/{id}";
+    string GetEditUrl(int id) => $"/customers/edit/{id}";
+    #endregion
 
     #region event handlers
     private void SearchBoxKeyPress(KeyboardEventArgs e)
@@ -108,8 +115,9 @@
 
     private void SearchClick()
     {
-        CurrentPage = 1;
+        options.CurrentPage = 1;
         UpdateList();
+        StateHasChanged();
     }
 
     private void ClearSearch()
@@ -120,7 +128,9 @@
 
     private void PagerPageChanged(int currentPage)
     {
-        NavManager.NavigateTo($"/customers/list/{currentPage}");
+        options.CurrentPage = currentPage;
+        UpdateList();
+        StateHasChanged();
     }
     #endregion
 }
