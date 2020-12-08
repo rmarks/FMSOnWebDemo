@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
-    public interface IGetCustomerService
+    public interface ICustomerUpdateService
     {
-        Task<Customer> GetCustomer(int id);
+        Task UpdateCustomer(Customer customer);
     }
 }

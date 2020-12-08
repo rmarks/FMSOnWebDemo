@@ -1,3 +1,4 @@
+using BlazorStrap;
 using FMS.BlazorServerApp.Data;
 using FMS.BlazorServerApp.Shared;
 using FMS.Dal;
@@ -36,11 +37,13 @@ namespace FMS.BlazorServerApp
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
 
+            services.AddBootstrapCss();
+
             services.AddDbContext<FMSContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:FMSDb"]), ServiceLifetime.Transient);
 
             services.AddScoped<AppState>();
 
-            services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(ListCustomersService)))
+            services.RegisterAssemblyPublicNonGenericClasses(Assembly.GetAssembly(typeof(CustomerListService)))
                 .Where(c => c.Name.EndsWith("Service"))
                 .AsPublicImplementedInterfaces();
         }

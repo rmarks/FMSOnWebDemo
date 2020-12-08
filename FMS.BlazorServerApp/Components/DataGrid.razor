@@ -1,0 +1,73 @@
+﻿@typeparam TRowData
+
+<CascadingValue IsFixed="true" Value="this">@ChildContent</CascadingValue>
+
+<table @attributes="@TableAttributes">
+    <thead>
+        <tr class="@HeaderClass">
+            @foreach (var column in columns)
+            {
+                @column.HeaderTemplate
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Items?.Count == 0)
+        {
+            <tr><td colspan="@columns.Count"><em>Andmed puuduvad</em></td></tr>
+        }
+        else
+        {
+            var index = 0;
+            foreach (var item in Items)
+            {
+                @* Use @key to help the diff algorithm when updating the collection *@
+                <tr @key="item.GetHashCode()" class="@(RowClass?.Invoke(item, index++))">
+                    @foreach (var column in columns)
+                    {
+                        @column.CellTemplate(item);
+                    }
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private readonly List<DataGridColumn<TRowData>> columns = new List<DataGridColumn<TRowData>>();
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> TableAttributes { get; set; }
+
+    [Parameter]
+    public ICollection<TRowData> Items { get; set; }
+
+    // This fragment should contain all the DataGridColumns
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Func<TRowData, int, string> RowClass { get; set; }
+
+    [Parameter]
+    public string HeaderClass { get; set; }
+
+    // DataGridColumn uses this method to add a column
+    internal void AddColumn(DataGridColumn<TRowData> column)
+    {
+        columns.Add(column);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // The first render will instantiate the DataGridColumn defined in the ChildContent.
+            // DataGridColumn calls AddColumn during its initialization. This means that until
+            // the first render is completed, the columns collection is empty.
+            // Calling StateHasChanged() will re-render the component, so the second time it will know the columns
+            StateHasChanged();
+        }
+    }
+}

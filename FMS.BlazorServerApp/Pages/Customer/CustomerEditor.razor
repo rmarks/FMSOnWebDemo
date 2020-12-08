@@ -1,25 +1,293 @@
-﻿@page "/customers/edit/{Id:int}"
+﻿@page "/customers/{Id:int}"
+@page "/customers/add"
 @inject IServiceProvider ServiceProvider
+@inject AppState AppState
+@inject NavigationManager NavManager
 
-<div class="d-flex justify-content-between bg-light border-bottom px-4 py-2">
-    <h3 class="align-self-center m-0">Muuda klienti</h3>
-    <div>
-        <NavLink class="btn btn-primary" href="/customers/list">Tagasi</NavLink>
-        <button class="btn btn-success ml-2">Salvesta</button>
+<EditForm Model="@customer" OnValidSubmit="HandleValidSubmit">
+    <FluentValidationValidator />
+
+    <div class="d-flex justify-content-between bg-light border-bottom px-4 py-2">
+        <h3 class="align-self-center m-0">@Title</h3>
+        <div>
+            <NavLink class="btn btn-primary" href="@GetListUrl()">Tagasi</NavLink>
+            <button type="button" class="btn btn-warning ml-2" @onclick="@(() => IsInEditMode = true)" hidden="@IsInEditMode">Muuda</button>
+            <button type="submit" class="btn btn-success ml-2" hidden="@IsInViewMode">Salvesta</button>
+            <button type="button" class="btn btn-danger ml-2" @onclick="DeleteCustomer" hidden="@IsInEditMode">Kustuta</button>
+        </div>
     </div>
-</div>
 
-<h1>@customer.Name</h1>
+    <div class="container-fluid">
+
+        <div class="row px-3">
+            <div class="col p-4">
+                <div class="form-group">
+                    <label>Nimi</label>
+                    <InputText class="form-control" @bind-Value="customer.Name" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.Name)" />
+                </div>
+                <div class="form-group">
+                    <label>Registrikood</label>
+                    <InputText class="form-control" @bind-Value="customer.RegNo" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.RegNo)" />
+                </div>
+                <div class="form-group">
+                    <label>KMKR</label>
+                    <InputText class="form-control" @bind-Value="customer.VATNo" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.VATNo)" />
+                </div>
+            </div>
+
+            <div class="col p-4">
+                <div class="form-group">
+                    <label>Riik</label>
+                    <InputSelectInt @bind-Value="customer.PayerAddress.CountryId" Dict="dropdowns.Countries" Disabled="@IsInViewMode">
+                        <option disabled value="0">--Vali riik--</option>
+                    </InputSelectInt>
+                    <ValidationMessage For="@(() => customer.PayerAddress.CountryId)" />
+                </div>
+                <div class="form-group">
+                    <label>Maakond</label>
+                    <InputText class="form-control" @bind-Value="customer.PayerAddress.County" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.PayerAddress.County)" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-9">
+                        <label>Linn</label>
+                        <InputText class="form-control" @bind-Value="customer.PayerAddress.City" disabled="@IsInViewMode" />
+                        <ValidationMessage For="@(() => customer.PayerAddress.City)" />
+                    </div>
+                    <div class="form-group col-3">
+                        <label>Indeks</label>
+                        <InputText class="form-control" @bind-Value="customer.PayerAddress.PostCode" disabled="@IsInViewMode" />
+                        <ValidationMessage For="@(() => customer.PayerAddress.PostCode)" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Aadress</label>
+                    <InputText class="form-control" @bind-Value="customer.PayerAddress.Address" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.PayerAddress.Address)" />
+                </div>
+            </div>
+
+            <div class="col p-4">
+                <div class="form-group">
+                    <label>Maksetingimus</label>
+                    <InputSelectInt @bind-Value="customer.PaymentTermId" Dict="dropdowns.PaymentTerms" Disabled="@IsInViewMode">
+                        <option disabled value="0">--Vali maksetingimus--</option>
+                    </InputSelectInt>
+                    <ValidationMessage For="@(() => customer.PaymentTermId)" />
+                </div>
+                <div class="form-group">
+                    <label>Tarnetingimus</label>
+                    <InputText class="form-control" @bind-Value="customer.DeliveryTermText" disabled="@IsInViewMode" />
+                    <ValidationMessage For="@(() => customer.DeliveryTermText)" />
+                </div>
+            </div>
+
+            <div class="col p-4"></div>
+
+        </div>
+
+        <div class="row px-3">
+            <div class="col p-4">
+                <TabSet>
+                    <Tab Title="Kontaktid">
+                        @if (IsInViewMode)
+                        {
+                            <DataGrid Items="customer.Contacts" class="table" HeaderClass="thead-light">
+                                <DataGridColumn TRowData="CustomerContact" Title="Nimi" Expression="c => c.Name" />
+                                <DataGridColumn TRowData="CustomerContact" Title="Amet" Expression="c => c.Job" />
+                                <DataGridColumn TRowData="CustomerContact" Title="Mobiil" Expression="c => c.Mobile" />
+                                <DataGridColumn TRowData="CustomerContact" Title="Telefon" Expression="c => c.Phone" />
+                                <DataGridColumn TRowData="CustomerContact" Title="E-post" Expression="c => c.Email" />
+                            </DataGrid>
+                        }
+                        else
+                        {
+                            <DataGrid Items="customer.Contacts" class="table" HeaderClass="thead-light">
+                                <DataGridColumn TRowData="CustomerContact" Title="Nimi" Context="contact">
+                                    <InputText class="form-control" @bind-Value="@contact.Name" />
+                                    <ValidationMessage For="@(() => contact.Name)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerContact" Title="Amet" Context="contact">
+                                    <InputText class="form-control" @bind-Value="@contact.Job" />
+                                    <ValidationMessage For="@(() => contact.Job)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerContact" Title="Mobiil" Context="contact">
+                                    <InputText class="form-control" @bind-Value="@contact.Mobile" />
+                                    <ValidationMessage For="@(() => contact.Mobile)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerContact" Title="Telefon" Context="contact">
+                                    <InputText class="form-control" @bind-Value="@contact.Phone" />
+                                    <ValidationMessage For="@(() => contact.Phone)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerContact" Title="E-post" Context="contact">
+                                    <InputText class="form-control" @bind-Value="@contact.Email" />
+                                    <ValidationMessage For="@(() => contact.Email)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerContact" Context="contact">
+                                    <button type="button" class="btn btn-danger" @onclick="@(() => DeleteContact(contact))">X</button>
+                                </DataGridColumn>
+                            </DataGrid>
+                        }
+
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" @onclick="AddContact" hidden="@IsInViewMode">Lisa kontakt</button>
+                        </div>
+                    </Tab>
+
+                    <Tab Title="Saajad">
+                        @if (IsInViewMode)
+                        {
+                            <DataGrid Items="customer.ConsigneeAddresses" class="table" HeaderClass="thead-light">
+                                <DataGridColumn TRowData="CustomerAddress" Title="Saaja" Expression="c => c.Description" />
+                                <DataGridColumn TRowData="CustomerAddress" Title="Riik" Expression="c => c.Country.Name" />
+                                <DataGridColumn TRowData="CustomerAddress" Title="Maakond" Expression="c => c.County" />
+                                <DataGridColumn TRowData="CustomerAddress" Title="Linn" Expression="c => c.City" />
+                                <DataGridColumn TRowData="CustomerAddress" Title="Aadress" Expression="c => c.Address" />
+                                <DataGridColumn TRowData="CustomerAddress" Title="Indeks" Expression="c => c.PostCode" />
+                            </DataGrid>
+                        }
+                        else
+                        {
+                            <DataGrid Items="customer.ConsigneeAddresses" class="table" HeaderClass="thead-light">
+                                <DataGridColumn TRowData="CustomerAddress" Title="Saaja" Context="address">
+                                    <InputText class="form-control" @bind-Value="@address.Description" />
+                                    <ValidationMessage For="@(() => address.Description)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Title="Riik" Context="address">
+                                    <InputSelectInt @bind-Value="address.CountryId" Dict="dropdowns.Countries">
+                                        <option disabled value="0">--Vali riik--</option>
+                                    </InputSelectInt>
+                                    <ValidationMessage For="@(() => address.CountryId)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Title="Maakond" Context="address">
+                                    <InputText class="form-control" @bind-Value="@address.County" />
+                                    <ValidationMessage For="@(() => address.County)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Title="Linn" Context="address">
+                                    <InputText class="form-control" @bind-Value="@address.City" />
+                                    <ValidationMessage For="@(() => address.City)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Title="Aadress" Context="address">
+                                    <InputText class="form-control" @bind-Value="@address.Address" />
+                                    <ValidationMessage For="@(() => address.Address)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Title="Indeks" Context="address">
+                                    <InputText class="form-control" @bind-Value="@address.PostCode" />
+                                    <ValidationMessage For="@(() => address.PostCode)" />
+                                </DataGridColumn>
+                                <DataGridColumn TRowData="CustomerAddress" Context="address">
+                                    <button type="button" class="btn btn-danger" @onclick="@(() => DeleteConsigneeAddress(address))">X</button>
+                                </DataGridColumn>
+                            </DataGrid>
+                        }
+
+                        <div class="form-group">
+                            <button type="button" class="btn btn-success" @onclick="AddConsigneeAddress" hidden="@IsInViewMode">Lisa saaja</button>
+                        </div>
+                    </Tab>
+                </TabSet>
+            </div>
+        </div>
+    </div>
+
+</EditForm>
 
 
 @code {
+    #region fields
     Customer customer = new Customer();
+    CustomerDropdowns dropdowns = new CustomerDropdowns
+    {
+        Countries = new Dictionary<string, int>(),
+        PaymentTerms = new Dictionary<string, int>()
+    };
+    #endregion
 
+    #region parameters
     [Parameter]
     public int Id { get; set; }
+    #endregion
+
+    #region properties
+    bool IsInEditMode { get; set; }
+    bool IsInViewMode => !IsInEditMode;
+
+    string Title => IsInEditMode ? (Id == 0 ? "Uus" : "Muuda") : "Vaata";
+    #endregion
+
+    #region lifecycle methods
+    protected override async Task OnInitializedAsync()
+    {
+        dropdowns = await ServiceProvider.GetService<ICustomerDropdownsService>().GetCustomerDropdowns();
+    }
 
     protected override async Task OnParametersSetAsync()
     {
-        customer = await ServiceProvider.GetService<IGetCustomerService>().GetCustomer(Id);
+        if (Id != 0)
+        {
+            customer = await ServiceProvider.GetService<ICustomerReadService>().GetCustomer(Id);
+        }
+        else
+        {
+            IsInEditMode = true;
+        }
     }
+    #endregion
+
+    #region helpers
+    private string GetListUrl()
+    {
+        AppState.BackToCustomerList = true;
+
+        return "customers/list";
+    }
+    #endregion
+
+    #region event handlers
+    private async Task HandleValidSubmit()
+    {
+        if (customer.Id == 0)
+        {
+            await ServiceProvider.GetService<ICustomerCreateService>().CreateCustomer(customer);
+        }
+        else
+        {
+            await ServiceProvider.GetService<ICustomerUpdateService>().UpdateCustomer(customer);
+        }
+
+        NavManager.NavigateTo(GetListUrl());
+    }
+
+    private async Task DeleteCustomer()
+    {
+        await ServiceProvider.GetService<ICustomerDeleteService>().DeleteCustomer(Id);
+
+        NavManager.NavigateTo(GetListUrl());
+    }
+
+    private void AddContact()
+    {
+        customer.Contacts.Add(new CustomerContact());
+    }
+
+    private void DeleteContact(CustomerContact contact)
+    {
+        customer.Contacts.Remove(contact);
+    }
+
+    private void AddConsigneeAddress()
+    {
+        customer.Addresses.Add(new CustomerAddress());
+    }
+
+    private void DeleteConsigneeAddress(CustomerAddress address)
+    {
+        customer.Addresses.Remove(address);
+    }
+    #endregion
 }

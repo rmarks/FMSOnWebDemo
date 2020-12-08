@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
-    public class GetCustomerService : IGetCustomerService
+    public class CustomerReadService : ICustomerReadService
     {
         private readonly FMSContext _context;
 
-        public GetCustomerService(FMSContext context)
+        public CustomerReadService(FMSContext context)
         {
             _context = context;
         }

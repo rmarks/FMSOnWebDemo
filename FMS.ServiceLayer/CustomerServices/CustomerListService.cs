@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
-    public class ListCustomersService : IListCustomersService
+    public class CustomerListService : ICustomerListService
     {
         private readonly FMSContext _context;
 
-        public ListCustomersService(FMSContext context)
+        public CustomerListService(FMSContext context)
         {
             _context = context;
         }

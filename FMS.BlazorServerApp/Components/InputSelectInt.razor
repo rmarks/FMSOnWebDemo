@@ -1,0 +1,37 @@
+﻿@inherits InputBase<int>
+
+<select class="form-control @CssClass" value="@CurrentValueAsString" @onchange="@(e => CurrentValueAsString = e.Value as string)"
+        disabled="@Disabled">
+    @ChildContent
+    @foreach (KeyValuePair<string, int> kvp in Dict)
+    {
+        <option value="@kvp.Value">@kvp.Key</option>
+    }
+</select>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public IDictionary<string, int> Dict { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    protected override bool TryParseValueFromString(string value, out int result, out string validationErrorMessage)
+    {
+        if (int.TryParse(value, out var resultInt))
+        {
+            result = resultInt;
+            validationErrorMessage = null;
+            return true;
+        }
+        else
+        {
+            result = default;
+            validationErrorMessage = $"The selected value {value} is not a valid number.";
+            return false;
+        }
+    }
+}

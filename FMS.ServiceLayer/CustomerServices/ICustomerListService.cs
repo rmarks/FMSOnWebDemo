@@ -3,7 +3,7 @@ using FMS.ServiceLayer.Dtos;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
-    public interface IListCustomersService
+    public interface ICustomerListService
     {
         PagedList<Customer> FilterPage(CustomerListOptions options);
     }

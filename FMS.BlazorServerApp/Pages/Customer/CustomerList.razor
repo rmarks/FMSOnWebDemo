@@ -1,6 +1,5 @@
 ﻿@page "/customers/list"
 @inject IServiceProvider ServiceProvider
-@inject NavigationManager NavManager
 @inject AppState AppState 
 
 <div class="d-flex justify-content-between bg-light border-bottom px-4 py-2 mb-4">
@@ -14,7 +13,7 @@
 
     <div class="row mb-3">
         <div class="col-md-7">
-            <button class="btn btn-primary">Lisa uus klient</button>
+            <NavLink class="btn btn-primary" href="/customers/add">Lisa uus klient</NavLink>
         </div>
         <div class="col-md-5 input-group text-md-right">
             <input class="form-control" type="text" placeholder="Kliendi nimi" @bind="options.SearchString" @onkeyup="SearchBoxKeyPress" />
@@ -54,15 +53,9 @@
                         <td>@customer.PayerAddress.Country.Name</td>
                         <td>@customer.PayerAddress.City</td>
                         <td>
-                            <NavLink class="btn btn-default btn-sm" href="@GetDetailsUrl(customer.Id)">
-                                <i class="oi oi-eye text-primary" />
+                            <NavLink class="btn btn-dark btn-sm" href="@GetUrl(customer.Id)">
+                                <i class="oi oi-eye text-white" /> Vaata
                             </NavLink>
-                            <NavLink class="btn btn-default btn-sm" href="@GetEditUrl(customer.Id)">
-                                <i class="oi oi-pencil text-warning" />
-                            </NavLink>
-                            <button class="btn btn-default btn-sm">
-                                <i class="oi oi-trash text-danger" />
-                            </button>
                         </td>
                     </tr>
                 }
@@ -96,12 +89,11 @@
     {
         AppState.CustomerListOptions = options;
 
-        var service = ServiceProvider.GetService<IListCustomersService>();
+        var service = ServiceProvider.GetService<ICustomerListService>();
         pagedCustomers = service.FilterPage(options);
     }
 
-    string GetDetailsUrl(int id) => $"/customers/details/{id}";
-    string GetEditUrl(int id) => $"/customers/edit/{id}";
+    string GetUrl(int id) => $"/customers/{id}";
     #endregion
 
     #region event handlers

@@ -9,7 +9,7 @@ namespace FMS.Domain.Models
     public class Customer
     {
         public int Id { get; set; }
-        
+
         [Required]
         [MaxLength(70)]
         public string Name { get; set; }
@@ -28,7 +28,7 @@ namespace FMS.Domain.Models
         public string DeliveryTermText { get; set; }
 
         public int FixedDiscountPercent { get; set; }
-        
+
         public bool IsVAT { get; set; }
 
         public DateTime CreatedOn { get; set; }
@@ -38,9 +38,21 @@ namespace FMS.Domain.Models
 
 
         //temp
+        private CustomerAddress payerAddress;
         [NotMapped]
-        public CustomerAddress PayerAddress => Addresses.FirstOrDefault(a => a.IsBilling) ?? new CustomerAddress { Country = new Country() };
-        
+        public CustomerAddress PayerAddress
+        {
+            get
+            {
+                if (payerAddress == null)
+                {
+                    payerAddress = Addresses.FirstOrDefault(a => a.IsBilling) ?? new CustomerAddress { IsBilling = true, Country = new Country() };
+                }
+
+                return payerAddress;
+            }
+        }
+
         [NotMapped]
         public List<CustomerAddress> ConsigneeAddresses => Addresses.Where(a => !a.IsBilling).ToList() ?? new List<CustomerAddress>();
 
