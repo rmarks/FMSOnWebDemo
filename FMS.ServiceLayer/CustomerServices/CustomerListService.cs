@@ -3,7 +3,9 @@ using FMS.Domain.Models;
 using FMS.ServiceLayer.Dtos;
 using FMS.ServiceLayer.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FMS.ServiceLayer.CustomerServices
 {
@@ -32,6 +34,15 @@ namespace FMS.ServiceLayer.CustomerServices
                 .Include(c => c.Addresses).ThenInclude(a => a.Country)
                 .OrderBy(c => c.Name)
                 .GetPagedList(options.CurrentPage, options.PageSize);
+        }
+
+        public async Task<IEnumerable<Customer>> SearchCustomers(string searchText)
+        {
+            return await _context.Customers
+                .AsNoTracking()
+                .Where(c => c.Name.ToLower().Contains(searchText.ToLower()))
+                .OrderBy(c => c.Name)
+                .ToListAsync();
         }
     }
 }
