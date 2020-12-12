@@ -3,89 +3,104 @@
 @inject AppState AppState
 @inject NavigationManager NavManager
 
-<div class="d-flex justify-content-between bg-light border-bottom px-4 py-2 mb-4">
-    <h3 class="align-self-center m-0">Kliendid</h3>
-    <div style="width:20%">
-        <BlazoredTypeahead SearchMethod="@SearchCustomers"
-                           TValue="Customer"
-                           TItem="Customer"
-                           Value="selectedCustomer"
-                           ValueExpression="@(() => selectedCustomer)"
-                           ValueChanged="SelectedCustomerChanged"
-                           class="form-control"
-                           placeholder="Otsi klienti nime järgi...">
-            <SelectedTemplate>
-                @context.Name
-            </SelectedTemplate>
-            <ResultTemplate>
-                @context.Name
-            </ResultTemplate>
-        </BlazoredTypeahead>
-    </div>
-</div>
-
-<div class="container">
-
-    <div class="row mb-3">
-        <div class="col-md-7">
-            <NavLink class="btn btn-primary" href="/customers/add">Lisa uus klient</NavLink>
+<div class="main">
+    <div class="d-flex justify-content-between bg-light border-bottom px-4 py-2 component-bar">
+        <div class="d-flex align-items-center">
+            <h3 class="align-self-center m-0">Kliendid</h3>
+            <a class="btn btn-default text-primary font-weight-bolder ml-4 @(ShowFilter ? "d-none" : "")"
+               @onclick="@(() => ShowFilter = true)">
+                Muuda filtrit
+            </a>
         </div>
-        <div class="col-md-5 input-group text-md-right">
-            <input class="form-control" type="text" placeholder="Kliendi nimi" @bind="options.SearchString" @onkeyup="SearchBoxKeyPress" />
-            <div class="input-group-btn">
-                <button class="btn btn-default" @onclick="SearchClick">
-                    <i class="oi oi-magnifying-glass" title="search" />
-                </button>
-            </div>
-            <div class="input-group-btn" @onclick="ClearSearch">
-                <button class="btn btn-default">
-                    <i class="oi oi-x" title="clear" />
-                </button>
-            </div>
+        <div style="width:20%">
+            <BlazoredTypeahead SearchMethod="@SearchCustomers"
+                               TValue="Customer"
+                               TItem="Customer"
+                               Value="selectedCustomer"
+                               ValueExpression="@(() => selectedCustomer)"
+                               ValueChanged="SelectedCustomerChanged"
+                               class="form-control"
+                               placeholder="Otsi klienti nime järgi...">
+                <SelectedTemplate>
+                    @context.Name
+                </SelectedTemplate>
+                <ResultTemplate>
+                    @context.Name
+                </ResultTemplate>
+            </BlazoredTypeahead>
         </div>
     </div>
 
-    @if (pagedCustomers?.List == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th>Nimi</th>
-                    <th>Riik</th>
-                    <th>Linn</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var customer in pagedCustomers.List)
-                {
-                    <tr>
-                        <td>@customer.Name</td>
-                        <td>@customer.PayerAddress.Country.Name</td>
-                        <td>@customer.PayerAddress.City</td>
-                        <td>
-                            <NavLink class="btn btn-dark btn-sm" href="@GetUrl(customer.Id)">
-                                <i class="oi oi-eye text-white" /> Vaata
-                            </NavLink>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <Pager Result="pagedCustomers" PageChanged="PagerPageChanged" />
-    }
+    <div class="modal-filter-parent">
+        <ModalFilter Show="@ShowFilter">
+            <h1>This is a modal filter</h1>
+            <button class="btn btn-secondary" @onclick="@(() => ShowFilter = false)">Katkesta</button>
+        </ModalFilter>
 
+        <div class="container pt-3">
+            <div class="row pb-3">
+                <div class="col-md-7">
+                    <NavLink class="btn btn-primary" href="/customers/add">Lisa uus klient</NavLink>
+                </div>
+                <div class="col-md-5 input-group text-md-right">
+                    <input class="form-control" type="text" placeholder="Kliendi nimi" @bind="options.SearchString" @onkeyup="SearchBoxKeyPress" />
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" @onclick="SearchClick">
+                            <i class="oi oi-magnifying-glass" title="search" />
+                        </button>
+                    </div>
+                    <div class="input-group-btn" @onclick="ClearSearch">
+                        <button class="btn btn-default">
+                            <i class="oi oi-x" title="clear" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @if (pagedCustomers?.List == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Nimi</th>
+                            <th>Riik</th>
+                            <th>Linn</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in pagedCustomers.List)
+                        {
+                            <tr>
+                                <td>@customer.Name</td>
+                                <td>@customer.PayerAddress.Country.Name</td>
+                                <td>@customer.PayerAddress.City</td>
+                                <td>
+                                    <NavLink class="btn btn-dark btn-sm" href="@GetUrl(customer.Id)">
+                                        <i class="oi oi-eye text-white" /> Vaata
+                                    </NavLink>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <Pager Result="pagedCustomers" PageChanged="PagerPageChanged" />
+            }
+
+        </div>
+    </div>
 </div>
 
 
 @code {
     private PagedList<Customer> pagedCustomers;
-    private CustomerListOptions options = new CustomerListOptions { PageSize = 11, CurrentPage = 1 };
+    private CustomerListOptions options = new CustomerListOptions { PageSize = 10, CurrentPage = 1 };
     private Customer selectedCustomer;
+    bool ShowFilter;
 
     protected override void OnParametersSet()
     {

@@ -1,0 +1,14 @@
+﻿@if (Show)
+{
+<div class="modal-filter-container">
+    <div class="modal-filter bg-light p-3 border-bottom">
+        @ChildContent
+    </div>
+</div>
+}
+
+
+@code {
+    [Parameter] public bool Show { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}
