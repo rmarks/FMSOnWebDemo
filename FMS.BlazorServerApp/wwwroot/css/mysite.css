@@ -44,3 +44,10 @@ body {
     position: relative;
     z-index: 3000;
 }
+
+.sidebar {
+    background-color: gray;
+    width: 20rem;
+    display: flex;
+    flex-direction: column;
+}

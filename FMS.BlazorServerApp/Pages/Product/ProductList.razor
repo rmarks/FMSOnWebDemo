@@ -1,0 +1,59 @@
+﻿@page "/tooted"
+@inject IServiceProvider ServiceProvider
+
+<div class="main">
+    <div class="d-flex bg-light border-bottom px-4 py-2">
+        <h3 class="m-0">Tooted</h3>
+    </div>
+
+    @if (pagedProductBases?.List == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+
+        <ul class="product-cards m-3">
+            @foreach (var pb in pagedProductBases.List)
+            {
+                <li style="background-image: url('/img/products/small/@(pb.Code).jpg')">
+                    <div class="product-info">
+                        <b>@pb.Code</b>
+                        <span class="content">@pb.Name</span>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <Pager Result="pagedProductBases" PageChanged="PagerPageChanged" />
+    }
+</div>
+
+<div class="sidebar"></div>
+
+@code {
+    PagedList<ProductBase> pagedProductBases;
+    ProductListOptions options = new ProductListOptions { PageSize = 24, CurrentPage = 1 };
+
+    protected override void OnParametersSet()
+    {
+        UpdateList();
+
+    }
+
+    #region helpers
+    void UpdateList()
+    {
+        pagedProductBases = ServiceProvider.GetService<IProductBaseService>().GetFilterPage(options);
+    }
+    #endregion
+
+    #region event handlers
+    void PagerPageChanged(int currentPage)
+    {
+        options.CurrentPage = currentPage;
+        UpdateList();
+        StateHasChanged();
+    }
+    #endregion
+}
