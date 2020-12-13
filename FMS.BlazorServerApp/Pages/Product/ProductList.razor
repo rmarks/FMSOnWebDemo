@@ -1,5 +1,7 @@
 ﻿@page "/tooted"
 @inject IServiceProvider ServiceProvider
+@using System.Reflection
+@using System.Linq;
 
 <div class="main">
     <div class="d-flex bg-light border-bottom px-4 py-2 align-items-baseline">
@@ -8,6 +10,7 @@
            @onclick="@(() => showFilter = true)">
             Muuda filtrit
         </a>
+        <FilterTags Names="@(productFilterTags.Keys)" OnTagRemoved="@((p) => HandleTagRemoved(p))" />
     </div>
 
     <div class="modal-filter-parent">
@@ -55,6 +58,7 @@
 @code {
     PagedList<ProductBase> pagedProductBases;
     bool showFilter;
+    IDictionary<string, string> productFilterTags = new Dictionary<string, string>();
 
     public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 24, CurrentPage = 1 };
 
@@ -75,6 +79,85 @@
     {
         pagedProductBases = ServiceProvider.GetService<IProductBaseService>().GetFilterPage(Options);
     }
+
+    void CreateFilterTagList()
+    {
+        productFilterTags.Clear();
+
+        if (Options.ProductStatusId != 0)
+        {
+            string tagName = Dropdowns.ProductStatuses.FirstOrDefault(p => p.Id == Options.ProductStatusId)?.Name;
+            productFilterTags.Add(tagName, "ProductStatusId");
+        }
+        if (Options.BusinessLineId != 0)
+        {
+            string tagName = Dropdowns.BusinessLines.FirstOrDefault(p => p.Id == Options.BusinessLineId)?.Name;
+            productFilterTags.Add(tagName, "BusinessLineId");
+        }
+        if (Options.ProductSourceTypeId != 0)
+        {
+            string tagName = Dropdowns.ProductSourceTypes.FirstOrDefault(p => p.Id == Options.ProductSourceTypeId)?.Name;
+            productFilterTags.Add(tagName, "ProductSourceTypeId");
+        }
+        if (Options.ProductDestinationTypeId != 0)
+        {
+            string tagName = Dropdowns.ProductDestinationTypes.FirstOrDefault(p => p.Id == Options.ProductDestinationTypeId)?.Name;
+            productFilterTags.Add(tagName, "ProductDestinationTypeId");
+        }
+        if (Options.ProductMaterialId != 0)
+        {
+            string tagName = Dropdowns.ProductMaterials.FirstOrDefault(p => p.Id == Options.ProductMaterialId)?.Name;
+            productFilterTags.Add(tagName, "ProductMaterialId");
+        }
+        if (Options.ProductTypeId != 0)
+        {
+            string tagName = Dropdowns.ProductTypes.FirstOrDefault(p => p.Id == Options.ProductTypeId)?.Name;
+            productFilterTags.Add(tagName, "ProductTypeId");
+        }
+        if (Options.ProductGroupId != 0)
+        {
+            string tagName = Dropdowns.ProductGroups.FirstOrDefault(p => p.Id == Options.ProductGroupId)?.Name;
+            productFilterTags.Add(tagName, "ProductGroupId");
+        }
+        if (Options.ProductBrandId != 0)
+        {
+            string tagName = Dropdowns.ProductBrands.FirstOrDefault(p => p.Id == Options.ProductBrandId)?.Name;
+            productFilterTags.Add(tagName, "ProductBrandId");
+        }
+        if (Options.ProductCollectionId != 0)
+        {
+            string tagName = Dropdowns.ProductCollections.FirstOrDefault(p => p.Id == Options.ProductCollectionId)?.Name;
+            productFilterTags.Add(tagName, "ProductCollectionId");
+        }
+        if (Options.ProductDesignId != 0)
+        {
+            string tagName = Dropdowns.ProductDesigns.FirstOrDefault(p => p.Id == Options.ProductDesignId)?.Name;
+            productFilterTags.Add(tagName, "ProductDesignId");
+        }
+    }
+
+    //void MakeFilterTagList()
+    //{
+    //    var filterTags = new Dictionary<string, object>();
+    //    var propNameList = new List<string>();
+
+    //    Type type = Options.GetType();
+    //    propNameList = type.GetProperties()
+    //        .Where(p => p.Name.ToLower().EndsWith("id") && p.GetType() == typeof(int) && (int)p.GetValue(Options) != 0)
+    //        .Select(p => p.Name)
+    //        .ToList();
+
+
+    //    Type dType = Dropdowns.GetType();
+    //    foreach (string propName in propNameList)
+    //    {
+    //        var prop = dType.GetProperty(propName.Substring(0, propName.Length - 2));
+    //        if (prop != null)
+    //        {
+    //            var list = Convert.ChangeType(prop.GetValue(Dropdowns), prop.PropertyType);
+    //        }
+    //    }
+    //}
     #endregion
 
     #region event handlers
@@ -95,6 +178,53 @@
         Options.CurrentPage = 1;
         UpdateList();
         showFilter = false;
+
+        CreateFilterTagList();
+    }
+
+    void HandleTagRemoved(string tagName)
+    {
+        switch (productFilterTags[tagName])
+        {
+            case "ProductStatusId":
+                Options.ProductStatusId = 0;
+                break;
+            case "BusinessLineId":
+                Options.BusinessLineId = 0;
+                break;
+            case "ProductSourceTypeId":
+                Options.ProductSourceTypeId = 0;
+                break;
+            case "ProductDestinationTypeId":
+                Options.ProductDestinationTypeId = 0;
+                break;
+            case "ProductMaterialId":
+                Options.ProductMaterialId = 0;
+                break;
+            case "ProductTypeId":
+                Options.ProductTypeId = 0;
+                Options.ProductGroupId = 0;
+                break;
+            case "ProductGroupId":
+                Options.ProductGroupId = 0;
+                break;
+            case "ProductBrandId":
+                Options.ProductBrandId = 0;
+                Options.ProductCollectionId = 0;
+                Options.ProductDesignId = 0;
+                break;
+            case "ProductCollectionId":
+                Options.ProductCollectionId = 0;
+                Options.ProductDesignId = 0;
+                break;
+            case "ProductDesignId":
+                Options.ProductDesignId = 0;
+                break;
+            default:
+                break;
+        }
+
+        HandleFilterSubmit();
     }
     #endregion
 }

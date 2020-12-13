@@ -1,0 +1,20 @@
+﻿@if (Names.Count() != 0)
+{
+<div class="d-flex">
+    @foreach (string tag in Names)
+    {
+        <span class="ml-2 pl-2 py-1 bg-dark text-white">
+            @tag
+            <button class="btn px-1 py-0 m-0 text-white"
+                    @onclick="@(() => OnTagRemoved.InvokeAsync(tag))">x</button>
+        </span>
+    }
+</div>
+}
+
+
+@code {
+    [Parameter] public IEnumerable<string> Names { get; set; }
+
+    [Parameter] public EventCallback<string> OnTagRemoved { get; set; }
+}
