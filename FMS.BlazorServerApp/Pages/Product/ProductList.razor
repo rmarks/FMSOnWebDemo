@@ -2,58 +2,99 @@
 @inject IServiceProvider ServiceProvider
 
 <div class="main">
-    <div class="d-flex bg-light border-bottom px-4 py-2">
+    <div class="d-flex bg-light border-bottom px-4 py-2 align-items-baseline">
         <h3 class="m-0">Tooted</h3>
+        <a class="btn btn-default text-primary font-weight-bolder ml-4 p-0 @(showFilter ? "d-none" : "")"
+           @onclick="@(() => showFilter = true)">
+            Muuda filtrit
+        </a>
     </div>
 
-    @if (pagedProductBases?.List == null)
-    {
-        <p>Loading...</p>
-    }
-    else
-    {
+    <div class="modal-filter-parent">
+        <ModalFilter Show="@showFilter">
+            <ProductListFilter Options="@Options" Dropdowns="@Dropdowns"
+                               OnCancel="HandleFilterCancel"
+                               OnSubmit="HandleFilterSubmit" />
+        </ModalFilter>
 
-        <ul class="product-cards m-3">
-            @foreach (var pb in pagedProductBases.List)
-            {
-                <li style="background-image: url('/img/products/small/@(pb.Code).jpg')">
-                    <div class="product-info">
-                        <b>@pb.Code</b>
-                        <span class="content">@pb.Name</span>
-                    </div>
-                </li>
-            }
-        </ul>
+        @if (pagedProductBases?.List == null)
+        {
+            <p>Loading...</p>
+        }
+        else
+        {
+            <ul class="product-cards pt-3">
+                @foreach (var pb in pagedProductBases.List)
+                {
+                    <li style="background-image: url('/img/products/small/@(pb.Code).jpg')">
+                        <div class="product-info">
+                            <b>@pb.Code</b>
+                            <span class="content">@pb.Name</span>
+                        </div>
+                    </li>
+                }
+            </ul>
 
-        <Pager Result="pagedProductBases" PageChanged="PagerPageChanged" />
-    }
+            <div class="row mx-5">
+                <div class="col">
+                    <NavLink class="btn btn-primary" href="/tooted/uus">Lisa uus toode</NavLink>
+                </div>
+                <div class="col-auto">
+                    <Pager Result="pagedProductBases" PageChanged="PagerPageChanged" />
+                </div>
+                <div class="col text-right">
+                    <p class="text-muted">Tooteid loendis: @pagedProductBases.ItemsCount</p>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
 <div class="sidebar"></div>
 
 @code {
     PagedList<ProductBase> pagedProductBases;
-    ProductListOptions options = new ProductListOptions { PageSize = 24, CurrentPage = 1 };
+    bool showFilter;
+
+    public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 24, CurrentPage = 1 };
+
+    public ProductDropdowns Dropdowns { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dropdowns = await ServiceProvider.GetService<IProductDropdownsService>().GetProductDropdowns();
+    }
 
     protected override void OnParametersSet()
     {
         UpdateList();
-
     }
 
     #region helpers
     void UpdateList()
     {
-        pagedProductBases = ServiceProvider.GetService<IProductBaseService>().GetFilterPage(options);
+        pagedProductBases = ServiceProvider.GetService<IProductBaseService>().GetFilterPage(Options);
     }
     #endregion
 
     #region event handlers
     void PagerPageChanged(int currentPage)
     {
-        options.CurrentPage = currentPage;
+        Options.CurrentPage = currentPage;
         UpdateList();
         StateHasChanged();
+    }
+
+    void HandleFilterCancel()
+    {
+        showFilter = false;
+    }
+
+    void HandleFilterSubmit()
+    {
+        Options.CurrentPage = 1;
+        UpdateList();
+        showFilter = false;
     }
     #endregion
 }

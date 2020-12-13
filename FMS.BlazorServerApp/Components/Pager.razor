@@ -1,28 +1,26 @@
 ﻿@if (Result != null)
 {
-    <div class="row">
-        <div class="col-md-12">
-            @if (Result.PageCount > 1)
-            {
-                <ul class="pagination pull-right">
-                    <li><button type="button" @onclick="(() => PagerButtonClicked(1))" class="btn">&laquo;</button></li>
-                    @for (var i = StartIndex; i <= FinishIndex; i++)
+    <div class="d-flex justify-content-center">
+        @if (Result.PageCount > 1)
+        {
+            <ul class="pagination pull-right">
+                <li><button type="button" @onclick="(() => PagerButtonClicked(1))" class="btn">&laquo;</button></li>
+                @for (var i = StartIndex; i <= FinishIndex; i++)
+                {
+                    var currentIndex = i;
+                    @if (i == Result.CurrentPage)
                     {
-                        var currentIndex = i;
-                        @if (i == Result.CurrentPage)
-                        {
-                            <li><span class="btn">@i</span></li>
-                        }
-                        else
-                        {
-                            <li><button type="button" @onclick="(() => PagerButtonClicked(currentIndex))" class="btn">@i</button></li>
-                        }
+                        <li><span class="btn">@i</span></li>
                     }
-                    <li><button type="button" @onclick="(() => PagerButtonClicked(Result.PageCount))" class="btn">&raquo;</button></li>
-                    <li class="pl-3 pt-3"><span>Lk @Result.CurrentPage / @Result.PageCount</span></li>
-                </ul>
-            }
-        </div>
+                    else
+                    {
+                        <li><button type="button" @onclick="(() => PagerButtonClicked(currentIndex))" class="btn">@i</button></li>
+                    }
+                }
+                <li><button type="button" @onclick="(() => PagerButtonClicked(Result.PageCount))" class="btn">&raquo;</button></li>
+                <li class="pl-3 pt-3"><span>Lk @Result.CurrentPage / @Result.PageCount</span></li>
+            </ul>
+        }
     </div>
 }
 

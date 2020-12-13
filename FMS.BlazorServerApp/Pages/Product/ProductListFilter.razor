@@ -1,0 +1,183 @@
+﻿@using AutoMapper
+
+@if (EditOptions == null || Dropdowns == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container-fluid p-2">
+        <div class="form-row">
+            <div class="col mx-2">
+                <select class="form-control m-2" @bind="@EditOptions.ProductStatusId">
+                    <option selected value="0">-- Vali olek --</option>
+                    @foreach (var status in Dropdowns.ProductStatuses)
+                    {
+                        <option value="@status.Id" selected="@(status.Id == EditOptions.ProductStatusId)">@status.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col mx-2">
+                <select class="form-control m-2" @bind="@EditOptions.BusinessLineId">
+                    <option selected value="0">-- Vali äriliin --</option>
+                    @foreach (var businessLine in Dropdowns.BusinessLines)
+                    {
+                        <option value="@businessLine.Id" selected="@(businessLine.Id == EditOptions.BusinessLineId)">@businessLine.Name</option>
+                    }
+                </select>
+                <select class="form-control m-2" @bind="@EditOptions.ProductSourceTypeId">
+                    <option selected value="0">-- Vali lähtetüüp --</option>
+                    @foreach (var sourceType in Dropdowns.ProductSourceTypes)
+                    {
+                        <option value="@sourceType.Id" selected="@(sourceType.Id == EditOptions.ProductSourceTypeId)">@sourceType.Name</option>
+                    }
+                </select>
+                <select class="form-control m-2" @bind="@EditOptions.ProductDestinationTypeId">
+                    <option selected value="0">-- Vali sihttüüp --</option>
+                    @foreach (var destType in Dropdowns.ProductDestinationTypes)
+                    {
+                        <option value="@destType.Id" selected="@(destType.Id == EditOptions.ProductDestinationTypeId)">@destType.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col mx-2">
+                <select class="form-control m-2" @bind="@EditOptions.ProductMaterialId">
+                    <option selected value="0">-- Vali materjal --</option>
+                    @foreach (var material in Dropdowns.ProductMaterials)
+                    {
+                        <option value="@material.Id" selected="@(material.Id == EditOptions.ProductMaterialId)">@material.Name</option>
+                    }
+                </select>
+
+                <select class="form-control m-2" value="@EditOptions.ProductTypeId" @onchange="OnProductTypeChange">
+                    <option selected value="0">-- Vali tüüp --</option>
+                    @foreach (var type in Dropdowns.ProductTypes)
+                    {
+                        <option value="@type.Id" selected="@(type.Id == EditOptions.ProductTypeId)">@type.Name</option>
+                    }
+                </select>
+
+                <select class="form-control m-2" @bind="@EditOptions.ProductGroupId">
+                    <option selected value="0">-- Vali grupp --</option>
+                    @foreach (var group in productGroupsByType)
+                    {
+                        <option value="@group.Id" selected="@(group.Id == EditOptions.ProductGroupId)">@group.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col mx-2">
+                <select class="form-control m-2" value="@EditOptions.ProductBrandId" @onchange="OnProductBrandChange">
+                    <option selected value="0">-- Vali kaubamärk --</option>
+                    @foreach (var brand in Dropdowns.ProductBrands)
+                    {
+                        <option value="@brand.Id" selected="@(brand.Id == EditOptions.ProductBrandId)">@brand.Name</option>
+                    }
+                </select>
+
+                <select class="form-control m-2" value="@EditOptions.ProductCollectionId" @onchange="OnProductCollectionChange">
+                    <option selected value="0">-- Vali kollektsioon --</option>
+                    @foreach (var collection in productCollectionsByBrand)
+                    {
+                        <option value="@collection.Id" selected="@(collection.Id == EditOptions.ProductCollectionId)">@collection.Name</option>
+                    }
+                </select>
+
+                <select class="form-control m-2" @bind="@EditOptions.ProductDesignId">
+                    <option selected value="0">-- Vali disain --</option>
+                    @foreach (var design in productDesignsByCollection)
+                    {
+                        <option value="@design.Id" selected="@(design.Id == EditOptions.ProductDesignId)">@design.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <hr />
+        <div class="d-flex justify-content-between">
+            <button class="btn btn-secondary mr-auto" @onclick="@(() => OnCancel.InvokeAsync())">Loobu</button>
+            <button class="btn btn-primary ml-auto" @onclick="HandleSubmit">Näita</button>
+        </div>
+    </div>
+}
+
+
+@code {
+    MapperConfiguration mapperCfg = new MapperConfiguration(cfg => cfg.CreateMap<ProductListOptions, ProductListOptions>());
+    IList<ProductGroup> productGroupsByType = new List<ProductGroup>();
+    IList<ProductCollection> productCollectionsByBrand = new List<ProductCollection>();
+    IList<ProductDesign> productDesignsByCollection = new List<ProductDesign>();
+
+    [Parameter] public ProductListOptions Options { get; set; }
+
+    [Parameter] public ProductDropdowns Dropdowns { get; set; }
+
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    [Parameter] public EventCallback OnSubmit { get; set; }
+
+    ProductListOptions EditOptions { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        EditOptions = mapperCfg.CreateMapper().Map<ProductListOptions>(Options);
+
+        SetProductGroupsByType();
+        SetProductCollectionsByBrand();
+        SetProductDesignsByCollection();
+    }
+
+    #region helpers
+    void SetProductGroupsByType()
+    {
+        productGroupsByType = EditOptions.ProductTypeId == 0
+            ? new List<ProductGroup>()
+            : Dropdowns.ProductGroups.Where(pg => pg.ProductTypeId == EditOptions.ProductTypeId).ToList();
+    }
+
+    private void SetProductCollectionsByBrand()
+    {
+        productCollectionsByBrand = EditOptions.ProductBrandId == 0
+            ? new List<ProductCollection>()
+            : Dropdowns.ProductCollections.Where(pc => pc.ProductBrandId == EditOptions.ProductBrandId).ToList();
+    }
+
+    private void SetProductDesignsByCollection()
+    {
+        productDesignsByCollection = EditOptions.ProductCollectionId == 0
+            ? new List<ProductDesign>()
+            : Dropdowns.ProductDesigns.Where(pd => pd.ProductCollectionId == EditOptions.ProductCollectionId).ToList();
+    }
+    #endregion
+
+    #region event handlers
+    void HandleSubmit()
+    {
+        mapperCfg.CreateMapper().Map(EditOptions, Options);
+        OnSubmit.InvokeAsync();
+    }
+
+    private void OnProductTypeChange(ChangeEventArgs e)
+    {
+        EditOptions.ProductTypeId = int.Parse(e.Value as string);
+        EditOptions.ProductGroupId = 0;
+
+        SetProductGroupsByType();
+    }
+
+    private void OnProductBrandChange(ChangeEventArgs e)
+    {
+        EditOptions.ProductBrandId = int.Parse(e.Value as string);
+        EditOptions.ProductCollectionId = 0;
+
+        SetProductCollectionsByBrand();
+    }
+
+    private void OnProductCollectionChange(ChangeEventArgs e)
+    {
+        EditOptions.ProductCollectionId = int.Parse(e.Value as string);
+        EditOptions.ProductDesignId = 0;
+
+        SetProductDesignsByCollection();
+    }
+    #endregion
+}
