@@ -1,68 +1,93 @@
 ﻿@page "/tooted"
+@page "/tooted/return"
 @inject IServiceProvider ServiceProvider
-@using System.Reflection
-@using System.Linq;
+@inject NavigationManager NavManager
+@inject AppState AppState
 
-<div class="main">
-    <div class="d-flex bg-light border-bottom px-4 py-2 align-items-baseline">
-        <h3 class="m-0">Tooted</h3>
-        <a class="btn btn-default text-primary font-weight-bolder ml-4 p-0 @(showFilter ? "d-none" : "")"
-           @onclick="@(() => showFilter = true)">
-            Muuda filtrit
-        </a>
-        <FilterTags Names="@(productFilterTags.Keys)" OnTagRemoved="@((p) => HandleTagRemoved(p))" />
-    </div>
+<div class="sidebar py-2 px-4">
+    <h3 class="text-center text-white mb-5">Tooted</h3>
 
-    <div class="modal-filter-parent">
-        <ModalFilter Show="@showFilter">
-            <ProductListFilter Options="@Options" Dropdowns="@Dropdowns"
-                               OnCancel="HandleFilterCancel"
-                               OnSubmit="HandleFilterSubmit" />
-        </ModalFilter>
+    <h6 class="text-white">Ava toode</h6>
+    <input class="form-control mb-5" placeholder="Sisesta toote kood" />
 
-        @if (pagedProductBases?.List == null)
-        {
-            <p>Loading...</p>
-        }
-        else
-        {
-            <ul class="product-cards pt-3">
-                @foreach (var pb in pagedProductBases.List)
-                {
-                    <li style="background-image: url('/img/products/small/@(pb.Code).jpg')">
-                        <div class="product-info">
-                            <b>@pb.Code</b>
-                            <span class="content">@pb.Name</span>
-                        </div>
-                    </li>
-                }
-            </ul>
-
-            <div class="row mx-5">
-                <div class="col">
-                    <NavLink class="btn btn-primary" href="/tooted/uus">Lisa uus toode</NavLink>
-                </div>
-                <div class="col-auto">
-                    <Pager Result="pagedProductBases" PageChanged="PagerPageChanged" />
-                </div>
-                <div class="col text-right">
-                    <p class="text-muted">Tooteid loendis: @pagedProductBases.ItemsCount</p>
-                </div>
-            </div>
-        }
-    </div>
+    <h6 class="text-white">Loendi filter</h6>
+    @if (Options == null || Dropdowns == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <ProductListFilterComponent Options="@Options" Dropdowns="@Dropdowns" OptionsChanged="OnOptionsChanged" />
+    }
 </div>
 
-<div class="sidebar"></div>
+<div class="main">
+    @if (pagedProductBases?.List == null)
+    {
+        <p class="text-secondary m-2">Loading...</p>
+    }
+    else
+    {
+        <ul class="product-cards">
+            @foreach (var pb in pagedProductBases.List)
+            {
+            <li style="background-image: url('/img/products/small/@(pb.Code).jpg')">
+                <div class="product-info" @onclick="@(() => NavManager.NavigateTo(GetProductLink(pb.Id)))">
+                    @pb.Name
+                    @*<span class="content">@pb.Name</span>*@
+                    <span class="code">@pb.Code</span>
+                    @*<span class="stock" @onclick="@(() => NavManager.NavigateTo("/tooted/uus"))">Laos</span>*@
+                </div>
+                <span class="stock" @onclick="@(() => AddProductInfo(pb.Code))">Laos</span>
+            </li>
+            }
+        </ul>
+
+        <div class="row mx-5">
+            <div class="col">
+                <NavLink class="btn btn-primary" href="/tooted/uus">Lisa uus toode</NavLink>
+            </div>
+            <div class="col-auto">
+                <Pager Result="pagedProductBases" PageChanged="PagerPageChanged" />
+            </div>
+            <div class="col text-right">
+                <p class="text-muted">Tooteid: @pagedProductBases.ItemsCount</p>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="sidebar py-2 px-3">
+
+    <button type="button" class="btn btn-primary mb-2" @onclick="@(() => ProductInfoList.Clear())"
+            hidden="@(ProductInfoList.Count < 2)">
+        Eemalda kõik (@(ProductInfoList.Count))
+    </button>
+
+    @if (ProductInfoList.Count == 0)
+    {
+        <h3 class="text-center text-secondary mt-auto">Toote info</h3>
+        <p class="text-center text-secondary mb-auto">Toote info vaatamiseks kliki toote pildil laoseisu märgisele</p>
+    }
+    else
+    {
+        @foreach (var info in ProductInfoList)
+        {
+            <ProductInfoComponent ProductInfo="@info" ProductInfoRemoved="OnProductInfoRemoved" />
+        }
+    }
+
+</div>
+
 
 @code {
     PagedList<ProductBase> pagedProductBases;
-    bool showFilter;
-    IDictionary<string, string> productFilterTags = new Dictionary<string, string>();
 
-    public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 24, CurrentPage = 1 };
+    public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 20, CurrentPage = 1 };
 
     public ProductDropdowns Dropdowns { get; set; }
+
+    public IList<ProductInfo> ProductInfoList { get; set; } = new List<ProductInfo>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -71,6 +96,15 @@
 
     protected override void OnParametersSet()
     {
+        if (NavManager.Uri.Contains("return"))
+        {
+            Options = AppState.ProductListOptions ?? Options;
+        }
+        else
+        {
+            AppState.ProductListOptions = null;
+        }
+
         UpdateList();
     }
 
@@ -80,84 +114,33 @@
         pagedProductBases = ServiceProvider.GetService<IProductBaseService>().GetFilterPage(Options);
     }
 
-    void CreateFilterTagList()
+    string GetProductLink(int id)
     {
-        productFilterTags.Clear();
-
-        if (Options.ProductStatusId != 0)
-        {
-            string tagName = Dropdowns.ProductStatuses.FirstOrDefault(p => p.Id == Options.ProductStatusId)?.Name;
-            productFilterTags.Add(tagName, "ProductStatusId");
-        }
-        if (Options.BusinessLineId != 0)
-        {
-            string tagName = Dropdowns.BusinessLines.FirstOrDefault(p => p.Id == Options.BusinessLineId)?.Name;
-            productFilterTags.Add(tagName, "BusinessLineId");
-        }
-        if (Options.ProductSourceTypeId != 0)
-        {
-            string tagName = Dropdowns.ProductSourceTypes.FirstOrDefault(p => p.Id == Options.ProductSourceTypeId)?.Name;
-            productFilterTags.Add(tagName, "ProductSourceTypeId");
-        }
-        if (Options.ProductDestinationTypeId != 0)
-        {
-            string tagName = Dropdowns.ProductDestinationTypes.FirstOrDefault(p => p.Id == Options.ProductDestinationTypeId)?.Name;
-            productFilterTags.Add(tagName, "ProductDestinationTypeId");
-        }
-        if (Options.ProductMaterialId != 0)
-        {
-            string tagName = Dropdowns.ProductMaterials.FirstOrDefault(p => p.Id == Options.ProductMaterialId)?.Name;
-            productFilterTags.Add(tagName, "ProductMaterialId");
-        }
-        if (Options.ProductTypeId != 0)
-        {
-            string tagName = Dropdowns.ProductTypes.FirstOrDefault(p => p.Id == Options.ProductTypeId)?.Name;
-            productFilterTags.Add(tagName, "ProductTypeId");
-        }
-        if (Options.ProductGroupId != 0)
-        {
-            string tagName = Dropdowns.ProductGroups.FirstOrDefault(p => p.Id == Options.ProductGroupId)?.Name;
-            productFilterTags.Add(tagName, "ProductGroupId");
-        }
-        if (Options.ProductBrandId != 0)
-        {
-            string tagName = Dropdowns.ProductBrands.FirstOrDefault(p => p.Id == Options.ProductBrandId)?.Name;
-            productFilterTags.Add(tagName, "ProductBrandId");
-        }
-        if (Options.ProductCollectionId != 0)
-        {
-            string tagName = Dropdowns.ProductCollections.FirstOrDefault(p => p.Id == Options.ProductCollectionId)?.Name;
-            productFilterTags.Add(tagName, "ProductCollectionId");
-        }
-        if (Options.ProductDesignId != 0)
-        {
-            string tagName = Dropdowns.ProductDesigns.FirstOrDefault(p => p.Id == Options.ProductDesignId)?.Name;
-            productFilterTags.Add(tagName, "ProductDesignId");
-        }
+        AppState.ProductListOptions = Options;
+        return $"/tooted/{id}";
     }
 
-    //void MakeFilterTagList()
-    //{
-    //    var filterTags = new Dictionary<string, object>();
-    //    var propNameList = new List<string>();
+    void AddProductInfo(string productCode)
+    {
+        var productInfo = ProductInfoList.FirstOrDefault(p => p.ProductCode == productCode);
+        if (productInfo != null)
+        {
+            ProductInfoList.Remove(productInfo);
+        }
 
-    //    Type type = Options.GetType();
-    //    propNameList = type.GetProperties()
-    //        .Where(p => p.Name.ToLower().EndsWith("id") && p.GetType() == typeof(int) && (int)p.GetValue(Options) != 0)
-    //        .Select(p => p.Name)
-    //        .ToList();
+        productInfo = new ProductInfo
+        {
+            ProductCode = productCode,
+            Inventory = new List<ProductInStock>
+            {
+                new ProductInStock { Warehouse = "Eesti", Quantity = 4 },
+                new ProductInStock { Warehouse = "Eksport", Quantity = 3 },
+                new ProductInStock { Warehouse = "Näidiste ladu", Quantity = 1 },
+            }
+        };
 
-
-    //    Type dType = Dropdowns.GetType();
-    //    foreach (string propName in propNameList)
-    //    {
-    //        var prop = dType.GetProperty(propName.Substring(0, propName.Length - 2));
-    //        if (prop != null)
-    //        {
-    //            var list = Convert.ChangeType(prop.GetValue(Dropdowns), prop.PropertyType);
-    //        }
-    //    }
-    //}
+        ProductInfoList.Insert(0, productInfo);
+    }
     #endregion
 
     #region event handlers
@@ -168,63 +151,15 @@
         StateHasChanged();
     }
 
-    void HandleFilterCancel()
-    {
-        showFilter = false;
-    }
-
-    void HandleFilterSubmit()
+    void OnOptionsChanged()
     {
         Options.CurrentPage = 1;
         UpdateList();
-        showFilter = false;
-
-        CreateFilterTagList();
     }
 
-    void HandleTagRemoved(string tagName)
+    void OnProductInfoRemoved(ProductInfo info)
     {
-        switch (productFilterTags[tagName])
-        {
-            case "ProductStatusId":
-                Options.ProductStatusId = 0;
-                break;
-            case "BusinessLineId":
-                Options.BusinessLineId = 0;
-                break;
-            case "ProductSourceTypeId":
-                Options.ProductSourceTypeId = 0;
-                break;
-            case "ProductDestinationTypeId":
-                Options.ProductDestinationTypeId = 0;
-                break;
-            case "ProductMaterialId":
-                Options.ProductMaterialId = 0;
-                break;
-            case "ProductTypeId":
-                Options.ProductTypeId = 0;
-                Options.ProductGroupId = 0;
-                break;
-            case "ProductGroupId":
-                Options.ProductGroupId = 0;
-                break;
-            case "ProductBrandId":
-                Options.ProductBrandId = 0;
-                Options.ProductCollectionId = 0;
-                Options.ProductDesignId = 0;
-                break;
-            case "ProductCollectionId":
-                Options.ProductCollectionId = 0;
-                Options.ProductDesignId = 0;
-                break;
-            case "ProductDesignId":
-                Options.ProductDesignId = 0;
-                break;
-            default:
-                break;
-        }
-
-        HandleFilterSubmit();
+        ProductInfoList.Remove(info);
     }
     #endregion
 }

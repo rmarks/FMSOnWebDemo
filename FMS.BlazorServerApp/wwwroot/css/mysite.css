@@ -51,4 +51,5 @@ body {
     width: 20rem;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }

@@ -6,5 +6,7 @@ namespace FMS.BlazorServerApp.Shared
     {
         public bool BackToCustomerList { get; set; }
         public CustomerListOptions CustomerListOptions { get; set; }
+
+        public ProductListOptions ProductListOptions { get; set; }
     }
 }
