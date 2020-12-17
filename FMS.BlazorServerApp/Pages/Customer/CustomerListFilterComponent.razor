@@ -1,0 +1,97 @@
+﻿<div>
+    <div class="form-group">
+        <div class="input-group">
+            <input class="form-control" type="search" placeholder="Kliendi nimi" @bind="Options.SearchByName" @onkeyup="SearchNameKeyPress" />
+            <div class="input-group-btn">
+                <button class="btn btn-dark" @onclick="SearchNameClick">
+                    <i class="oi oi-magnifying-glass" title="search" />
+                </button>
+            </div>
+            @*<div class="input-group-btn" @onclick="ClearSearch">
+                <button class="btn btn-secondary">
+                    <i class="oi oi-x" title="clear" />
+                </button>
+            </div>*@
+        </div>
+    </div>
+    <div class="form-group">
+        <select class="form-control mb-2" value="@Options.CountryId" @onchange="OnCountryChanged">
+            <option selected value="0">-- Kõik riigid --</option>
+            @foreach (var country in Dropdowns.Countries)
+            {
+                <option value="@country.Value" selected="@(country.Value == Options.CountryId)">@country.Key</option>
+            }
+        </select>
+        <div class="input-group">
+            <input class="form-control" type="search" placeholder="Linn" @bind="Options.SearchByCity" @onkeyup="SearchCityKeyPress" />
+            <div class="input-group-btn">
+                <button class="btn btn-dark" @onclick="SearchCityClick">
+                    <i class="oi oi-magnifying-glass" title="search" />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <select class="form-control mb-2" value="@Options.PaymentTermId" @onchange="OnPaymentTermChanged">
+            <option selected value="0">-- Kõik maksetingimused --</option>
+            @foreach (var pt in Dropdowns.PaymentTerms)
+            {
+                <option value="@pt.Value" selected="@(pt.Value == Options.CountryId)">@pt.Key</option>
+            }
+        </select>
+    </div>
+</div>
+
+@code {
+    [Parameter] public CustomerListOptions Options { get; set; }
+
+    [Parameter] public CustomerDropdowns Dropdowns { get; set; }
+
+    [Parameter] public EventCallback OptionsChanged { get; set; }
+
+    #region event handlers
+    private void SearchNameKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SearchNameClick();
+        }
+    }
+
+    private void SearchNameClick()
+    {
+        OptionsChanged.InvokeAsync();
+    }
+
+    //private void ClearSearch()
+    //{
+    //    Options.SearchByName = string.Empty;
+    //    SearchNameClick();
+    //}
+
+    private void OnCountryChanged(ChangeEventArgs e)
+    {
+        Options.CountryId = int.Parse(e.Value as string);
+        OptionsChanged.InvokeAsync();
+    }
+
+    private void SearchCityKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SearchCityClick();
+        }
+    }
+
+    private void SearchCityClick()
+    {
+        OptionsChanged.InvokeAsync();
+    }
+
+    private void OnPaymentTermChanged(ChangeEventArgs e)
+    {
+        Options.PaymentTermId = int.Parse(e.Value as string);
+        OptionsChanged.InvokeAsync();
+    }
+    #endregion
+}

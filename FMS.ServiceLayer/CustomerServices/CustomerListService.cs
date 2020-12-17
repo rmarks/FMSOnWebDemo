@@ -20,14 +20,27 @@ namespace FMS.ServiceLayer.CustomerServices
 
         public PagedList<Customer> FilterPage(CustomerListOptions options)
         {
-            string search = options.SearchString;
-
             var queryable = _context.Customers
                 .AsNoTracking();
 
-            if (!string.IsNullOrWhiteSpace(search))
+            if (!string.IsNullOrWhiteSpace(options.SearchByName))
             {
-                queryable = queryable.Where(c => c.Name.ToLower().Contains(search.ToLower()));
+                queryable = queryable.Where(c => c.Name.ToLower().Contains(options.SearchByName.ToLower()));
+            }
+
+            if (options.CountryId != 0)
+            {
+                queryable = queryable.Where(c => c.Addresses.Any(a => a.IsBilling && a.CountryId == options.CountryId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.SearchByCity))
+            {
+                queryable = queryable.Where(c => c.Addresses.Any(a => a.IsBilling && a.City.ToLower().Contains(options.SearchByCity.ToLower())));
+            }
+
+            if (options.PaymentTermId != 0)
+            {
+                queryable = queryable.Where(c => c.PaymentTermId == options.PaymentTermId);
             }
 
             return queryable

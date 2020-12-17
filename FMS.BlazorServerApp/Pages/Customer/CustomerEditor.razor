@@ -1,5 +1,5 @@
-﻿@page "/customers/{Id:int}"
-@page "/customers/add"
+﻿@page "/kliendid/{Id:int}"
+@page "/kliendid/uus"
 @inject IServiceProvider ServiceProvider
 @inject AppState AppState
 @inject NavigationManager NavManager
@@ -246,7 +246,7 @@
     {
         AppState.BackToCustomerList = true;
 
-        return "customers/list";
+        return "kliendid";
     }
     #endregion
 
