@@ -2,12 +2,26 @@
 @page "/tooted/uus"
 
 <div class="main">
-    <nav class="navbar navbar-light bg-secondary">
+    <nav class="navbar navbar-dark bg-secondary">
         <span class="navbar-brand mb-0 h1">Toode: @Id</span>
         <div>
             <NavLink class="btn btn-primary" href="/tooted/return">Tagasi</NavLink>
         </div>
     </nav>
+
+    <div class="p-3">
+        <TabSet>
+            <Tab Title="Baasinfo">
+                <ProductBaseEditor />
+            </Tab>
+            <Tab Title="Tooteinfo">
+                <ProductVariantsEditor />
+            </Tab>
+            <Tab Title="Hinnad">
+                <ProductPricesEditor />
+            </Tab>
+        </TabSet>
+    </div>
 </div>
 
 
