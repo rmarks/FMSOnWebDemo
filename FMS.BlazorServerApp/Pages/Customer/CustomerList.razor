@@ -24,14 +24,7 @@
     </BlazoredTypeahead>
 
     <h6 class="text-white mt-5">Loendi filter</h6>
-    @if (Options == null || Dropdowns == null)
-    {
-        <p class="text-secondary">Loading...</p>
-    }
-    else
-    {
-        <CustomerListFilterComponent Options="@Options" Dropdowns="@Dropdowns" OptionsChanged="@OnOptionsChanged" />
-    }
+    <CustomerListFilterComponent Options="@Options" OptionsChanged="@OnOptionsChanged" />
 </div>
 
 <div class="main p-3">
@@ -94,14 +87,7 @@
 
     public CustomerListOptions Options { get; set; } = new CustomerListOptions { PageSize = 13, CurrentPage = 1 };
 
-    public CustomerDropdowns Dropdowns { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        Dropdowns = await ServiceProvider.GetService<ICustomerDropdownsService>().GetCustomerDropdowns();
-    }
-
-    protected override void OnParametersSet()
+    protected override void OnInitialized()
     {
         if (AppState.BackToCustomerList)
         {
@@ -117,8 +103,7 @@
     #region Helpers
     private void UpdateList()
     {
-        var service = ServiceProvider.GetService<ICustomerListService>();
-        pagedCustomers = service.FilterPage(Options);
+        pagedCustomers = ServiceProvider.GetService<ICustomerListService>().FilterPage(Options);
     }
 
     string GetCustomerUrl(int id)
