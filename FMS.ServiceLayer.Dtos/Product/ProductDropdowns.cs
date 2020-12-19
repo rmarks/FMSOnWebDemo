@@ -15,5 +15,7 @@ namespace FMS.ServiceLayer.Dtos
         public IList<ProductBrand> ProductBrands { get; set; }
         public IList<ProductCollection> ProductCollections { get; set; }
         public IList<ProductDesign> ProductDesigns { get; set; }
+
+        public IList<Warehouse> Warehouses { get; set; }
     }
 }

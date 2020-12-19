@@ -35,6 +35,9 @@ namespace FMS.Dal
         public DbSet<ProductBaseProductVariant> ProductBaseProductVariants { get; set; }
         public DbSet<ProductProductVariant> ProductProductVariants { get; set; }
 
+        public DbSet<Warehouse> Warehouses { get; set; }
+        public DbSet<Inventory> Inventory { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProductBaseProductVariantType>()

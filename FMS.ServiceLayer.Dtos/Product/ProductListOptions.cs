@@ -12,5 +12,10 @@
         public int ProductBrandId { get; set; }
         public int ProductCollectionId { get; set; }
         public int ProductDesignId { get; set; }
+
+        public int WarehouseId { get; set; }
+        public Stock Stock { get; set; }
     }
+
+    public enum Stock { AllInStock, OnlyInStock, NotInStock }
 }

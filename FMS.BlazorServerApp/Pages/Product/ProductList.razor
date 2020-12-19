@@ -5,20 +5,18 @@
 @inject AppState AppState
 
 <div class="sidebar py-2 px-4">
-    <h3 class="text-center text-white mb-5">Tooted</h3>
+    <h3 class="text-center text-white">Tooted</h3>
 
-    <h6 class="text-white">Ava toode</h6>
-    <input class="form-control mb-5" placeholder="Sisesta toote kood" disabled />
+    <h6 class="text-white mt-4">Ava toode</h6>
+    <div class="form-group">
+        <input class="form-control" placeholder="Sisesta toote kood" disabled />
+    </div>
 
-    <h6 class="text-white">Loendi filter</h6>
-    @if (Options == null || Dropdowns == null)
-    {
-        <p class="text-secondary">Loading...</p>
-    }
-    else
-    {
-        <ProductListFilterComponent Options="@Options" Dropdowns="@Dropdowns" OptionsChanged="OnOptionsChanged" />
-    }
+    <h6 class="text-white mt-4">Laoseis</h6>
+    <ProductListInventoryComponent Options="@Options" Dropdowns="@Dropdowns" OptionsChanged="OnOptionsChanged" />
+
+    <h6 class="text-white mt-4">Loendi filter</h6>
+    <ProductListFilterComponent Options="@Options" Dropdowns="@Dropdowns" OptionsChanged="OnOptionsChanged" />
 </div>
 
 <div class="main">
@@ -38,7 +36,10 @@
                     <span class="code">@pb.Code</span>
                     @*<span class="stock" @onclick="@(() => NavManager.NavigateTo("/tooted/uus"))">Laos</span>*@
                 </div>
-                <span class="stock" @onclick="@(() => AddProductInfo(pb.Code))">Laos</span>
+                <span class="stock" @onclick="@(() => AddProductInfo(pb.Code))"
+                      style="background-color: @(pb.FreeQuantity > 0 ? "mediumseagreen" : (pb.ReservedQuantity > 0 ? "orange" : "firebrick"));">
+                    Laos: @(pb.FreeQuantity)
+                </span>
             </li>
             }
         </ul>
@@ -81,9 +82,9 @@
 
 
 @code {
-    PagedList<ProductBase> pagedProductBases;
+    PagedList<ProductListDto> pagedProductBases;
 
-    public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 20, CurrentPage = 1 };
+    public ProductListOptions Options { get; set; } = new ProductListOptions { PageSize = 20, CurrentPage = 1, Stock = Stock.AllInStock };
 
     public ProductDropdowns Dropdowns { get; set; }
 

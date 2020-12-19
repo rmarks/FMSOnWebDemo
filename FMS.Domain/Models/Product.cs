@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FMS.Domain.Models
 {
@@ -14,6 +15,8 @@ namespace FMS.Domain.Models
 
         public int ProductBaseId { get; set; }
         public ProductBase ProductBase { get; set; }
+
+        public IList<Inventory> ProductInventory { get; set; }
 
         //--- legacy system fields ---
         [MaxLength(12)]

@@ -1,86 +1,93 @@
 ﻿<div>
-    <div class="form-group">
-        <select class="form-control mb-2" value="@Options.ProductStatusId" @onchange="OnProductStatusChanged">
-            <option selected value="0">-- Kõik olekud --</option>
-            @foreach (var status in Dropdowns.ProductStatuses)
-            {
-                <option value="@status.Id" selected="@(status.Id == Options.ProductStatusId)">@status.Name</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <select class="form-control mb-2" value="@Options.BusinessLineId" @onchange="OnBusinessLineChanged">
-            <option selected value="0">-- Kõik äriliinid --</option>
-            @foreach (var businessLine in Dropdowns.BusinessLines)
-            {
-                <option value="@businessLine.Id" selected="@(businessLine.Id == Options.BusinessLineId)">@businessLine.Name</option>
-            }
-        </select>
-        <select class="form-control mb-2" value="@Options.ProductSourceTypeId" @onchange="OnProductSourceTypeChanged">
-            <option selected value="0">-- Kõik lähtetüübid --</option>
-            @foreach (var sourceType in Dropdowns.ProductSourceTypes)
-            {
-                <option value="@sourceType.Id" selected="@(sourceType.Id == Options.ProductSourceTypeId)">@sourceType.Name</option>
-            }
-        </select>
-        <select class="form-control" value="@Options.ProductDestinationTypeId" @onchange="OnProductDestinationTypeChanged">
-            <option selected value="0">-- Kõik sihttüübid --</option>
-            @foreach (var destType in Dropdowns.ProductDestinationTypes)
-            {
-                <option value="@destType.Id" selected="@(destType.Id == Options.ProductDestinationTypeId)">@destType.Name</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <select class="form-control mb-2" value="@Options.ProductMaterialId" @onchange="OnProductMaterialChanged">
-            <option selected value="0">-- Kõik materjalid --</option>
-            @foreach (var material in Dropdowns.ProductMaterials)
-            {
-                <option value="@material.Id" selected="@(material.Id == Options.ProductMaterialId)">@material.Name</option>
-            }
-        </select>
+    @if (Options == null || Dropdowns == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <div class="form-group">
+            <select class="form-control mb-2" value="@Options.ProductStatusId" @onchange="OnProductStatusChanged">
+                <option selected value="0">-- Kõik olekud --</option>
+                @foreach (var status in Dropdowns.ProductStatuses)
+                {
+                    <option value="@status.Id" selected="@(status.Id == Options.ProductStatusId)">@status.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <select class="form-control mb-2" value="@Options.BusinessLineId" @onchange="OnBusinessLineChanged">
+                <option selected value="0">-- Kõik äriliinid --</option>
+                @foreach (var businessLine in Dropdowns.BusinessLines)
+                {
+                    <option value="@businessLine.Id" selected="@(businessLine.Id == Options.BusinessLineId)">@businessLine.Name</option>
+                }
+            </select>
+            <select class="form-control mb-2" value="@Options.ProductSourceTypeId" @onchange="OnProductSourceTypeChanged">
+                <option selected value="0">-- Kõik lähtetüübid --</option>
+                @foreach (var sourceType in Dropdowns.ProductSourceTypes)
+                {
+                    <option value="@sourceType.Id" selected="@(sourceType.Id == Options.ProductSourceTypeId)">@sourceType.Name</option>
+                }
+            </select>
+            <select class="form-control" value="@Options.ProductDestinationTypeId" @onchange="OnProductDestinationTypeChanged">
+                <option selected value="0">-- Kõik sihttüübid --</option>
+                @foreach (var destType in Dropdowns.ProductDestinationTypes)
+                {
+                    <option value="@destType.Id" selected="@(destType.Id == Options.ProductDestinationTypeId)">@destType.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <select class="form-control mb-2" value="@Options.ProductMaterialId" @onchange="OnProductMaterialChanged">
+                <option selected value="0">-- Kõik materjalid --</option>
+                @foreach (var material in Dropdowns.ProductMaterials)
+                {
+                    <option value="@material.Id" selected="@(material.Id == Options.ProductMaterialId)">@material.Name</option>
+                }
+            </select>
 
-        <select class="form-control mb-2" value="@Options.ProductTypeId" @onchange="OnProductTypeChanged">
-            <option selected value="0">-- Kõik tüübid --</option>
-            @foreach (var type in Dropdowns.ProductTypes)
-            {
-                <option value="@type.Id" selected="@(type.Id == Options.ProductTypeId)">@type.Name</option>
-            }
-        </select>
+            <select class="form-control mb-2" value="@Options.ProductTypeId" @onchange="OnProductTypeChanged">
+                <option selected value="0">-- Kõik tüübid --</option>
+                @foreach (var type in Dropdowns.ProductTypes)
+                {
+                    <option value="@type.Id" selected="@(type.Id == Options.ProductTypeId)">@type.Name</option>
+                }
+            </select>
 
-        <select class="form-control" value="@Options.ProductGroupId" @onchange="OnProductGroupChanged">
-            <option selected value="0">-- Kõik grupid --</option>
-            @foreach (var group in productGroupsByType)
-            {
-                <option value="@group.Id" selected="@(group.Id == Options.ProductGroupId)">@group.Name</option>
-            }
-        </select>
-    </div>
-    <div class="form-group">
-        <select class="form-control mb-2" value="@Options.ProductBrandId" @onchange="OnProductBrandChanged">
-            <option selected value="0">-- Kõik kaubamärgid --</option>
-            @foreach (var brand in Dropdowns.ProductBrands)
-            {
-                <option value="@brand.Id" selected="@(brand.Id == Options.ProductBrandId)">@brand.Name</option>
-            }
-        </select>
+            <select class="form-control" value="@Options.ProductGroupId" @onchange="OnProductGroupChanged">
+                <option selected value="0">-- Kõik grupid --</option>
+                @foreach (var group in productGroupsByType)
+                {
+                    <option value="@group.Id" selected="@(group.Id == Options.ProductGroupId)">@group.Name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <select class="form-control mb-2" value="@Options.ProductBrandId" @onchange="OnProductBrandChanged">
+                <option selected value="0">-- Kõik kaubamärgid --</option>
+                @foreach (var brand in Dropdowns.ProductBrands)
+                {
+                    <option value="@brand.Id" selected="@(brand.Id == Options.ProductBrandId)">@brand.Name</option>
+                }
+            </select>
 
-        <select class="form-control mb-2" value="@Options.ProductCollectionId" @onchange="OnProductCollectionChanged">
-            <option selected value="0">-- Kõik kollektsioonid --</option>
-            @foreach (var collection in productCollectionsByBrand)
-            {
-                <option value="@collection.Id" selected="@(collection.Id == Options.ProductCollectionId)">@collection.Name</option>
-            }
-        </select>
+            <select class="form-control mb-2" value="@Options.ProductCollectionId" @onchange="OnProductCollectionChanged">
+                <option selected value="0">-- Kõik kollektsioonid --</option>
+                @foreach (var collection in productCollectionsByBrand)
+                {
+                    <option value="@collection.Id" selected="@(collection.Id == Options.ProductCollectionId)">@collection.Name</option>
+                }
+            </select>
 
-        <select class="form-control" value="@Options.ProductDesignId" @onchange="OnProductDesignChanged">
-            <option selected value="0">-- Kõik disainid --</option>
-            @foreach (var design in productDesignsByCollection)
-            {
-                <option value="@design.Id" selected="@(design.Id == Options.ProductDesignId)">@design.Name</option>
-            }
-        </select>
-    </div>
+            <select class="form-control" value="@Options.ProductDesignId" @onchange="OnProductDesignChanged">
+                <option selected value="0">-- Kõik disainid --</option>
+                @foreach (var design in productDesignsByCollection)
+                {
+                    <option value="@design.Id" selected="@(design.Id == Options.ProductDesignId)">@design.Name</option>
+                }
+            </select>
+        </div>
+    }
 </div>
 
 

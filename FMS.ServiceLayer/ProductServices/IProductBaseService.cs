@@ -5,6 +5,6 @@ namespace FMS.ServiceLayer.ProductServices
 {
     public interface IProductBaseService
     {
-        PagedList<ProductBase> GetFilterPage(ProductListOptions options);
+        PagedList<ProductListDto> GetFilterPage(ProductListOptions options);
     }
 }

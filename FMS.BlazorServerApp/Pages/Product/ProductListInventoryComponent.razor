@@ -1,0 +1,61 @@
+﻿<div>
+    @if (Options == null || Dropdowns == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+<div class="form-group">
+    <select class="form-control mb-2" value="@Options.WarehouseId" @onchange="OnWarehouseChanged">
+        <option selected value="0">-- Kõik laod --</option>
+        @foreach (var warehouse in Dropdowns.Warehouses)
+        {
+            <option value="@warehouse.Id" selected="@(warehouse.Id == Options.WarehouseId)">@warehouse.Name</option>
+        }
+    </select>
+
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inStock" id="radio1" 
+               value="@Stock.AllInStock" @onchange="SelectionChanged" checked="@(Options.Stock == Stock.AllInStock)" />
+        <label class="form-check-label text-white" for="radio1">Kõik</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inStock" id="radio2" 
+               value="@Stock.OnlyInStock" @onchange="SelectionChanged" checked="@(Options.Stock == Stock.OnlyInStock)" />
+        <label class="form-check-label text-white" for="radio2">laos</label>
+    </div>
+    <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="inStock" id="radio3" 
+               value="@Stock.NotInStock" @onchange="SelectionChanged" checked="@(Options.Stock == Stock.NotInStock)" />
+        <label class="form-check-label text-white" for="radio3">puuduvad</label>
+    </div>
+</div>
+    }
+</div>
+
+@code {
+    [Parameter] public ProductListOptions Options { get; set; }
+
+    [Parameter] public ProductDropdowns Dropdowns { get; set; }
+
+    [Parameter] public EventCallback OptionsChanged { get; set; }
+
+    #region event handlers
+    void OnInventoryChanged()
+    {
+        OptionsChanged.InvokeAsync();
+    }
+
+    void OnWarehouseChanged(ChangeEventArgs e)
+    {
+        Options.WarehouseId = int.Parse(e.Value.ToString());
+        OnInventoryChanged();
+    }
+
+    void SelectionChanged(ChangeEventArgs e)
+    {
+        Options.Stock = (Stock)Enum.Parse(typeof(Stock), e.Value.ToString());
+        OnInventoryChanged();
+    }
+    #endregion
+}

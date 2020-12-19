@@ -1,5 +1,4 @@
 ﻿using FMS.Dal;
-using FMS.Domain.Models;
 using FMS.ServiceLayer.Dtos;
 using FMS.ServiceLayer.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,7 @@ namespace FMS.ServiceLayer.ProductServices
             _context = context;
         }
 
-        public PagedList<ProductBase> GetFilterPage(ProductListOptions options)
+        public PagedList<ProductListDto> GetFilterPage(ProductListOptions options)
         {
             var queryable = _context.ProductBases
                 .AsNoTracking();
@@ -70,6 +69,22 @@ namespace FMS.ServiceLayer.ProductServices
 
             return queryable
                 .OrderBy(p => p.Code)
+                .Select(p => new ProductListDto
+                {
+                    Id = p.Id,
+                    Code = p.Code,
+                    Name = p.Name,
+                    StockQuantity = p.Products
+                        .SelectMany(p => p.ProductInventory)
+                        .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
+                        .Sum(i => i.StockQuantity),
+                    //ReservedQuantity = p.Products.Sum(p => p.ProductInventory.Sum(i => i.ReservedQuantity))
+                    ReservedQuantity = p.Products
+                        .SelectMany(p => p.ProductInventory)
+                        .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
+                        .Sum(i => i.ReservedQuantity)
+                })
+                .Where(p => options.Stock == Stock.OnlyInStock ? p.StockQuantity > 0 : (options.Stock == Stock.NotInStock ? p.StockQuantity == 0 : true ))
                 .GetPagedList(options.CurrentPage, options.PageSize);
         }
     }
