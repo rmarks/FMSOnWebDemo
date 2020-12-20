@@ -15,7 +15,7 @@ namespace FMS.ServiceLayer.ProductServices
             _context = context;
         }
 
-        public PagedList<ProductListDto> GetFilterPage(ProductListOptions options)
+        public PagedList<ProductBaseListDto> GetFilterPage(ProductListOptions options)
         {
             var queryable = _context.ProductBases
                 .AsNoTracking();
@@ -69,23 +69,51 @@ namespace FMS.ServiceLayer.ProductServices
 
             return queryable
                 .OrderBy(p => p.Code)
-                .Select(p => new ProductListDto
+                .Select(p => new ProductBaseListDto
                 {
-                    Id = p.Id,
-                    Code = p.Code,
-                    Name = p.Name,
+                    ProductBaseId = p.Id,
+                    ProductBaseCode = p.Code,
+                    ProductBaseName = p.Name,
                     StockQuantity = p.Products
-                        .SelectMany(p => p.ProductInventory)
+                        .SelectMany(p => p.Inventory)
                         .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
                         .Sum(i => i.StockQuantity),
                     //ReservedQuantity = p.Products.Sum(p => p.ProductInventory.Sum(i => i.ReservedQuantity))
                     ReservedQuantity = p.Products
-                        .SelectMany(p => p.ProductInventory)
+                        .SelectMany(p => p.Inventory)
                         .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
                         .Sum(i => i.ReservedQuantity)
                 })
                 .Where(p => options.Stock == Stock.OnlyInStock ? p.StockQuantity > 0 : (options.Stock == Stock.NotInStock ? p.StockQuantity == 0 : true ))
                 .GetPagedList(options.CurrentPage, options.PageSize);
+        }
+
+        public ProductBaseInfoDto GetProductBaseInfo(ProductBaseInfoDto info)
+        {
+            info.Warehouses = _context.Warehouses
+                .AsNoTracking()
+                .Where(w => w.Inventory.Any(i => i.Product.ProductBaseId == info.ProductBaseId))
+                .Select(w => new WarehouseInventoryDto
+                {
+                    WarehouseId = w.Id,
+                    WarehouseName = w.Name,
+                    Products = w.Inventory
+                        .Where(i => i.Product.ProductBaseId == info.ProductBaseId)
+                        .Select(i => new ProductInStockDto
+                        {
+                            WarehouseId = i.WarehouseId,
+                            ProductCode = i.Product.Code,
+                            StockQuantity = i.StockQuantity,
+                            ReservedQuantity = i.ReservedQuantity
+                        })
+                        .Where(p => p.StockQuantity > 0)
+                        .OrderBy(p => p.ProductCode)
+                        .ToList()
+                })
+                .Where(wi => wi.Products.Count > 0)
+                .ToList();
+
+            return info;
         }
     }
 }

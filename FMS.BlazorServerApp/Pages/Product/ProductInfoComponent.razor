@@ -1,24 +1,32 @@
 ﻿<div class="p-3 bg-light mb-2">
     <button type="button" class="close" 
-            @onclick="@(() => ProductInfoRemoved.InvokeAsync(ProductInfo))">
+            @onclick="@(() => ProductBaseInfoRemoved.InvokeAsync(ProductBaseInfo))">
         X
     </button>
-    <h4 class="text-center mb-2">@ProductInfo.ProductCode</h4>
+    <h4 class="text-center">@ProductBaseInfo.ProductBaseCode</h4>
 
     <ul class="list-group">
-        @foreach (var stock in ProductInfo.Inventory)
+        @foreach (var warehouse in ProductBaseInfo.Warehouses)
         {
-            <li class="list-group-item d-flex">
-                <div class="mr-auto">@stock.Warehouse</div>
-                <div class="ml-auto">@stock.Quantity</div>
-            </li>
+        <li class="list-group-item p-0">
+            <div class="text-primary m-2">@warehouse.WarehouseName</div>
+            <ul class="list-group">
+                @foreach (var product in warehouse.Products)
+                {
+                    <li class="list-group-item d-flex px-2">
+                        <div class="mr-auto">@product.ProductCode</div>
+                        <div class="ml-auto">@product.FreeQuantity (@product.StockQuantity-@product.ReservedQuantity)</div>
+                    </li>
+                }
+            </ul>
+        </li>
         }
     </ul>
 </div>
 
 
 @code {
-    [Parameter] public ProductInfo ProductInfo { get; set; }
+    [Parameter] public ProductBaseInfoDto ProductBaseInfo { get; set; }
 
-    [Parameter] public EventCallback<ProductInfo> ProductInfoRemoved { get; set; }
+    [Parameter] public EventCallback<ProductBaseInfoDto> ProductBaseInfoRemoved { get; set; }
 }

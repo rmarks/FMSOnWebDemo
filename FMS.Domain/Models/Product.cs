@@ -16,7 +16,7 @@ namespace FMS.Domain.Models
         public int ProductBaseId { get; set; }
         public ProductBase ProductBase { get; set; }
 
-        public IList<Inventory> ProductInventory { get; set; }
+        public IList<Inventory> Inventory { get; set; }
 
         //--- legacy system fields ---
         [MaxLength(12)]
