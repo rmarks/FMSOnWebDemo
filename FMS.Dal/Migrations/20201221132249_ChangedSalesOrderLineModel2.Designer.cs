@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201221132249_ChangedSalesOrderLineModel2")]
+    partial class ChangedSalesOrderLineModel2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,7 +245,7 @@ namespace FMS.Dal.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReservedQuantity")
@@ -917,7 +919,9 @@ namespace FMS.Dal.Migrations
                 {
                     b.HasOne("FMS.Domain.Models.Product", "Product")
                         .WithMany("Inventory")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FMS.Domain.Models.Warehouse", "Warehouse")
                         .WithMany("Inventory")

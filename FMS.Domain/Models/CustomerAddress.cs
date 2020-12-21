@@ -33,5 +33,14 @@ namespace FMS.Domain.Models
 
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
+
+        //--- legacy system fields ---
+        public int? FMS_yksusid { get; set; }
+
+        [MaxLength(4)]
+        public string FMS_ykood { get; set; }
+
+        [MaxLength(6)]
+        public string FMS_skood { get; set; }
     }
 }

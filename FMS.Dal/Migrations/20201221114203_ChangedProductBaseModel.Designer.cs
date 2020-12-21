@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201221114203_ChangedProductBaseModel")]
+    partial class ChangedProductBaseModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,7 +245,7 @@ namespace FMS.Dal.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReservedQuantity")
@@ -795,7 +797,7 @@ namespace FMS.Dal.Migrations
                     b.Property<int>("OrderedQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId")
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReservedQuantity")
@@ -807,7 +809,7 @@ namespace FMS.Dal.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(9,2)");
 
-                    b.Property<int?>("WarehouseId")
+                    b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -917,7 +919,9 @@ namespace FMS.Dal.Migrations
                 {
                     b.HasOne("FMS.Domain.Models.Product", "Product")
                         .WithMany("Inventory")
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FMS.Domain.Models.Warehouse", "Warehouse")
                         .WithMany("Inventory")
@@ -1103,7 +1107,9 @@ namespace FMS.Dal.Migrations
                 {
                     b.HasOne("FMS.Domain.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId");
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("FMS.Domain.Models.SalesOrder", null)
                         .WithMany("SalesOrderLines")
@@ -1113,7 +1119,9 @@ namespace FMS.Dal.Migrations
 
                     b.HasOne("FMS.Domain.Models.Warehouse", "Warehouse")
                         .WithMany()
-                        .HasForeignKey("WarehouseId");
+                        .HasForeignKey("WarehouseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
 
