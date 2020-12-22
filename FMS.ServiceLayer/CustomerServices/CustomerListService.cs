@@ -49,12 +49,17 @@ namespace FMS.ServiceLayer.CustomerServices
                 .GetPagedList(options.CurrentPage, options.PageSize);
         }
 
-        public async Task<IEnumerable<Customer>> SearchCustomers(string searchText)
+        public async Task<IEnumerable<CustomerDropdownDto>> SearchCustomers(string searchText)
         {
             return await _context.Customers
                 .AsNoTracking()
                 .Where(c => c.Name.ToLower().Contains(searchText.ToLower()))
                 .OrderBy(c => c.Name)
+                .Select(c => new CustomerDropdownDto
+                {
+                    CustomerId = c.Id,
+                    CustomerName = c.Name
+                })
                 .ToListAsync();
         }
     }

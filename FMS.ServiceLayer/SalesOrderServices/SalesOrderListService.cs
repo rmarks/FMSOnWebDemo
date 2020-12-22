@@ -19,6 +19,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
         {
             var queryable = _context.SalesOrders
                 .AsNoTracking();
+            
             queryable = queryable.Where(s => !s.IsClosed);
 
             return queryable

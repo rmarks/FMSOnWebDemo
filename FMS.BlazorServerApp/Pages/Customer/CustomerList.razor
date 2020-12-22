@@ -8,18 +8,18 @@
 
     <h6 class="text-white">Ava klient</h6>
     <BlazoredTypeahead SearchMethod="@SearchCustomers"
-                       TValue="Customer"
-                       TItem="Customer"
+                       TValue="CustomerDropdownDto"
+                       TItem="CustomerDropdownDto"
                        Value="selectedCustomer"
                        ValueExpression="@(() => selectedCustomer)"
                        ValueChanged="SelectedCustomerChanged"
                        class="form-control"
                        placeholder="Sisesta kliendi nimi">
         <SelectedTemplate>
-            @context.Name
+            @context.CustomerName
         </SelectedTemplate>
         <ResultTemplate>
-            @context.Name
+            @context.CustomerName
         </ResultTemplate>
     </BlazoredTypeahead>
 
@@ -83,7 +83,7 @@
 
 @code {
     private PagedList<Customer> pagedCustomers;
-    private Customer selectedCustomer;
+    private CustomerDropdownDto selectedCustomer;
 
     public CustomerListOptions Options { get; set; } = new CustomerListOptions { PageSize = 13, CurrentPage = 1 };
 
@@ -112,7 +112,7 @@
         return $"/kliendid/{id}";
     }
 
-    private async Task<IEnumerable<Customer>> SearchCustomers(string searchText)
+    private async Task<IEnumerable<CustomerDropdownDto>> SearchCustomers(string searchText)
     {
         return await ServiceProvider.GetService<ICustomerListService>().SearchCustomers(searchText);
     }
@@ -132,10 +132,10 @@
         StateHasChanged();
     }
 
-    private void SelectedCustomerChanged(Customer customer)
+    private void SelectedCustomerChanged(CustomerDropdownDto customer)
     {
         selectedCustomer = customer;
-        NavManager.NavigateTo($"/kliendid/{selectedCustomer.Id}");
+        NavManager.NavigateTo($"/kliendid/{selectedCustomer.CustomerId}");
     }
     #endregion
 }
