@@ -1,0 +1,15 @@
+﻿@page "/tellimus/{id:int}" 
+
+<div class="main">
+    <h3 class="text-center">Müügitellimus</h3>
+</div>
+
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+        }
+}
