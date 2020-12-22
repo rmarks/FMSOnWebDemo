@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201222090808_AddedSalesInvoiceModels")]
+    partial class AddedSalesInvoiceModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -710,99 +712,6 @@ namespace FMS.Dal.Migrations
                     b.ToTable("ProductVariantTypes");
                 });
 
-            modelBuilder.Entity("FMS.Domain.Models.SalesInvoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("BillingAddressId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("DeliveryTermName")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("FMS_doknr")
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("FMS_doktyyp")
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
-
-                    b.Property<int>("FixedDiscountPercent")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("InvoiceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InvoiceNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("PaymentDays")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ShippingAddressId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VATPercent")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BillingAddressId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("ShippingAddressId");
-
-                    b.ToTable("SalesInvoices");
-                });
-
-            modelBuilder.Entity("FMS.Domain.Models.SalesInvoiceLine", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("InvoicedQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LineDiscountPercent")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SalesInvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(9,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SalesInvoiceId");
-
-                    b.ToTable("SalesInvoiceLines");
-                });
-
             modelBuilder.Entity("FMS.Domain.Models.SalesOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -1169,44 +1078,6 @@ namespace FMS.Dal.Migrations
                     b.Navigation("ProductBaseProductVariant");
                 });
 
-            modelBuilder.Entity("FMS.Domain.Models.SalesInvoice", b =>
-                {
-                    b.HasOne("FMS.Domain.Models.CustomerAddress", "BillingAddress")
-                        .WithMany()
-                        .HasForeignKey("BillingAddressId");
-
-                    b.HasOne("FMS.Domain.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FMS.Domain.Models.CustomerAddress", "ShippingAddress")
-                        .WithMany()
-                        .HasForeignKey("ShippingAddressId");
-
-                    b.Navigation("BillingAddress");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("ShippingAddress");
-                });
-
-            modelBuilder.Entity("FMS.Domain.Models.SalesInvoiceLine", b =>
-                {
-                    b.HasOne("FMS.Domain.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId");
-
-                    b.HasOne("FMS.Domain.Models.SalesInvoice", null)
-                        .WithMany("SalesInvoiceLines")
-                        .HasForeignKey("SalesInvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("FMS.Domain.Models.SalesOrder", b =>
                 {
                     b.HasOne("FMS.Domain.Models.CustomerAddress", "BillingAddress")
@@ -1282,11 +1153,6 @@ namespace FMS.Dal.Migrations
             modelBuilder.Entity("FMS.Domain.Models.ProductBaseProductVariantType", b =>
                 {
                     b.Navigation("ProductBaseProductVariants");
-                });
-
-            modelBuilder.Entity("FMS.Domain.Models.SalesInvoice", b =>
-                {
-                    b.Navigation("SalesInvoiceLines");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.SalesOrder", b =>
