@@ -1,0 +1,69 @@
+﻿@page "/arve/{id:int}" 
+@page "/arve/uus"
+@inject IServiceProvider ServiceProvider
+
+<div class="main">
+    <nav class="navbar navbar-dark bg-secondary">
+        <span class="navbar-brand mb-0 h1">Arve id: @Id</span>
+        <div>
+            <NavLink class="btn btn-primary" href="/arved">Tagasi</NavLink>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="form-group col-2">
+                <label>Arve nr.</label>
+                <input type="text" class="form-control" @bind="@invoice.InvoiceNo" />
+            </div>
+            <div class="form-group col-2">
+                <label>Arve kuupäev</label>
+                <input type="text" class="form-control" @bind="@invoice.InvoiceDate" @bind:format="dd.MM.yyyy" />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Klient</label>
+                    <input type="text" class="form-control" @bind="@invoice.CustomerName" />
+                </div>
+                <div class="form-group">
+                    <label>Kliendi aadress</label>
+                    <textarea type="text" class="form-control" @bind="@invoice.CustomerAddress"
+                              style="height: 87px"/>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-group">
+                    <label>Saaja</label>
+                    <input type="text" class="form-control" @bind="@invoice.ConsigneeName" />
+                </div>
+                <div class="form-group">
+                    <label>Saaja aadress</label>
+                    <textarea type="text" class="form-control" @bind="@invoice.ConsigneeAddress"
+                              style="height: 87px" />
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private SalesInvoiceDto invoice = new SalesInvoiceDto();
+
+    [Parameter] public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            invoice = await ServiceProvider.GetService<ISalesInvoiceService>().GetInvoice(Id);
+        }
+    }
+}
