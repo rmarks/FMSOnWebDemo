@@ -29,7 +29,7 @@ namespace FMS.ServiceLayer.ProductServices
                 ProductBrands = await _context.ProductBrands.AsNoTracking().ToListAsync(),
                 ProductCollections = await _context.ProductCollections.AsNoTracking().ToListAsync(),
                 ProductDesigns = await _context.ProductDesigns.AsNoTracking().ToListAsync(),
-                Warehouses = await _context.Warehouses.AsNoTracking().OrderBy(w => w.Name).ToListAsync()
+                Locations = await _context.Locations.AsNoTracking().OrderBy(l => l.Name).ToListAsync()
             };
         }
     }

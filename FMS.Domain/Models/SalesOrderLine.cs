@@ -9,8 +9,8 @@ namespace FMS.Domain.Models
         public int SalesOrderId { get; set; }
 
         //NB! int? - temp, must be -> int
-        public int? WarehouseId { get; set; }
-        public Warehouse Warehouse { get; set; }
+        public int? LocationId { get; set; }
+        public Location Location { get; set; }
 
         //NB! int? - temp, must be -> int
         public int? ProductId { get; set; }

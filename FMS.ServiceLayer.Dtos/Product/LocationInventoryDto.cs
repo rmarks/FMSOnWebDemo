@@ -2,10 +2,10 @@
 
 namespace FMS.ServiceLayer.Dtos
 {
-    public class WarehouseInventoryDto
+    public class LocationInventoryDto
     {
-        public int WarehouseId { get; set; }
-        public string WarehouseName { get; set; }
+        public int LocationId { get; set; }
+        public string LocationName { get; set; }
         public IList<ProductInStockDto> Products { get; set; }
     }
 }

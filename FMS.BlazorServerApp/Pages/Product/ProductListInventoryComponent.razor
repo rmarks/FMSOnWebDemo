@@ -6,11 +6,11 @@
     else
     {
 <div class="form-group">
-    <select class="form-control mb-2" value="@Options.WarehouseId" @onchange="OnWarehouseChanged">
+    <select class="form-control mb-2" value="@Options.LocationId" @onchange="OnWarehouseChanged">
         <option selected value="0">-- Kõik laod --</option>
-        @foreach (var warehouse in Dropdowns.Warehouses)
+        @foreach (var warehouse in Dropdowns.Locations)
         {
-            <option value="@warehouse.Id" selected="@(warehouse.Id == Options.WarehouseId)">@warehouse.Name</option>
+            <option value="@warehouse.Id" selected="@(warehouse.Id == Options.LocationId)">@warehouse.Name</option>
         }
     </select>
 
@@ -48,7 +48,7 @@
 
     void OnWarehouseChanged(ChangeEventArgs e)
     {
-        Options.WarehouseId = int.Parse(e.Value.ToString());
+        Options.LocationId = int.Parse(e.Value.ToString());
         OnInventoryChanged();
     }
 

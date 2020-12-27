@@ -76,12 +76,12 @@ namespace FMS.ServiceLayer.ProductServices
                     ProductBaseName = p.Name,
                     StockQuantity = p.Products
                         .SelectMany(p => p.Inventory)
-                        .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
+                        .Where(i => options.LocationId == 0 ? true : i.LocationId == options.LocationId)
                         .Sum(i => i.StockQuantity),
                     //ReservedQuantity = p.Products.Sum(p => p.ProductInventory.Sum(i => i.ReservedQuantity))
                     ReservedQuantity = p.Products
                         .SelectMany(p => p.Inventory)
-                        .Where(i => options.WarehouseId == 0 ? true : i.WarehouseId == options.WarehouseId)
+                        .Where(i => options.LocationId == 0 ? true : i.LocationId == options.LocationId)
                         .Sum(i => i.ReservedQuantity)
                 })
                 .Where(p => options.Stock == Stock.OnlyInStock ? p.StockQuantity > 0 : (options.Stock == Stock.NotInStock ? p.StockQuantity == 0 : true ))
@@ -90,18 +90,18 @@ namespace FMS.ServiceLayer.ProductServices
 
         public ProductBaseInfoDto GetProductBaseInfo(ProductBaseInfoDto info)
         {
-            info.Warehouses = _context.Warehouses
+            info.Locations = _context.Locations
                 .AsNoTracking()
-                .Where(w => w.Inventory.Any(i => i.Product.ProductBaseId == info.ProductBaseId))
-                .Select(w => new WarehouseInventoryDto
+                .Where(l => l.Inventory.Any(i => i.Product.ProductBaseId == info.ProductBaseId))
+                .Select(l => new LocationInventoryDto
                 {
-                    WarehouseId = w.Id,
-                    WarehouseName = w.Name,
-                    Products = w.Inventory
+                    LocationId = l.Id,
+                    LocationName = l.Name,
+                    Products = l.Inventory
                         .Where(i => i.Product.ProductBaseId == info.ProductBaseId)
                         .Select(i => new ProductInStockDto
                         {
-                            WarehouseId = i.WarehouseId,
+                            LocationId = i.LocationId,
                             ProductCode = i.Product.Code,
                             StockQuantity = i.StockQuantity,
                             ReservedQuantity = i.ReservedQuantity

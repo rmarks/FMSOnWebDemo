@@ -6,6 +6,6 @@ namespace FMS.ServiceLayer.Dtos
     {
         public int ProductBaseId { get; set; }
         public string ProductBaseCode { get; set; }
-        public IList<WarehouseInventoryDto> Warehouses { get; set; }
+        public IList<LocationInventoryDto> Locations { get; set; }
     }
 }

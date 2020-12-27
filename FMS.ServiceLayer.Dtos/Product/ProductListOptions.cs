@@ -13,7 +13,7 @@
         public int ProductCollectionId { get; set; }
         public int ProductDesignId { get; set; }
 
-        public int WarehouseId { get; set; }
+        public int LocationId { get; set; }
         public Stock Stock { get; set; }
     }
 
