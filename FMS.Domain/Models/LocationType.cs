@@ -13,6 +13,6 @@ namespace FMS.Domain.Models
         [Required, MaxLength(30)]
         public string Name { get; set; }
         
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 }

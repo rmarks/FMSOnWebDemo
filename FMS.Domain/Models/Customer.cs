@@ -10,12 +10,11 @@ namespace FMS.Domain.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(70)]
+        [Required, MaxLength(70)]
         public string Name { get; set; }
 
-        [Required]
-        [MaxLength(20)]
+        [Required, MaxLength(20)]
+        
         public string RegNo { get; set; }
 
         [MaxLength(20)]
@@ -31,7 +30,7 @@ namespace FMS.Domain.Models
 
         public bool IsVAT { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public List<CustomerAddress> Addresses { get; set; } = new List<CustomerAddress>();
         public List<CustomerContact> Contacts { get; set; } = new List<CustomerContact>();

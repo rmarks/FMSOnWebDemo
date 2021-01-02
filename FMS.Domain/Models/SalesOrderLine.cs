@@ -8,12 +8,10 @@ namespace FMS.Domain.Models
 
         public int SalesOrderId { get; set; }
 
-        //NB! int? - temp, must be -> int
-        public int? LocationId { get; set; }
+        public int LocationId { get; set; }
         public Location Location { get; set; }
 
-        //NB! int? - temp, must be -> int
-        public int? ProductId { get; set; }
+        public int ProductId { get; set; }
         public Product Product { get; set; }
 
         [Column(TypeName = "decimal(9,2)")]

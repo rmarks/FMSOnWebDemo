@@ -51,7 +51,7 @@
                         <td>@customer.Name</td>
                         <td>@customer.PayerAddress.Country.Name</td>
                         <td>@customer.PayerAddress.City</td>
-                        <td>@customer.CreatedOn.ToShortDateString()</td>
+                        <td>@(customer.CreatedOn?.ToShortDateString() ?? "")</td>
                         <td class="text-right">
                             <NavLink class="btn btn-dark btn-sm" href="@GetCustomerUrl(customer.Id)">
                                 <i class="oi oi-eye text-white" /> Vaata

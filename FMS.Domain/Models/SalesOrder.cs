@@ -30,7 +30,7 @@ namespace FMS.Domain.Models
         [ForeignKey(nameof(ShippingAddressId))]
         public CustomerAddress ShippingAddress { get; set; }
 
-        public int WarehouseId { get; set; }
+        public int LocationId { get; set; }
         public string DeliveryTermName { get; set; }
         public int PaymentDays { get; set; }
         public int FixedDiscountPercent { get; set; }

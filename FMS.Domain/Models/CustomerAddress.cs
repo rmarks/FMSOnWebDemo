@@ -13,12 +13,10 @@ namespace FMS.Domain.Models
         [MaxLength(30)]
         public string County { get; set; }
 
-        [Required]
-        [MaxLength(50)]
+        [Required, MaxLength(50)]
         public string City { get; set; }
 
-        [Required]
-        [MaxLength(100)]
+        [Required, MaxLength(100)]
         public string Address { get; set; }
 
         [MaxLength(10)]
@@ -29,10 +27,11 @@ namespace FMS.Domain.Models
 
         public bool IsBilling { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
+
 
         //--- legacy system fields ---
         public int? FMS_yksusid { get; set; }

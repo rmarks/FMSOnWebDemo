@@ -7,8 +7,7 @@ namespace FMS.Domain.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(50)]
+        [Required, MaxLength(50)]
         public string Name { get; set; }
         
         [MaxLength(50)]
@@ -23,7 +22,7 @@ namespace FMS.Domain.Models
         [MaxLength(100)]
         public string Email { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }

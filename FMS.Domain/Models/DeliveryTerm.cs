@@ -7,10 +7,9 @@ namespace FMS.Domain.Models
     {
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(30)]
+        [Required, MaxLength(30)]
         public string Name { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 }

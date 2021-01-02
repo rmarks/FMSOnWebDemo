@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201227155024_ChangedFieldCreatedOnInSomeModelsToNullable")]
+    partial class ChangedFieldCreatedOnInSomeModelsToNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -841,7 +843,7 @@ namespace FMS.Dal.Migrations
                     b.Property<int>("LineDiscountPercent")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("SalesInvoiceId")
@@ -894,9 +896,6 @@ namespace FMS.Dal.Migrations
                     b.Property<bool>("IsClosed")
                         .HasColumnType("bit");
 
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
@@ -915,6 +914,9 @@ namespace FMS.Dal.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("VATPercent")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WarehouseId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -941,13 +943,13 @@ namespace FMS.Dal.Migrations
                     b.Property<int>("LineDiscountPercent")
                         .HasColumnType("int");
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int>("OrderedQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("ProductId")
+                    b.Property<int?>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("ReservedQuantity")
@@ -1228,9 +1230,7 @@ namespace FMS.Dal.Migrations
                 {
                     b.HasOne("FMS.Domain.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("FMS.Domain.Models.SalesInvoice", null)
                         .WithMany("SalesInvoiceLines")
@@ -1268,15 +1268,11 @@ namespace FMS.Dal.Migrations
                 {
                     b.HasOne("FMS.Domain.Models.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.HasOne("FMS.Domain.Models.Product", "Product")
                         .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.HasOne("FMS.Domain.Models.SalesOrder", null)
                         .WithMany("SalesOrderLines")
