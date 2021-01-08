@@ -26,6 +26,7 @@ namespace FMS.Domain.Models
 
         //public int DeliveryTypeId { get; set; }
         public int DeliveryDomainId { get; set; }
+        public DeliveryDomain DeliveryDomain { get; set; }
 
         public IList<DeliveryNoteLine> DeliveryNoteLines { get; set; }
 
