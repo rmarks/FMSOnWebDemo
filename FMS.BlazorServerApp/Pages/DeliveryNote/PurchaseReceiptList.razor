@@ -16,7 +16,7 @@ else
                 <div class="form-inline">
                     <select class="form-control" value="@Options.ToLocationId" @onchange="OnLocationChanged">
                         <option selected value="0">-- Kõik laod --</option>
-                        @foreach (var location in dropdowns.WarehouseLocations)
+                        @foreach (var location in dropdowns.ToLocations)
                         {
                             <option value="@location.Value" selected="@(location.Value == Options.ToLocationId)">@location.Key</option>
                         }
@@ -47,8 +47,8 @@ else
                             @ondblclick="@(() => NavManager.NavigateTo($"/ostutarne/{receipt.DeliveryNoteId}"))"
                             style="cursor: default;">
                             <td style="width: 15%">@receipt.DeliveryNo</td>
-                            <td style="width: 30%">@receipt.ReceiverName</td>
-                            <td style="width: 30%">@receipt.ShipperName</td>
+                            <td style="width: 30%">@receipt.ToLocationName</td>
+                            <td style="width: 30%">@receipt.FromLocationName</td>
                             <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
                             <td style="width: 10%">@receipt.StatusName</td>
                         </tr>
@@ -82,7 +82,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetPurchaseReceiptDropdowns();
         UpdateList();
     }
 

@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace FMS.ServiceLayer.DeliveryNoteServices
 {
-    public class PurchaseReceiptService : IPurchaseReceiptService
+    public class ProductionReceiptService : IProductionReceiptService
     {
         private readonly FMSContext _context;
 
-        public PurchaseReceiptService(FMSContext context)
+        public ProductionReceiptService(FMSContext context)
         {
             _context = context;
         }
@@ -20,11 +20,16 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             var queryable = _context.DeliveryNotes
                 .AsNoTracking();
 
-            queryable = queryable.Where(d => d.DeliveryDomain.Code == "O" && d.ToLocation.LocationType.Code == "VL");
+            queryable = queryable.Where(d => d.ToLocation.LocationType.Code == "VL" && d.FromLocation.LocationType.Code == "TO");
 
             if (options.ToLocationId != 0)
             {
                 queryable = queryable.Where(d => d.ToLocationId == options.ToLocationId);
+            }
+
+            if (options.FromLocationId != 0)
+            {
+                queryable = queryable.Where(d => d.FromLocationId == options.FromLocationId);
             }
 
             if (options.IsClosed != null)
@@ -39,7 +44,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
                     DeliveryNoteId = d.Id,
                     DeliveryNo = d.DeliveryNo,
                     ToLocationName = d.ToLocation.Name,
-                    FromLocationName = "Muud hankijad",
+                    FromLocationName = d.FromLocation.Name,
                     DeliveryDate = d.DeliveryDate,
                     StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })

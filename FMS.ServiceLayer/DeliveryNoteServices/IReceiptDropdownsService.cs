@@ -5,6 +5,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 {
     public interface IReceiptDropdownsService
     {
-        Task<ReceiptDropdowns> GetReceiptDropdowns();
+        Task<ReceiptDropdowns> GetProductionReceiptDropdowns();
+        Task<ReceiptDropdowns> GetPurchaseReceiptDropdowns();
     }
 }

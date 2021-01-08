@@ -1,0 +1,25 @@
+﻿@page "/toodangutarned"
+@inject IServiceProvider ServiceProvider
+
+<div class="main">
+    <ReceiptListComponent Title="@title" PagedReceipts="@pagedReceipts" Dropdowns="@dropdowns" 
+                          Options="@options" OptionsChanged="@((p) => UpdateList(p))" />
+</div>
+
+@code {
+    private PagedList<ReceiptListItemDto> pagedReceipts;
+    private ReceiptDropdowns dropdowns;
+    private ReceiptListOptions options = new ReceiptListOptions { PageSize = 13 };
+    private string title = "Toodangu tarned";
+
+    protected override async Task OnInitializedAsync()
+    {
+        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetProductionReceiptDropdowns();
+        UpdateList(options);
+    }
+
+    private void UpdateList(ReceiptListOptions options)
+    {
+        pagedReceipts = ServiceProvider.GetService<IProductionReceiptService>().FilterPage(options);
+    }
+}

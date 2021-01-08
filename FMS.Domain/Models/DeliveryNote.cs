@@ -15,7 +15,7 @@ namespace FMS.Domain.Models
         
         public int? FromLocationId { get; set; }
         [ForeignKey(nameof(FromLocationId))]
-        public Location Location { get; set; }
+        public Location FromLocation { get; set; }
 
         public int? ToLocationId { get; set; }
         [ForeignKey(nameof(ToLocationId))]
