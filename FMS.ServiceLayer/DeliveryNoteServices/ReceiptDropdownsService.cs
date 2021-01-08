@@ -34,6 +34,14 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
         }
 
+        public async Task<ReceiptDropdowns> GetOutSourcingReceiptDropdowns()
+        {
+            return new ReceiptDropdowns
+            {
+                ToLocations = await GetLocationsByType("VL")
+            };
+        }
+
         #region helpers
         private async Task<IDictionary<string, int>> GetLocationsByType(string typeCode)
         {

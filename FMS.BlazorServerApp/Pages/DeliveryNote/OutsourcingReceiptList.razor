@@ -1,8 +1,8 @@
-﻿@page "/toodangutarned"
+﻿@page "/allhanketarned"
 @inject IServiceProvider ServiceProvider
 
 <div class="main">
-    <ReceiptListComponent Title="@title" PagedReceipts="@pagedReceipts" Dropdowns="@dropdowns" 
+    <ReceiptListComponent Title="@title" PagedReceipts="@pagedReceipts" Dropdowns="@dropdowns"
                           Options="@options" OptionsChanged="@((p) => UpdateList(p))" />
 </div>
 
@@ -11,16 +11,16 @@
     private PagedList<ReceiptListItemDto> pagedReceipts;
     private ReceiptDropdowns dropdowns;
     private ReceiptListOptions options = new ReceiptListOptions { PageSize = 13 };
-    private string title = "Toodangu tarned";
+    private string title = "Allhanke tarned";
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetProductionReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetOutSourcingReceiptDropdowns();
         UpdateList(options);
     }
 
     private void UpdateList(ReceiptListOptions options)
     {
-        pagedReceipts = ServiceProvider.GetService<IProductionReceiptService>().FilterPage(options);
+        pagedReceipts = ServiceProvider.GetService<IOutsourcingReceiptService>().FilterPage(options);
     }
 }

@@ -17,13 +17,16 @@ else
                     }
                 </select>
 
-                <select class="form-control ml-2" value="@Options.FromLocationId" @onchange="OnFromLocationChanged">
-                    <option selected value="0">-- Kõik saatjad --</option>
-                    @foreach (var location in Dropdowns.FromLocations)
-                    {
-                        <option value="@location.Value" selected="@(location.Value == Options.FromLocationId)">@location.Key</option>
-                    }
-                </select>
+                @if (Dropdowns.FromLocations != null)
+                {
+                    <select class="form-control ml-2" value="@Options.FromLocationId" @onchange="OnFromLocationChanged">
+                        <option selected value="0">-- Kõik saatjad --</option>
+                        @foreach (var location in Dropdowns.FromLocations)
+                        {
+                            <option value="@location.Value" selected="@(location.Value == Options.FromLocationId)">@location.Key</option>
+                        }
+                    </select>
+                }
 
                 <select class="form-control ml-2" @onchange="OnStatusSelectionChanged">
                     <option value="null" selected="@(Options.IsClosed == null)">--- Kõik olekud ---</option>
@@ -74,8 +77,6 @@ else
 }
 
 @code {
-    //private PagedList<ReceiptListItemDto> pagedReceipts;
-    //private ReceiptDropdowns dropdowns;
     private ReceiptListItemDto selectedItem;
 
     [Parameter] public string Title { get; set; }
@@ -83,13 +84,6 @@ else
     [Parameter] public PagedList<ReceiptListItemDto> PagedReceipts { get; set; }
     [Parameter] public EventCallback<ReceiptListOptions> OptionsChanged { get; set; }
     [Parameter] public ReceiptListOptions Options { get; set; }
-
-    //public ReceiptListOptions Options { get; set; } = new ReceiptListOptions { PageSize = 13 };
-
-    //protected override void OnParametersSet()
-    //{
-    //    RaiseOptionsChanged();
-    //}
 
     #region helpers
     private void RaiseOptionsChanged(int currentPage = 1)
