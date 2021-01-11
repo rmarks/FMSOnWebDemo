@@ -1,0 +1,37 @@
+﻿<select @attributes="@AdditionalAttributes" value="@Value" @onchange="HandleChange">
+    <option value="0" selected>@SelectTitle</option>
+    @foreach (var val in Values)
+    {
+        <option value="@val.Value" selected="@(val.Value == Value)">@val.Key</option>
+    }
+</select>
+
+@code {
+    [Parameter]
+    public IDictionary<string, int> Values { get; set; }
+
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnChangeCallback { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    public string SelectTitle => (Title == null ? "--- Kõik ---" : $"--- {Title} ---");
+
+    private void HandleChange(ChangeEventArgs e)
+    {
+        Value = int.Parse(e.Value.ToString());
+        ValueChanged.InvokeAsync(Value);
+
+        OnChangeCallback.InvokeAsync();
+    }
+}

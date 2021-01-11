@@ -2,8 +2,53 @@
 @inject IServiceProvider ServiceProvider
 
 <div class="main">
-    <ReceiptListComponent Title="@title" PagedReceipts="@pagedReceipts" Dropdowns="@dropdowns"
-                          Options="@options" OptionsChanged="@((p) => UpdateList(p))" />
+    @if (pagedReceipts?.List == null || dropdowns == null)
+    {
+        <p class="m-2">Loading...</p>
+    }
+    else
+    {
+        <div class="container">
+            <div class="d-flex bg-light ml-auto my-3 p-2 border shadow-sm">
+                <h3 class="m-0 align-self-center text-secondary">@title</h3>
+
+                <div class="d-flex ml-auto">
+                    <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
+                                   @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
+
+                    <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
+                                                 OnChangeCallback="@(() => UpdateList())" />
+                </div>
+            </div>
+
+            <TableControl Items="@pagedReceipts.List" Context="receipt">
+                <TableHeader>
+                    <th>Nr.</th>
+                    <th>Saaja ladu</th>
+                    <th>Saatja</th>
+                    <th>Kuupäev</th>
+                    <th>Olek</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td style="width: 15%">@receipt.DeliveryNo</td>
+                    <td style="width: 30%">@receipt.ToLocationName</td>
+                    <td style="width: 30%">@receipt.FromLocationName</td>
+                    <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
+                    <td style="width: 10%">@receipt.StatusName</td>
+                </RowTemplate>
+            </TableControl>
+
+            <div class="row">
+                <div class="col"></div>
+                <div class="col-auto">
+                    <Pager Result="pagedReceipts" PageChanged="OnPagerPageChanged" />
+                </div>
+                <div class="col text-right">
+                    <p class="text-muted pt-3">Kirjeid: @pagedReceipts.ItemsCount</p>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 
@@ -16,11 +61,18 @@
     protected override async Task OnInitializedAsync()
     {
         dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetOutSourcingReceiptDropdowns();
-        UpdateList(options);
+        UpdateList();
     }
 
-    private void UpdateList(ReceiptListOptions options)
+    private void UpdateList(int currentPage = 1)
     {
+        options.CurrentPage = currentPage;
         pagedReceipts = ServiceProvider.GetService<IOutsourcingReceiptService>().FilterPage(options);
+    }
+
+    private void OnPagerPageChanged(int currentPage)
+    {
+        UpdateList(currentPage);
+        StateHasChanged();
     }
 }
