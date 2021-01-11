@@ -7,20 +7,11 @@
     <tbody>
         @foreach (var item in Items)
         {
-            <tr>
+            <tr class="@(item == selectedItem ? "bg-primary text-white" : "")" style="cursor: default"
+                @onclick="@(() => selectedItem = item)" @ondblclick="@(() => ItemSelected.InvokeAsync(item.ItemId))">
                 @RowTemplate(item)
             </tr>
         }
     </tbody>
 </table>
 
-@code {
-    [Parameter] 
-    public RenderFragment TableHeader { get; set; }
-
-    [Parameter]
-    public RenderFragment<TItem> RowTemplate { get; set; }
-
-    [Parameter]
-    public IList<TItem> Items { get; set; }
-}

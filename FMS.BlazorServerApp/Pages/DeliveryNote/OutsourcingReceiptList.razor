@@ -1,5 +1,6 @@
 ﻿@page "/allhanketarned"
 @inject IServiceProvider ServiceProvider
+@inject NavigationManager NavManager
 
 <div class="main">
     @if (pagedReceipts?.List == null || dropdowns == null)
@@ -9,8 +10,8 @@
     else
     {
         <div class="container">
-            <div class="d-flex bg-light ml-auto my-3 p-2 border shadow-sm">
-                <h3 class="m-0 align-self-center text-secondary">@title</h3>
+            <nav class="navbar navbar-light bg-light my-3 border">
+                <span class="navbar-brand">@title</span>
 
                 <div class="d-flex ml-auto">
                     <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
@@ -19,9 +20,10 @@
                     <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
                                                  OnChangeCallback="@(() => UpdateList())" />
                 </div>
-            </div>
+            </nav>
 
-            <TableControl Items="@pagedReceipts.List" Context="receipt">
+            <TableControl Items="@pagedReceipts.List" TItem="ReceiptListItemDto" Context="receipt"
+                          ItemSelected="@((id) => HandleItemSelected(id))">
                 <TableHeader>
                     <th>Nr.</th>
                     <th>Saaja ladu</th>
@@ -74,5 +76,10 @@
     {
         UpdateList(currentPage);
         StateHasChanged();
+    }
+
+    private void HandleItemSelected(int itemId)
+    {
+        NavManager.NavigateTo($"allhanketarne/{itemId}");
     }
 }

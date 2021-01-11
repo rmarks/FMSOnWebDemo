@@ -36,7 +36,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
                 .OrderByDescending(d => d.DeliveryDate)
                 .Select(d => new ReceiptListItemDto
                 {
-                    DeliveryNoteId = d.Id,
+                    ItemId = d.Id,
                     DeliveryNo = d.DeliveryNo,
                     ToLocationName = d.ToLocation.Name,
                     FromLocationName = "Muud hankijad",

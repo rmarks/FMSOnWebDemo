@@ -2,111 +2,86 @@
 @inject NavigationManager NavManager
 @inject IServiceProvider ServiceProvider
 
-@if (pagedReceipts?.List == null || dropdowns == null)
-{
-    <p class="m-2">Loading...</p>
-}
-else
-{
-    <div class="main">
+<div class="main">
+    @if (pagedReceipts?.List == null || dropdowns == null)
+    {
+        <p class="m-2">Loading...</p>
+    }
+    else
+    {
         <div class="container">
 
-            <div class="d-flex my-3 p-2 justify-content-between" style="background-color: lightslategray">
-                <h4 class="text-white p-0 m-0 align-self-center">Ostutarned</h4>
-                <div class="form-inline">
-                    <select class="form-control" value="@Options.ToLocationId" @onchange="OnLocationChanged">
-                        <option selected value="0">-- Kõik laod --</option>
-                        @foreach (var location in dropdowns.ToLocations)
-                        {
-                            <option value="@location.Value" selected="@(location.Value == Options.ToLocationId)">@location.Key</option>
-                        }
-                    </select>
+            <nav class="navbar navbar-light bg-light my-3 border">
+                <span class="navbar-brand">@title</span>
 
-                    <select class="form-control ml-2" @onchange="StatusSelectionChanged">
-                        <option value="null" selected="@(Options.IsClosed == null)">--- Kõik olekud ---</option>
-                        <option value="false" selected="@(Options.IsClosed == false)">Avatud</option>
-                        <option value="true" selected="@(Options.IsClosed == true)">Suletud</option>
-                    </select>
+                <div class="d-flex ml-auto">
+                    <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
+                                   @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
+
+                    <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
+                                                 OnChangeCallback="@(() => UpdateList())" />
                 </div>
-            </div>
+            </nav>
 
-            <table class="table table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Nr.</th>
-                        <th>Saaja ladu</th>
-                        <th>Saatja</th>
-                        <th>Kuupäev</th>
-                        <th>Olek</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var receipt in pagedReceipts.List)
-                    {
-                        <tr class="@(receipt == selectedItem ? "bg-primary text-white" : "")" @onclick="@(() => selectedItem = receipt)"
-                            @ondblclick="@(() => NavManager.NavigateTo($"/ostutarne/{receipt.DeliveryNoteId}"))"
-                            style="cursor: default;">
-                            <td style="width: 15%">@receipt.DeliveryNo</td>
-                            <td style="width: 30%">@receipt.ToLocationName</td>
-                            <td style="width: 30%">@receipt.FromLocationName</td>
-                            <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
-                            <td style="width: 10%">@receipt.StatusName</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+            <TableControl Items="@pagedReceipts.List" TItem="ReceiptListItemDto" Context="receipt"
+                          ItemSelected="@((id) => HandleItemSelected(id))">
+                <TableHeader>
+                    <th>Nr.</th>
+                    <th>Saaja ladu</th>
+                    <th>Saatja</th>
+                    <th>Kuupäev</th>
+                    <th>Olek</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td style="width: 15%">@receipt.DeliveryNo</td>
+                    <td style="width: 30%">@receipt.ToLocationName</td>
+                    <td style="width: 30%">@receipt.FromLocationName</td>
+                    <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
+                    <td style="width: 10%">@receipt.StatusName</td>
+                </RowTemplate>
+            </TableControl>
 
             <div class="row">
-                <div class="col">
-                    @*<NavLink class="btn btn-primary" href="/ostutarne/uus">Uus ostutarne</NavLink>*@
-                </div>
+                <div class="col"></div>
                 <div class="col-auto">
-                    <Pager Result="pagedReceipts" PageChanged="PagerPageChanged" />
+                    <Pager Result="pagedReceipts" PageChanged="OnPagerPageChanged" />
                 </div>
                 <div class="col text-right">
-                    <p class="text-muted">Kirjeid: @pagedReceipts.ItemsCount</p>
+                    <p class="text-muted pt-3">Kirjeid: @pagedReceipts.ItemsCount</p>
                 </div>
             </div>
 
         </div>
-    </div>
-}
-
-
-@code {
-    private PagedList<ReceiptListItemDto> pagedReceipts;
-    private ReceiptListItemDto selectedItem;
-    private ReceiptDropdowns dropdowns;
-
-    public ReceiptListOptions Options { get; set; } = new ReceiptListOptions { PageSize = 13 };
-
-    protected override async Task OnInitializedAsync()
-    {
-        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetPurchaseReceiptDropdowns();
-        UpdateList();
     }
+</div>
 
-    private void UpdateList(int currentPage = 1)
-    {
-        Options.CurrentPage = currentPage;
-        pagedReceipts = ServiceProvider.GetService<IPurchaseReceiptService>().FilterPage(Options);
-    }
 
-    private void PagerPageChanged(int currentPage)
-    {
-        UpdateList(currentPage);
-        StateHasChanged();
-    }
+        @code {
+            private PagedList<ReceiptListItemDto> pagedReceipts;
+            private ReceiptDropdowns dropdowns;
+            private ReceiptListOptions options = new ReceiptListOptions { PageSize = 13 };
+            private string title = "Ostutarned";
 
-    private void OnLocationChanged(ChangeEventArgs e)
-    {
-        Options.ToLocationId = int.Parse(e.Value.ToString());
-        UpdateList();
-    }
+            protected override async Task OnInitializedAsync()
+            {
+                dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetPurchaseReceiptDropdowns();
+                UpdateList();
+            }
 
-    private void StatusSelectionChanged(ChangeEventArgs e)
-    {
-        Options.IsClosed = (bool.TryParse(e.Value.ToString(), out bool tmp) ? tmp : null);
-        UpdateList();
-    }
-}
+            private void UpdateList(int currentPage = 1)
+            {
+                options.CurrentPage = currentPage;
+                pagedReceipts = ServiceProvider.GetService<IPurchaseReceiptService>().FilterPage(options);
+            }
+
+            private void OnPagerPageChanged(int currentPage)
+            {
+                UpdateList(currentPage);
+                StateHasChanged();
+            }
+
+            private void HandleItemSelected(int itemId)
+            {
+                NavManager.NavigateTo($"ostutarne/{itemId}");
+            }
+        }
