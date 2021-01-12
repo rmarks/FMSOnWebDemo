@@ -1,10 +1,9 @@
 ﻿using FMS.ServiceLayer.Dtos;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
 
 namespace FMS.BlazorServerApp.Components
 {
-    public partial class TableControl<TItem> where TItem: class, IItemDto
+    public partial class PagedTableControl<TItem> where TItem: class
     {
         private TItem selectedItem;
 
@@ -15,9 +14,12 @@ namespace FMS.BlazorServerApp.Components
         public RenderFragment<TItem> RowTemplate { get; set; }
 
         [Parameter]
-        public IList<TItem> Items { get; set; }
+        public PagedList<TItem> PagedItems { get; set; }
 
         [Parameter]
-        public EventCallback<int> ItemSelected { get; set; }
+        public EventCallback<TItem> ItemSelected { get; set; }
+
+        [Parameter] 
+        public EventCallback<int> PageChanged { get; set; }
     }
 }

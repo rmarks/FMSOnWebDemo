@@ -10,23 +10,22 @@
     else
     {
         <div class="container">
-            <nav class="navbar navbar-light bg-light my-3 border">
-                <span class="navbar-brand">@title</span>
 
-                <div class="d-flex ml-auto">
-                    <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
-                                   @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
+            <DeliveryNoteHeaderComponent Title="@title">
+                <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
+                               @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
 
-                    <SelectControl class="form-control ml-2" Title="Kõik saajad" Values="@dropdowns.FromLocations"
-                                   @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => UpdateList())" />
+                <SelectControl class="form-control ml-2" Title="Kõik saajad" Values="@dropdowns.FromLocations"
+                               @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => UpdateList())" />
 
-                    <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
-                                                 OnChangeCallback="@(() => UpdateList())" />
-                </div>
-            </nav>
+                <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
+                                             OnChangeCallback="@(() => UpdateList())" />
+            </DeliveryNoteHeaderComponent>
 
-            <TableControl Items="@pagedReceipts.List" TItem="ReceiptListItemDto" Context="receipt"
-                          ItemSelected="@((id) => HandleItemSelected(id))">
+
+            <PagedTableControl PagedItems="@pagedReceipts" TItem="ReceiptListItemDto" Context="receipt"
+                               ItemSelected="@((item) => HandleItemSelected(item))"
+                               PageChanged="@((cp) => HandlePageChanged(cp))">
                 <TableHeader>
                     <th>Nr.</th>
                     <th>Saaja ladu</th>
@@ -41,17 +40,8 @@
                     <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
                     <td style="width: 10%">@receipt.StatusName</td>
                 </RowTemplate>
-            </TableControl>
+            </PagedTableControl>
 
-            <div class="row">
-                <div class="col"></div>
-                <div class="col-auto">
-                    <Pager Result="pagedReceipts" PageChanged="OnPagerPageChanged" />
-                </div>
-                <div class="col text-right">
-                    <p class="text-muted pt-3">Kirjeid: @pagedReceipts.ItemsCount</p>
-                </div>
-            </div>
         </div>
     }
 </div>
@@ -75,14 +65,14 @@
         pagedReceipts = ServiceProvider.GetService<IProductionReceiptService>().FilterPage(options);
     }
 
-    private void OnPagerPageChanged(int currentPage)
+    private void HandlePageChanged(int currentPage)
     {
         UpdateList(currentPage);
         StateHasChanged();
     }
 
-    private void HandleItemSelected(int itemId)
+    private void HandleItemSelected(ReceiptListItemDto item)
     {
-        NavManager.NavigateTo($"toodangutarne/{itemId}");
+        NavManager.NavigateTo($"toodangutarne/{item.DeliveryNoteId}");
     }
 }

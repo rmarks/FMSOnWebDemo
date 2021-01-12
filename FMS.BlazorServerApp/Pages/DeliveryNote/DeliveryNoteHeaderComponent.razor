@@ -1,0 +1,16 @@
+﻿<nav class="navbar navbar-light bg-light my-3 border">
+    <span class="navbar-brand">@Title</span>
+
+    <div class="d-flex ml-auto">
+        @ChildContent
+    </div>
+</nav>
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}
