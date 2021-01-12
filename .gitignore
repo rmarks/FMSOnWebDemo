@@ -339,3 +339,4 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /FMS.BlazorServerApp/wwwroot/img/products/small
+/FMS.BlazorServerApp/Pages/DeliveryNote/DeliveryNoteComponent.razor

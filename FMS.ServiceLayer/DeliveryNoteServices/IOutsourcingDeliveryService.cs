@@ -2,7 +2,7 @@
 
 namespace FMS.ServiceLayer.DeliveryNoteServices
 {
-    public interface IPurchaseReceiptService
+    public interface IOutsourcingDeliveryService
     {
         PagedList<DeliveryListItemDto> ReceiptFilterPage(DeliveryListOptions options);
         PagedList<DeliveryListItemDto> ShipmentFilterPage(DeliveryListOptions options);

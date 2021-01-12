@@ -58,7 +58,7 @@
     private void UpdateList(int currentPage = 1)
     {
         options.CurrentPage = currentPage;
-        pagedItems = ServiceProvider.GetService<IOutsourcingReceiptService>().ShipmentFilterPage(options);
+        pagedItems = ServiceProvider.GetService<IOutsourcingDeliveryService>().ShipmentFilterPage(options);
     }
 
     private void HandlePageChanged(int currentPage)

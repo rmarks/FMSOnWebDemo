@@ -6,11 +6,11 @@ using System.Linq;
 
 namespace FMS.ServiceLayer.DeliveryNoteServices
 {
-    public class OutsourcingReceiptService : IOutsourcingReceiptService
+    public class OutsourcingDeliveryService : IOutsourcingDeliveryService
     {
         private readonly FMSContext _context;
 
-        public OutsourcingReceiptService(FMSContext context)
+        public OutsourcingDeliveryService(FMSContext context)
         {
             _context = context;
         }
