@@ -11,7 +11,7 @@
     {
         <div class="container">
 
-            <DeliveryNoteHeaderComponent Title="@title">
+            <DeliveryListHeaderComponent Title="@title">
                 <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.FromLocations"
                                @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => UpdateList())" />
 
@@ -20,7 +20,7 @@
 
                 <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
                                              OnChangeCallback="@(() => UpdateList())" />
-            </DeliveryNoteHeaderComponent>
+            </DeliveryListHeaderComponent>
 
 
             <PagedTableControl PagedItems="@pagedItems" TItem="DeliveryListItemDto" Context="shipment"
