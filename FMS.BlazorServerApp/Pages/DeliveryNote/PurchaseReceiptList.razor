@@ -20,7 +20,7 @@
             </DeliveryNoteHeaderComponent>
 
 
-            <PagedTableControl PagedItems="@pagedReceipts" TItem="ReceiptListItemDto" Context="receipt"
+            <PagedTableControl PagedItems="@pagedReceipts" TItem="DeliveryListItemDto" Context="receipt"
                                ItemSelected="@((item) => HandleItemSelected(item))"
                                PageChanged="@((cp) => HandlePageChanged(cp))">
                 <TableHeader>
@@ -45,21 +45,21 @@
 
 
 @code {
-    private PagedList<ReceiptListItemDto> pagedReceipts;
-    private ReceiptDropdowns dropdowns;
-    private ReceiptListOptions options = new ReceiptListOptions { PageSize = 13 };
+    private PagedList<DeliveryListItemDto> pagedReceipts;
+    private DeliveryDropdowns dropdowns;
+    private DeliveryListOptions options = new DeliveryListOptions { PageSize = 13 };
     private string title = "Ostutarned";
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IReceiptDropdownsService>().GetPurchaseReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetPurchaseReceiptDropdowns();
         UpdateList();
     }
 
     private void UpdateList(int currentPage = 1)
     {
         options.CurrentPage = currentPage;
-        pagedReceipts = ServiceProvider.GetService<IPurchaseReceiptService>().FilterPage(options);
+        pagedReceipts = ServiceProvider.GetService<IPurchaseReceiptService>().ReceiptFilterPage(options);
     }
 
     private void HandlePageChanged(int currentPage)
@@ -68,7 +68,7 @@
         StateHasChanged();
     }
 
-    private void HandleItemSelected(ReceiptListItemDto item)
+    private void HandleItemSelected(DeliveryListItemDto item)
     {
         NavManager.NavigateTo($"ostutarne/{item.DeliveryNoteId}");
     }

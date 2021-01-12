@@ -1,6 +1,6 @@
 ﻿namespace FMS.ServiceLayer.Dtos
 {
-    public class ReceiptListOptions : PagedArgsBase
+    public class DeliveryListOptions : PagedArgsBase
     {
         public int ToLocationId { get; set; }
         public int FromLocationId { get; set; }

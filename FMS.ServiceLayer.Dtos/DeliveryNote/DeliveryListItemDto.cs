@@ -2,7 +2,7 @@
 
 namespace FMS.ServiceLayer.Dtos
 {
-    public class ReceiptListItemDto
+    public class DeliveryListItemDto
     {
         public int DeliveryNoteId { get; set; }
         public string DeliveryNo { get; set; }

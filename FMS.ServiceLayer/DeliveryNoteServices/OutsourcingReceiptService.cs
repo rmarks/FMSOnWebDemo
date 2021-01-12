@@ -15,7 +15,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             _context = context;
         }
 
-        public PagedList<ReceiptListItemDto> FilterPage(ReceiptListOptions options)
+        public PagedList<DeliveryListItemDto> ReceiptFilterPage(DeliveryListOptions options)
         {
             var queryable = _context.DeliveryNotes
                 .AsNoTracking();
@@ -34,12 +34,43 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
             return queryable
                 .OrderByDescending(d => d.DeliveryDate)
-                .Select(d => new ReceiptListItemDto
+                .Select(d => new DeliveryListItemDto
                 {
                     DeliveryNoteId = d.Id,
                     DeliveryNo = d.DeliveryNo,
                     ToLocationName = d.ToLocation.Name,
                     FromLocationName = "Allhankijad",
+                    DeliveryDate = d.DeliveryDate,
+                    StatusName = d.IsClosed ? "Suletud" : "Avatud"
+                })
+                .GetPagedList(options.CurrentPage, options.PageSize);
+        }
+
+        public PagedList<DeliveryListItemDto> ShipmentFilterPage(DeliveryListOptions options)
+        {
+            var queryable = _context.DeliveryNotes
+                .AsNoTracking();
+
+            queryable = queryable.Where(d => d.DeliveryDomain.Code == "A" && d.FromLocation.LocationType.Code == "VL");
+
+            if (options.FromLocationId != 0)
+            {
+                queryable = queryable.Where(d => d.FromLocationId == options.FromLocationId);
+            }
+
+            if (options.IsClosed != null)
+            {
+                queryable = queryable.Where(d => d.IsClosed == options.IsClosed);
+            }
+
+            return queryable
+                .OrderByDescending(d => d.DeliveryDate)
+                .Select(d => new DeliveryListItemDto
+                {
+                    DeliveryNoteId = d.Id,
+                    DeliveryNo = d.DeliveryNo,
+                    ToLocationName = "Allhankijad",
+                    FromLocationName = d.FromLocation.Name,
                     DeliveryDate = d.DeliveryDate,
                     StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })

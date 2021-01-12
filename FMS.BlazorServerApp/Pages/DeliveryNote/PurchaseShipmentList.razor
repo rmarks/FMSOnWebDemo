@@ -1,9 +1,9 @@
-﻿@page "/allhanketarned"
+﻿@page "/ostulahetused"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 
 <div class="main">
-    @if (pagedReceipts?.List == null || dropdowns == null)
+    @if (pagedItems?.List == null || dropdowns == null)
     {
         <p class="m-2">Loading...</p>
     }
@@ -12,30 +12,30 @@
         <div class="container">
 
             <DeliveryNoteHeaderComponent Title="@title">
-                <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.ToLocations"
-                               @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
+                <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.FromLocations"
+                               @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => UpdateList())" />
 
                 <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
                                              OnChangeCallback="@(() => UpdateList())" />
             </DeliveryNoteHeaderComponent>
 
 
-            <PagedTableControl PagedItems="@pagedReceipts" TItem="DeliveryListItemDto" Context="receipt"
+            <PagedTableControl PagedItems="@pagedItems" TItem="DeliveryListItemDto" Context="shipment"
                                ItemSelected="@((item) => HandleItemSelected(item))"
                                PageChanged="@((cp) => HandlePageChanged(cp))">
                 <TableHeader>
                     <th>Nr.</th>
-                    <th>Saaja ladu</th>
-                    <th>Saatja</th>
+                    <th>Saatja ladu</th>
+                    <th>Saaja</th>
                     <th>Kuupäev</th>
                     <th>Olek</th>
                 </TableHeader>
                 <RowTemplate>
-                    <td style="width: 15%">@receipt.DeliveryNo</td>
-                    <td style="width: 30%">@receipt.ToLocationName</td>
-                    <td style="width: 30%">@receipt.FromLocationName</td>
-                    <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
-                    <td style="width: 10%">@receipt.StatusName</td>
+                    <td style="width: 15%">@shipment.DeliveryNo</td>
+                    <td style="width: 30%">@shipment.FromLocationName</td>
+                    <td style="width: 30%">@shipment.ToLocationName</td>
+                    <td style="width: 15%">@shipment.DeliveryDate.ToShortDateString()</td>
+                    <td style="width: 10%">@shipment.StatusName</td>
                 </RowTemplate>
             </PagedTableControl>
 
@@ -45,21 +45,21 @@
 
 
 @code {
-    private PagedList<DeliveryListItemDto> pagedReceipts;
+    private PagedList<DeliveryListItemDto> pagedItems;
     private DeliveryDropdowns dropdowns;
     private DeliveryListOptions options = new DeliveryListOptions { PageSize = 13 };
-    private string title = "Allhanke tarned";
+    private string title = "Ostutagastuse lähetused";
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOutsourcingReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetPurchaseShipmentDropdowns();
         UpdateList();
     }
 
     private void UpdateList(int currentPage = 1)
     {
         options.CurrentPage = currentPage;
-        pagedReceipts = ServiceProvider.GetService<IOutsourcingReceiptService>().ReceiptFilterPage(options);
+        pagedItems = ServiceProvider.GetService<IPurchaseReceiptService>().ShipmentFilterPage(options);
     }
 
     private void HandlePageChanged(int currentPage)
@@ -70,6 +70,6 @@
 
     private void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"allhanketarne/{item.DeliveryNoteId}");
+        NavManager.NavigateTo($"ostulahetus/{item.DeliveryNoteId}");
     }
 }
