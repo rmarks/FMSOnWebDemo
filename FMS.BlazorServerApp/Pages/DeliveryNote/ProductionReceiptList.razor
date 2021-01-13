@@ -73,6 +73,6 @@
 
     private void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"toodangutarne/{item.DeliveryNoteId}");
+        NavManager.NavigateTo($"toodangutarne/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
 }
