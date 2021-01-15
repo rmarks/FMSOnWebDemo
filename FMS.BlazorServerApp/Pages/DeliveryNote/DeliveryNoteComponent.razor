@@ -94,7 +94,10 @@
     {
         deliveryNote = await ServiceProvider.GetService<IDeliveryNoteService>().GetDeliveryNote(Id);
         totalQuantity = deliveryNote.Lines.Sum(l => l.DeliveredQuantity);
-        NavManager.TryGetQueryString("returnUrl", out returnUrl);
+        
+        //NavManager.TryGetQueryString("returnUrl", out returnUrl);
+        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
+        returnUrl = relativePath.Substring(relativePath.ToLower().IndexOf("returnUrl=".ToLower()) + "returnUrl=".Length);
     }
 
     private string GetTitle()
