@@ -10,79 +10,82 @@
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 
-<div class="container">
+<div class="main">
+    <div class="container pb-3">
 
-    <nav class="navbar navbar-dark bg-secondary my-3">
-        <span class="navbar-brand">@GetTitle()</span>
+        <nav class="navbar navbar-dark bg-secondary my-3">
+            <span class="navbar-brand">@GetTitle()</span>
 
-        <div class="d-flex ml-auto">
-            <NavLink class="btn btn-primary" href="@GetReturnUrl()">Tagasi</NavLink>
-        </div>
-    </nav>
+            <div class="d-flex ml-auto">
+                <NavLink class="btn btn-primary" href="@GetReturnUrl()">Tagasi</NavLink>
+            </div>
+        </nav>
 
-    <div class="row mb-3">
-        <div class="col-3 m-3">
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Nr.</label>
-                <div class="col-8">
-                    <input class="form-control" value="@deliveryNote.DeliveryNo" disabled>
+        <div class="row mb-3">
+            <div class="col-3 m-3">
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Nr.</label>
+                    <div class="col-8">
+                        <input class="form-control" value="@deliveryNote.DeliveryNo" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-4 col-form-label">Kuupäev</label>
+                    <div class="col-8">
+                        <input class="form-control" value="@deliveryNote.DeliveryDate.ToShortDateString()" disabled>
+                    </div>
                 </div>
             </div>
-            <div class="form-group row">
-                <label class="col-4 col-form-label">Kuupäev</label>
-                <div class="col-8">
-                    <input class="form-control" value="@deliveryNote.DeliveryDate.ToShortDateString()" disabled>
+            <div class="col m-3">
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Saaja</label>
+                    <div class="col-10">
+                        <input class="form-control" value="@deliveryNote.ToLocationName" disabled>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-2 col-form-label">Saatja</label>
+                    <div class="col-10">
+                        <input class="form-control" value="@deliveryNote.FromLocationName" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 m-3">
+                <div class="form-group form-check text-right">
+                    <input type="checkbox" class="form-check-input" checked="@deliveryNote.IsClosed" disabled>
+                    <label class="form-check-label">Suletud</label>
                 </div>
             </div>
         </div>
-        <div class="col m-3">
-            <div class="form-group row">
-                <label class="col-2 col-form-label">Saaja</label>
-                <div class="col-10">
-                    <input class="form-control" value="@deliveryNote.ToLocationName" disabled>
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="col-2 col-form-label">Saatja</label>
-                <div class="col-10">
-                    <input class="form-control" value="@deliveryNote.FromLocationName" disabled>
-                </div>
-            </div>
-        </div>
-        <div class="col-3 m-3">
-            <div class="form-group form-check text-right">
-                <input type="checkbox" class="form-check-input" checked="@deliveryNote.IsClosed" disabled>
-                <label class="form-check-label">Suletud</label>
-            </div>
-        </div>
-    </div>
 
-    <table class="table table-bordered">
-        <thead class="thead-light">
-            <tr>
-                <th>Kood</th>
-                <th>Nimetus</th>
-                <th class="text-right">Kogus</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var line in deliveryNote.Lines)
-            {
+        <table class="table table-bordered">
+            <thead class="thead-light">
                 <tr>
-                    <td style="width: 20%">@line.ProductCode</td>
-                    <td>@line.ProductName</td>
-                    <td style="width: 15%" class="text-right">@line.DeliveredQuantity</td>
+                    <th>Kood</th>
+                    <th>Nimetus</th>
+                    <th class="text-right">Kogus</th>
                 </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2" class="text-right font-weight-bold">Kokku:</td>
-                <td class="text-right font-weight-bold">@totalQuantity</td>
-            </tr>
-        </tfoot>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var line in deliveryNote.Lines)
+                {
+                    <tr>
+                        <td style="width: 20%">@line.ProductCode</td>
+                        <td>@line.ProductName</td>
+                        <td style="width: 15%" class="text-right">@line.DeliveredQuantity</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot class="bg-light">
+                <tr>
+                    <td colspan="2" class="text-right font-weight-bold">Kokku:</td>
+                    <td class="text-right font-weight-bold">@totalQuantity</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
 </div>
+
 
 @code {
     private DeliveryNoteDto deliveryNote = new DeliveryNoteDto();

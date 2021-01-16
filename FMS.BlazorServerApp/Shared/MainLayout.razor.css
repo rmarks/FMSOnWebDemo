@@ -3,12 +3,14 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow-y: auto;
 }
 
 .content-row {
     display: flex;
     flex-direction: row;
     height: 100%;
+    overflow-y: auto;
 }
 
 /*.main {
