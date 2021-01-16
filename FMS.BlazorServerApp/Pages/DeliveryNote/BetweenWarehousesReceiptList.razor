@@ -1,10 +1,10 @@
-﻿@page "/allhankelahetused"
+﻿@page "/ladudevahelisedtarned"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 @implements IDisposable
 
 <div class="main">
-    @if (pagedItems?.List == null || dropdowns == null)
+    @if (pagedReceipts?.List == null || dropdowns == null)
     {
         <p class="m-2">Loading...</p>
     }
@@ -13,7 +13,10 @@
         <div class="container">
 
             <DeliveryListHeaderComponent Title="@title">
-                <SelectControl class="form-control" Title="Kõik saatjad" Values="@dropdowns.FromLocations"
+                <SelectControl class="form-control" Title="Kõik saatjad" Values="@dropdowns.ToLocations"
+                               @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+
+                <SelectControl class="form-control ml-2" Title="Kõik saajad" Values="@dropdowns.FromLocations"
                                @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
 
                 <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
@@ -21,7 +24,7 @@
             </DeliveryListHeaderComponent>
 
 
-            <PagedTableControl PagedItems="@pagedItems" TItem="DeliveryListItemDto" Context="shipment"
+            <PagedTableControl PagedItems="@pagedReceipts" TItem="DeliveryListItemDto" Context="receipt"
                                ItemSelected="@((item) => HandleItemSelected(item))"
                                PageChanged="@((cp) => HandleOptionsChanged(cp))">
                 <TableHeader>
@@ -32,11 +35,11 @@
                     <th>Olek</th>
                 </TableHeader>
                 <RowTemplate>
-                    <td style="width: 15%">@shipment.DeliveryNo</td>
-                    <td style="width: 30%">@shipment.FromLocationName</td>
-                    <td style="width: 30%">@shipment.ToLocationName</td>
-                    <td style="width: 15%">@shipment.DeliveryDate.ToShortDateString()</td>
-                    <td style="width: 10%">@shipment.StatusName</td>
+                    <td style="width: 15%">@receipt.DeliveryNo</td>
+                    <td style="width: 30%">@receipt.ToLocationName</td>
+                    <td style="width: 30%">@receipt.FromLocationName</td>
+                    <td style="width: 15%">@receipt.DeliveryDate.ToShortDateString()</td>
+                    <td style="width: 10%">@receipt.StatusName</td>
                 </RowTemplate>
             </PagedTableControl>
 
@@ -44,24 +47,25 @@
     }
 </div>
 
+
 @code {
-    private PagedList<DeliveryListItemDto> pagedItems;
+    private PagedList<DeliveryListItemDto> pagedReceipts;
     private DeliveryDropdowns dropdowns;
-    private DeliveryListOptions options = new DeliveryListOptions { PageSize = 13 };
-    private string title = "Allhanketagastuse lähetused";
+    private DeliveryListOptions options = new DeliveryListOptions { CurrentPage = 1, PageSize = 13 };
+    private string title = "Ladudevahelised tarned";
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOutsourcingShipmentDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetBetweenWarehousesDropdowns();
         UpdateList();
 
         NavManager.LocationChanged += HandleLocationChanged;
     }
 
-    private void UpdateList()
+    void UpdateList()
     {
         NavManager.SetParametersFromQueryString(options);
-        pagedItems = ServiceProvider.GetService<IOutsourcingDeliveryService>().ShipmentFilterPage(options);
+        pagedReceipts = ServiceProvider.GetService<IBetweenWarehousesDeliveryService>().ReceiptFilterPage(options);
     }
 
     void HandleOptionsChanged(int currentPage = 1)
@@ -78,9 +82,9 @@
         StateHasChanged();
     }
 
-    private void HandleItemSelected(DeliveryListItemDto item)
+    void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"allhankelahetus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        NavManager.NavigateTo($"ladudevahelinetarne/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
 
     public void Dispose()

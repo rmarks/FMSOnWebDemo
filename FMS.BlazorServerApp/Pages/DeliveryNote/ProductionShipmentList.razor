@@ -13,7 +13,7 @@
         <div class="container">
 
             <DeliveryListHeaderComponent Title="@title">
-                <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.FromLocations"
+                <SelectControl class="form-control" Title="Kõik saatjad" Values="@dropdowns.FromLocations"
                                @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
 
                 <SelectControl class="form-control ml-2" Title="Kõik saajad" Values="@dropdowns.ToLocations"
@@ -29,7 +29,7 @@
                                PageChanged="@((cp) => HandleOptionsChanged(cp))">
                 <TableHeader>
                     <th>Nr.</th>
-                    <th>Saatja ladu</th>
+                    <th>Saatja</th>
                     <th>Saaja</th>
                     <th>Kuupäev</th>
                     <th>Olek</th>

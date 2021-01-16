@@ -13,5 +13,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
         Task<DeliveryDropdowns> GetPurchaseReceiptDropdowns();
         Task<DeliveryDropdowns> GetPurchaseShipmentDropdowns();
+
+        Task<DeliveryDropdowns> GetBetweenWarehousesDropdowns();
     }
 }
