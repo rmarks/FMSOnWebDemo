@@ -1,6 +1,7 @@
 ﻿@page "/toodangulahetused"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
+@implements IDisposable
 
 <div class="main">
     @if (pagedItems?.List == null || dropdowns == null)
@@ -13,19 +14,19 @@
 
             <DeliveryListHeaderComponent Title="@title">
                 <SelectControl class="form-control" Title="Kõik laod" Values="@dropdowns.FromLocations"
-                               @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => UpdateList())" />
+                               @bind-Value="@options.FromLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
 
                 <SelectControl class="form-control ml-2" Title="Kõik saajad" Values="@dropdowns.ToLocations"
-                               @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => UpdateList())" />
+                               @bind-Value="@options.ToLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
 
                 <DocumentStatusSelectControl class="form-control ml-2" @bind-Value="@options.IsClosed"
-                                             OnChangeCallback="@(() => UpdateList())" />
+                                             OnChangeCallback="@(() => HandleOptionsChanged())" />
             </DeliveryListHeaderComponent>
 
 
             <PagedTableControl PagedItems="@pagedItems" TItem="DeliveryListItemDto" Context="shipment"
                                ItemSelected="@((item) => HandleItemSelected(item))"
-                               PageChanged="@((cp) => HandlePageChanged(cp))">
+                               PageChanged="@((cp) => HandleOptionsChanged(cp))">
                 <TableHeader>
                     <th>Nr.</th>
                     <th>Saatja ladu</th>
@@ -56,22 +57,37 @@
     {
         dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetProductionShipmentDropdowns();
         UpdateList();
+
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
-    private void UpdateList(int currentPage = 1)
+    void UpdateList()
     {
-        options.CurrentPage = currentPage;
+        NavManager.SetParametersFromQueryString(options);
         pagedItems = ServiceProvider.GetService<IProductionDeliveryService>().ShipmentFilterPage(options);
     }
 
-    private void HandlePageChanged(int currentPage)
+    void HandleOptionsChanged(int currentPage = 1)
     {
-        UpdateList(currentPage);
+        options.CurrentPage = currentPage;
+
+        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
+        NavManager.NavigateTo(relativeUri);
+    }
+
+    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        UpdateList();
         StateHasChanged();
     }
 
-    private void HandleItemSelected(DeliveryListItemDto item)
+    void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"toodangulahetus/{item.DeliveryNoteId}");
+        NavManager.NavigateTo($"toodangulahetus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
 }

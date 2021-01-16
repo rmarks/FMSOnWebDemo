@@ -72,8 +72,7 @@
     {
         options.CurrentPage = currentPage;
 
-        string relativeUri = "";
-        NavManager.SetQueryStringFromParameters(options, out relativeUri);
+        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
         NavManager.NavigateTo(relativeUri);
     }
 
@@ -83,7 +82,7 @@
         StateHasChanged();
     }
 
-    private void HandleItemSelected(DeliveryListItemDto item)
+    void HandleItemSelected(DeliveryListItemDto item)
     {
         NavManager.NavigateTo($"toodangutarne/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }

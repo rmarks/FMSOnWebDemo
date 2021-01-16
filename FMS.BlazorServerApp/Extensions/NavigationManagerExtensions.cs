@@ -57,7 +57,7 @@ namespace FMS.BlazorServerApp.Extensions
             }
         }
 
-        public static void SetQueryStringFromParameters<T>(this NavigationManager navManager, T options, out string newRelativeUri) where T : class
+        public static string GetPathAndQueryStringFromParameters<T>(this NavigationManager navManager, T options) where T : class
         {
             Dictionary<string, StringValues> parameters = new Dictionary<string, StringValues>();
 
@@ -74,7 +74,7 @@ namespace FMS.BlazorServerApp.Extensions
                 }
             }
 
-            newRelativeUri = navManager.ToAbsoluteUri(navManager.Uri).GetComponents(UriComponents.Path, UriFormat.Unescaped);
+            string newRelativeUri = navManager.ToAbsoluteUri(navManager.Uri).GetComponents(UriComponents.Path, UriFormat.Unescaped);
             foreach (var parameter in parameters)
             {
                 foreach (var value in parameter.Value)
@@ -82,6 +82,8 @@ namespace FMS.BlazorServerApp.Extensions
                     newRelativeUri = QueryHelpers.AddQueryString(newRelativeUri, parameter.Key, value);
                 }
             }
+
+            return newRelativeUri;
         }
 
         #region Helpers

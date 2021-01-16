@@ -14,7 +14,7 @@
         <span class="navbar-brand">@GetTitle()</span>
 
         <div class="d-flex ml-auto">
-            <NavLink class="btn btn-primary" href="@returnUrl">Tagasi</NavLink>
+            <NavLink class="btn btn-primary" href="@GetReturnUrl()">Tagasi</NavLink>
         </div>
     </nav>
 
@@ -67,9 +67,9 @@
             @foreach (var line in deliveryNote.Lines)
             {
                 <tr>
-                    <td>@line.ProductCode</td>
+                    <td style="width: 20%">@line.ProductCode</td>
                     <td>@line.ProductName</td>
-                    <td class="text-right">@line.DeliveredQuantity</td>
+                    <td style="width: 15%" class="text-right">@line.DeliveredQuantity</td>
                 </tr>
             }
         </tbody>
@@ -85,7 +85,6 @@
 @code {
     private DeliveryNoteDto deliveryNote = new DeliveryNoteDto();
     private int totalQuantity;
-    private string returnUrl;
 
     [Parameter]
     public int Id { get; set; }
@@ -94,10 +93,6 @@
     {
         deliveryNote = await ServiceProvider.GetService<IDeliveryNoteService>().GetDeliveryNote(Id);
         totalQuantity = deliveryNote.Lines.Sum(l => l.DeliveredQuantity);
-        
-        //NavManager.TryGetQueryString("returnUrl", out returnUrl);
-        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
-        returnUrl = relativePath.Substring(relativePath.ToLower().IndexOf("returnUrl=".ToLower()) + "returnUrl=".Length);
     }
 
     private string GetTitle()
@@ -108,5 +103,21 @@
         title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
 
         return title;
+    }
+
+    private string GetReturnUrl()
+    {
+        //NavManager.TryGetQueryString("returnUrl", out returnUrl);
+
+        string searchString = "returnurl=";
+        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        string returnUrl = string.Empty;
+        if (relativePath.ToLower().Contains(searchString))
+        {
+            returnUrl = relativePath.Substring(relativePath.ToLower().IndexOf(searchString) + searchString.Length);
+        }
+
+        return returnUrl;
     }
 }
