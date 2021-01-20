@@ -1,0 +1,92 @@
+﻿@page "/ladu/{LocationId:int}"
+@inject IServiceProvider ServiceProvider
+@inject NavigationManager NavManager
+
+<div class="sidebar" style="background-color: aliceblue"></div>
+
+<div class="main p-3">
+    @if (PagedInventory?.List == null)
+    {
+        <p class="text-secondary m-2">Loading...</p>
+    }
+    else
+    {
+        <nav class="navbar navbar-dark bg-secondary mb-3">
+            <span class="navbar-brand">Laoseis: @title</span>
+
+            <div class="d-flex ml-auto">
+                <NavLink class="btn btn-primary" href="@GetReturnUrl()">Tagasi</NavLink>
+            </div>
+        </nav>
+
+        <PagedTableControl PagedItems="@PagedInventory" TItem="InventoryListItemDto" Context="inventory"
+                           ItemSelected="@((item) => HandleItemSelected(item))"
+                           PageChanged="@((cp) => HandleOptionsChanged(cp))">
+            <TableHeader>
+                <th>Toote kood</th>
+                <th>Toote nimetus</th>
+                <th style="text-align: right">Laos</th>
+                <th style="text-align: right">Reserv.</th>
+                <th style="text-align: right">Vaba</th>
+            </TableHeader>
+            <RowTemplate>
+                <td style="width: 20%">@inventory.ProductCode</td>
+                <td style="width: 50%">@inventory.ProductName</td>
+                <td style="width: 10%; text-align: right">@inventory.StockQuantity</td>
+                <td style="width: 10%; text-align: right">@inventory.ReservedQuantity</td>
+                <td style="width: 10%; text-align: right">@inventory.FreeQuantity</td>
+            </RowTemplate>
+        </PagedTableControl>
+    }
+</div>
+
+<div class="sidebar" style="background-color: aliceblue"></div>
+
+
+@code {
+    PagedList<InventoryListItemDto> PagedInventory;
+    InventoryListOptions options = new InventoryListOptions { CurrentPage = 1, PageSize = 13, IsInStore = true };
+    string title = string.Empty;
+
+
+    [Parameter]
+    public int LocationId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        options.LocationId = LocationId;
+        UpdateList();
+
+        title = ServiceProvider.GetService<ILocationService>().GetLocationName(LocationId);
+    }
+
+    void UpdateList()
+    {
+        PagedInventory = ServiceProvider.GetService<IInventoryService>().FilterPage(options);
+    }
+
+    string GetReturnUrl()
+    {
+        string searchString = "returnurl=";
+        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        string returnUrl = string.Empty;
+        if (relativePath.ToLower().Contains(searchString))
+        {
+            returnUrl = relativePath.Substring(relativePath.ToLower().IndexOf(searchString) + searchString.Length);
+        }
+
+        return returnUrl;
+    }
+
+    void HandleOptionsChanged(int currentPage)
+    {
+        options.CurrentPage = currentPage;
+        UpdateList();
+    }
+
+    void HandleItemSelected(InventoryListItemDto item)
+    {
+
+    }
+}

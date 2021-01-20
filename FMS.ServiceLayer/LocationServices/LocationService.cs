@@ -15,6 +15,13 @@ namespace FMS.ServiceLayer.LocationServices
             _context = context;
         }
 
+        public string GetLocationName(int locationId)
+        {
+            return _context.Locations
+                .AsNoTracking()
+                .FirstOrDefault(l => l.Id == locationId).Name;
+        }
+
         public PagedList<LocationListItemDto> GetWarehouses(LocationListOptions options)
         {
             return FilterPage(options, "VL");
@@ -29,8 +36,8 @@ namespace FMS.ServiceLayer.LocationServices
                 .OrderBy(l => l.Name)
                 .Select(l => new LocationListItemDto
                 {
-                    Id = l.Id,
-                    Name = l.Name,
+                    LocationId = l.Id,
+                    LocationName = l.Name,
                     TotalCount = l.Inventory.Where(i => i.StockQuantity != 0).Count(),
                     TotalStockQuantity = l.Inventory.Sum(i => i.StockQuantity),
                     TotalReservedQuantity = l.Inventory.Sum(i => i.ReservedQuantity)

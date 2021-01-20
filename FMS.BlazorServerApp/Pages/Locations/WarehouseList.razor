@@ -14,23 +14,6 @@
 
     <h3 class="my-3">@title</h3>
 
-    @*<table class="table table-hover">
-        <thead class="thead-light">
-            <tr><th>Ladu</th><th>Laos kokku</th><th>Reserv. kokku</th><th>Vabu kokku</th></tr>
-        </thead>
-        <tbody>
-            @foreach (var w in warehouses)
-            {
-                <tr>
-                    <td>@w.Name</td>
-                    <td>@w.TotalStockQuantity</td>
-                    <td>@w.TotalReservedQuantity</td>
-                    <td>@(w.TotalStockQuantity - w.TotalReservedQuantity)</td>
-                </tr>
-            }
-        </tbody>
-    </table>*@
-
     <PagedTableControl PagedItems="@pagedWarehouses" TItem="LocationListItemDto" Context="warehouse"
                        ItemSelected="@((item) => HandleItemSelected(item))"
                        PageChanged="@((cp) => HandleOptionsChanged(cp))">
@@ -42,7 +25,7 @@
             <th style="text-align: right">Vabu kokku</th>
         </TableHeader>
         <RowTemplate>
-            <td style="width: 40%">@warehouse.Name</td>
+            <td style="width: 40%">@warehouse.LocationName</td>
             <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(warehouse.TotalCount)</td>
             <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(warehouse.TotalStockQuantity)</td>
             <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(warehouse.TotalReservedQuantity)</td>
@@ -91,7 +74,7 @@
 
     void HandleItemSelected(LocationListItemDto item)
     {
-
+        NavManager.NavigateTo($"ladu/{item.LocationId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
 
     public void Dispose()

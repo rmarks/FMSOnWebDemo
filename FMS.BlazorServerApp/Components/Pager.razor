@@ -37,8 +37,8 @@
 
     protected override void OnParametersSet()
     {
-        StartIndex = Math.Max(Result.CurrentPage - 5, 1);
-        FinishIndex = Math.Min(Result.CurrentPage + 5, Result.PageCount);
+        StartIndex = Math.Max(Result.CurrentPage - 4, 1);
+        FinishIndex = Math.Min(Result.CurrentPage + 4, Result.PageCount);
         base.OnParametersSet();
     }
 
