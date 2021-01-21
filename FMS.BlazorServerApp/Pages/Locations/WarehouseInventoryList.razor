@@ -40,13 +40,24 @@
     }
 </div>
 
-<div class="sidebar" style="background-color: aliceblue"></div>
+<div class="sidebar p-3" style="background-color: aliceblue; width: 40rem;">
+    @if (productId == 0)
+    {
+        <h3 class="text-center text-secondary mt-auto">Toote liikumised</h3>
+        <p class="text-center text-secondary mb-auto">Toote liikumiste vaatamiseks kliki tootel</p>
+    }
+    else
+    {
+        <ProductStockMovementsComponent ProductId="@productId" LocationId="@LocationId" />
+    }
+</div>
 
 
 @code {
     PagedList<InventoryListItemDto> PagedInventory;
     InventoryListOptions options = new InventoryListOptions { CurrentPage = 1, PageSize = 13, IsInStore = true };
     string title = string.Empty;
+    int productId;
 
 
     [Parameter]
@@ -87,6 +98,6 @@
 
     void HandleItemSelected(InventoryListItemDto item)
     {
-
+        productId = item.ProductId;
     }
 }

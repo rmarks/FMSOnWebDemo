@@ -5,12 +5,12 @@
     <UserSecretsId>a4f32596-433f-46aa-9224-77f921ad9f76</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Compile Remove="wwwroot\img\products\**" />
     <Content Remove="wwwroot\img\products\**" />
     <EmbeddedResource Remove="wwwroot\img\products\**" />
     <None Remove="wwwroot\img\products\**" />
-  </ItemGroup>
+  </ItemGroup>-->
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
@@ -32,8 +32,8 @@
     <ProjectReference Include="..\FMS.ServiceLayer\FMS.ServiceLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <Folder Include="wwwroot\img\" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>

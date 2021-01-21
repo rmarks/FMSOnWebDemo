@@ -1,0 +1,52 @@
+﻿@inject IServiceProvider ServiceProvider
+@using System.IO
+
+<div class="card">
+    <img src="@GetImagePath()" class="card-img-top border align-self-center" style="width: 12.5rem; height: 10rem;" />
+    <div class="card-body">
+        <h5 class="card-title text-center">@model.ProductCode</h5>
+        <table class="table table-sm table-striped">
+            <tbody>
+                @foreach (var m in model.Movements)
+                {
+                    <tr>
+                        <td style="width: 15%">@m.DocNo</td>
+                        <td style="width: 20%">@m.DocTypeName</td>
+                        <td style="width: 35%">@m.DocPartyName</td>
+                        <td style="width: 20%">@m.DocDate.ToShortDateString()</td>
+                        <td style="width: 10%; text-align: right">@m.Quantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@code {
+    ProductStockMovementsDto model;
+
+    [Parameter]
+    public int ProductId { get; set; }
+
+    [Parameter]
+    public int LocationId { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        model = ServiceProvider.GetService<IStockMovementsService>().GetProductStockMovements(ProductId, LocationId);
+    }
+
+    string GetImagePath()
+    {
+        //if (model == null) return string.Empty;
+
+        string imageDirectory = $"{Directory.GetCurrentDirectory()}{@"\wwwroot\img\products\small\"}";
+        string relativePath = "/img/products/small/";
+
+        string imageName = $"{model.ProductBaseCode}.jpg";
+        string blankImageName = "BlankImage.png";
+
+        return File.Exists($"{imageDirectory}{imageName}") ? $"{relativePath}{imageName}" : $"{relativePath}{blankImageName}";
+    }
+}

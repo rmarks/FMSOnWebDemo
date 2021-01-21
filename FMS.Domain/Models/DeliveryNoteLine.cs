@@ -8,6 +8,7 @@ namespace FMS.Domain.Models
         public int Id { get; set; }
 
         public int DeliveryNoteId { get; set; }
+        public DeliveryNote DeliveryNote { get; set; }
 
         public int ProductId { get; set; }
         public Product Product { get; set; }

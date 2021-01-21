@@ -17,6 +17,7 @@ namespace FMS.Domain.Models
         public ProductBase ProductBase { get; set; }
 
         public IList<Inventory> Inventory { get; set; }
+        public IList<SalesInvoiceLine> SalesInvoiceLines { get; set; }
 
         //--- legacy system fields ---
         [MaxLength(12)]
