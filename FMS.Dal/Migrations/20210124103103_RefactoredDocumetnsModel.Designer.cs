@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210124103103_RefactoredDocumetnsModel")]
+    partial class RefactoredDocumetnsModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -388,36 +390,22 @@ namespace FMS.Dal.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("DestLocationId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DocumentDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DocumentNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocumentTypeId")
                         .HasColumnType("int");
-
-                    b.Property<string>("FMS_doknr")
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
-                    b.Property<string>("FMS_doktyyp")
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
-
-                    b.Property<string>("FMS_skood")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
                     b.Property<int?>("SourceDocumentId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ToFromLocationId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -435,9 +423,7 @@ namespace FMS.Dal.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("datetime2");
@@ -446,9 +432,7 @@ namespace FMS.Dal.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

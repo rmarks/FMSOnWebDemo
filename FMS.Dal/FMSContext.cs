@@ -50,6 +50,9 @@ namespace FMS.Dal
         public DbSet<DeliveryNote> DeliveryNotes { get; set; }
         public DbSet<DeliveryNoteLine> DeliveryNoteLines { get; set; }
 
+        public DbSet<DocumentType> DocumentTypes { get; set; }
+        public DbSet<Document> Documents { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
