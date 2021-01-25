@@ -15,8 +15,14 @@ namespace FMS.Domain.Models
         public DateTime DocumentDate { get; set; }
         
         public int LocationId { get; set; }
+        public Location Location { get; set; }
+
         public int? ToFromLocationId { get; set; }
+        public Location ToFromLocation { get; set; }
+
         public int? SourceDocumentId { get; set; }
+
+        public bool IsClosed { get; set; }
         public DateTime CreatedOn { get; set; }
 
         //--- legacy system fields ---

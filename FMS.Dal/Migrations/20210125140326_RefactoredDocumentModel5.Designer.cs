@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210125140326_RefactoredDocumentModel5")]
+    partial class RefactoredDocumentModel5
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -426,10 +428,6 @@ namespace FMS.Dal.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DocumentTypeId");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("ToFromLocationId");
 
                     b.ToTable("Documents");
                 });
@@ -1316,21 +1314,7 @@ namespace FMS.Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FMS.Domain.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FMS.Domain.Models.Location", "ToFromLocation")
-                        .WithMany()
-                        .HasForeignKey("ToFromLocationId");
-
                     b.Navigation("DocumentType");
-
-                    b.Navigation("Location");
-
-                    b.Navigation("ToFromLocation");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Inventory", b =>
