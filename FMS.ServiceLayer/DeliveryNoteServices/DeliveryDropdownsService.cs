@@ -16,11 +16,30 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             _context = context;
         }
 
+        public async Task<DeliveryDropdowns> GetWarehouseReceiptDropdowns()
+        {
+            return new DeliveryDropdowns
+            {
+                ToLocations = await GetLocationsByTypeCode("VL"),
+                FromLocationTypes = await GetLocationTypes(),
+                FromLocations = await GetLocations()
+            };
+        }
+
+        public async Task<IDictionary<string, int>> GetLocationsByType(int typeId)
+        {
+            return await _context.Locations
+                .AsNoTracking()
+                .Where(l => l.LocationTypeId == typeId)
+                .OrderBy(l => l.Name)
+                .ToDictionaryAsync(l => l.Name, l => l.Id);
+        }
+
         public async Task<DeliveryDropdowns> GetPurchaseReceiptDropdowns()
         {
             return new DeliveryDropdowns
             {
-                ToLocations = await GetLocationsByType("VL")
+                ToLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
@@ -28,7 +47,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                FromLocations = await GetLocationsByType("VL")
+                FromLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
@@ -36,8 +55,8 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                ToLocations = await GetLocationsByType("VL"),
-                FromLocations = await GetLocationsByType("TO")
+                ToLocations = await GetLocationsByTypeCode("VL"),
+                FromLocations = await GetLocationsByTypeCode("TO")
             };
 
         }
@@ -46,8 +65,8 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                FromLocations = await GetLocationsByType("VL"),
-                ToLocations = await GetLocationsByType("TO")
+                FromLocations = await GetLocationsByTypeCode("VL"),
+                ToLocations = await GetLocationsByTypeCode("TO")
             };
 
         }
@@ -56,7 +75,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                ToLocations = await GetLocationsByType("VL")
+                ToLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
@@ -64,7 +83,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                FromLocations = await GetLocationsByType("VL")
+                FromLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
@@ -72,13 +91,29 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
         {
             return new DeliveryDropdowns
             {
-                ToLocations = await GetLocationsByType("VL"),
-                FromLocations = await GetLocationsByType("VL")
+                ToLocations = await GetLocationsByTypeCode("VL"),
+                FromLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
         #region helpers
-        private async Task<IDictionary<string, int>> GetLocationsByType(string typeCode)
+        private async Task<IDictionary<string, int>> GetLocationTypes()
+        {
+            return await _context.LocationTypes
+                .AsNoTracking()
+                .OrderBy(l => l.Name)
+                .ToDictionaryAsync(l => l.Name, l => l.Id);
+        }
+
+        private async Task<IDictionary<string, int>> GetLocations()
+        {
+            return await _context.Locations
+                .AsNoTracking()
+                .OrderBy(l => l.LocationTypeId).ThenBy(l => l.Name)
+                .ToDictionaryAsync(l => l.Name, l => l.Id);
+        }
+
+        private async Task<IDictionary<string, int>> GetLocationsByTypeCode(string typeCode)
         {
             return await _context.Locations
                 .AsNoTracking()

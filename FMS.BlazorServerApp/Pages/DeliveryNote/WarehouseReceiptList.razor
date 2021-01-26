@@ -1,0 +1,67 @@
+﻿@page "/laovastuvotulehed"
+@inject IServiceProvider ServiceProvider
+
+<div class="sidebar p-4">
+    <h3 class="text-center text-white">Vastuvõtulehed</h3>
+
+    <DeliveryReceiptListFilterComponent Dropdowns="@dropdowns" Options="@options" OptionsChanged="@(() => HandleOptionsChanged())" />
+</div>
+
+<div class="main p-3">
+    @if (pagedReceipts?.List == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <PagedTableControl PagedItems="@pagedReceipts" TItem="LocationDeliveryListItemDto" Context="receipt"
+                           ItemSelected="@((item) => HandleItemSelected(item))"
+                           PageChanged="@((cp) => HandleOptionsChanged(cp))">
+            <TableHeader>
+                <th>Nr.</th>
+                <th>Saaja</th>
+                <th>Saatja</th>
+                <th>Kuupäev</th>
+                <th>Olek</th>
+            </TableHeader>
+            <RowTemplate>
+                <td style="width: 15%">@receipt.DocumentNo</td>
+                <td style="width: 30%">@receipt.ToLocationName</td>
+                <td style="width: 30%">@receipt.FromLocationName</td>
+                <td style="width: 15%">@receipt.DocumentDate.ToShortDateString()</td>
+                <td style="width: 10%">@receipt.StatusName</td>
+            </RowTemplate>
+        </PagedTableControl>
+    }
+</div>
+
+<div class="sidebar"></div>
+
+@code {
+    DeliveryDropdowns dropdowns;
+    PagedList<LocationDeliveryListItemDto> pagedReceipts;
+    DeliveryListOptions options = new DeliveryListOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
+
+    protected override async Task OnInitializedAsync()
+    {
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetWarehouseReceiptDropdowns();
+        UpdateList();
+    }
+
+    void UpdateList()
+    {
+        pagedReceipts = ServiceProvider.GetService<ILocationDeliveryService>().WarehouseReceiptFilterPage(options);
+    }
+
+    void HandleItemSelected(LocationDeliveryListItemDto item)
+    {
+
+    }
+
+    void HandleOptionsChanged(int currentPage = 1)
+    {
+        options.CurrentPage = currentPage;
+
+        UpdateList();
+    }
+}

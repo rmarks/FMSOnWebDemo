@@ -15,13 +15,30 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             _context = context;
         }
 
-        public PagedList<LocationDeliveryListItemDto> ReceiptFilterPage(DeliveryListOptions options)
+        public PagedList<LocationDeliveryListItemDto> WarehouseReceiptFilterPage(DeliveryListOptions options)
         {
             var queryable = _context.Documents
-                .AsNoTracking();
+                .AsNoTracking()
+                .Where(d => d.DocumentType.Code == "VL"); // && d.Location.LocationType.Code == "VL");
 
-            queryable = queryable
-                .Where(d => d.DocumentType.Code == options.DocumentTypeCode && d.Location.LocationType.Code == options.ToLocationTypeCode);
+            if (options.ToLocationId != 0)
+            {
+                queryable = queryable.Where(d => d.LocationId == options.ToLocationId);
+            }
+
+            if (options.FromLocationId != 0)
+            {
+                queryable = queryable.Where(d => d.ToFromLocationId == options.FromLocationId);
+            }
+            else if (options.FromLocationTypeId != 0)
+            {
+                queryable = queryable.Where(d => d.ToFromLocation.LocationTypeId == options.FromLocationTypeId);
+            }
+
+            if (options.IsClosed != null)
+            {
+                queryable = queryable.Where(d => d.IsClosed == options.IsClosed);
+            }
 
             return queryable
                 .OrderByDescending(d => d.DocumentDate)
