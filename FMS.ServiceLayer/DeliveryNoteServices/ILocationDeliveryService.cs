@@ -4,6 +4,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 {
     public interface ILocationDeliveryService
     {
-        PagedList<LocationDeliveryListItemDto> WarehouseReceiptFilterPage(DeliveryListOptions options);
+        PagedList<LocationDeliveryListItemDto> ReceiptFilterPage(DeliveryListOptions options);
+        PagedList<LocationDeliveryListItemDto> ShipmentFilterPage(DeliveryListOptions options);
     }
 }

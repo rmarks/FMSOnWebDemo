@@ -2,8 +2,6 @@
 {
     public class DeliveryListOptions : PagedArgsBase
     {
-        public string DocumentTypeCode { get; set; }
-
         public int ToLocationTypeId { get; set; }
         public int ToLocationId { get; set; }
 

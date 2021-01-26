@@ -7,6 +7,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
     public interface IDeliveryDropdownsService
     {
         Task<DeliveryDropdowns> GetWarehouseReceiptDropdowns();
+        Task<DeliveryDropdowns> GetWarehouseShipmentDropdowns();
 
         Task<IDictionary<string, int>> GetLocationsByType(int typeId);
 

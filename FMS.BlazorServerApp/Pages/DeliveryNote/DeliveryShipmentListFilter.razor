@@ -1,0 +1,70 @@
+﻿@inject IServiceProvider ServiceProvider
+
+<div>
+    @if (Options == null || Dropdowns == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <div class="form-group mt-4">
+            <h6 class="text-white">Saatja</h6>
+            <SelectControl class="form-control" Title="Kõik saatjad" Values="@Dropdowns.FromLocations"
+                           @bind-Value="@Options.FromLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+
+        <div class="form-group mt-4">
+            <h6 class="text-white">Saaja</h6>
+            <SelectControl class="form-control mb-2" Title="Kõik saaja tüübid" Values="@Dropdowns.ToLocationTypes"
+                           @bind-Value="@Options.ToLocationTypeId" OnChangeCallback="@(() => HandleToLocationTypesChanged())" />
+
+            <SelectControl class="form-control" Title="Kõik saajad" Values="@toLocationsByType"
+                           @bind-Value="@Options.ToLocationId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+
+        <div class="form-group mt-4">
+            <h6 class="text-white">Olek</h6>
+            <DocumentStatusSelectControl class="form-control" @bind-Value="@Options.IsClosed"
+                                         OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+    }
+</div>
+
+@code {
+    IDictionary<string, int> toLocationsByType = new Dictionary<string, int>();
+
+    [Parameter]
+    public DeliveryDropdowns Dropdowns { get; set; }
+
+    [Parameter]
+    public DeliveryListOptions Options { get; set; }
+
+    [Parameter]
+    public EventCallback OptionsChanged { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await SetToLocationsByType();
+    }
+
+    async Task SetToLocationsByType()
+    {
+        toLocationsByType = Options.ToLocationTypeId == 0
+        ? new Dictionary<string, int>()
+        : await ServiceProvider.GetService<IDeliveryDropdownsService>().GetLocationsByType(Options.ToLocationTypeId);
+    }
+
+    void HandleOptionsChanged()
+    {
+        OptionsChanged.InvokeAsync();
+    }
+
+    async Task HandleToLocationTypesChanged()
+    {
+        Options.ToLocationId = 0;
+
+        await SetToLocationsByType();
+
+        HandleOptionsChanged();
+    }
+}

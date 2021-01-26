@@ -1,35 +1,35 @@
-﻿@page "/laovastuvotulehed"
+﻿@page "/laosaatelehed"
 @inject IServiceProvider ServiceProvider
 
 <div class="sidebar p-4">
-    <h3 class="text-center text-white">Vastuvõtulehed</h3>
+    <h3 class="text-center text-white">Saatelehed</h3>
 
-    <DeliveryReceiptListFilter Dropdowns="@dropdowns" Options="@options" OptionsChanged="@(() => HandleOptionsChanged())" />
+    <DeliveryShipmentListFilter Dropdowns="@dropdowns" Options="@options" OptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
 <div class="main p-3">
-    @if (pagedReceipts?.List == null)
+    @if (pagedShipments?.List == null)
     {
         <p class="text-secondary">Loading...</p>
     }
     else
     {
-        <PagedTableControl PagedItems="@pagedReceipts" TItem="LocationDeliveryListItemDto" Context="receipt"
+        <PagedTableControl PagedItems="@pagedShipments" TItem="LocationDeliveryListItemDto" Context="shipment"
                            ItemSelected="@((item) => HandleItemSelected(item))"
                            PageChanged="@((cp) => HandleOptionsChanged(cp))">
             <TableHeader>
                 <th>Nr.</th>
-                <th>Saaja</th>
                 <th>Saatja</th>
+                <th>Saaja</th>
                 <th>Kuupäev</th>
                 <th>Olek</th>
             </TableHeader>
             <RowTemplate>
-                <td style="width: 15%">@receipt.DocumentNo</td>
-                <td style="width: 30%">@receipt.ToLocationName</td>
-                <td style="width: 30%">@receipt.FromLocationName</td>
-                <td style="width: 15%">@receipt.DocumentDate.ToShortDateString()</td>
-                <td style="width: 10%">@receipt.StatusName</td>
+                <td style="width: 15%">@shipment.DocumentNo</td>
+                <td style="width: 30%">@shipment.FromLocationName</td>
+                <td style="width: 30%">@shipment.ToLocationName</td>
+                <td style="width: 15%">@shipment.DocumentDate.ToShortDateString()</td>
+                <td style="width: 10%">@shipment.StatusName</td>
             </RowTemplate>
         </PagedTableControl>
     }
@@ -39,18 +39,18 @@
 
 @code {
     DeliveryDropdowns dropdowns;
-    PagedList<LocationDeliveryListItemDto> pagedReceipts;
+    PagedList<LocationDeliveryListItemDto> pagedShipments;
     DeliveryListOptions options = new DeliveryListOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetWarehouseReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetWarehouseShipmentDropdowns();
         UpdateList();
     }
 
     void UpdateList()
     {
-        pagedReceipts = ServiceProvider.GetService<ILocationDeliveryService>().ReceiptFilterPage(options);
+        pagedShipments = ServiceProvider.GetService<ILocationDeliveryService>().ShipmentFilterPage(options);
     }
 
     void HandleItemSelected(LocationDeliveryListItemDto item)

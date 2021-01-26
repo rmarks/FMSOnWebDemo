@@ -26,6 +26,16 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             };
         }
 
+        public async Task<DeliveryDropdowns> GetWarehouseShipmentDropdowns()
+        {
+            return new DeliveryDropdowns
+            {
+                FromLocations = await GetLocationsByTypeCode("VL"),
+                ToLocationTypes = await GetLocationTypes(),
+                ToLocations = await GetLocations()
+            };
+        }
+
         public async Task<IDictionary<string, int>> GetLocationsByType(int typeId)
         {
             return await _context.Locations
