@@ -52,6 +52,7 @@ namespace FMS.Dal
 
         public DbSet<DocumentType> DocumentTypes { get; set; }
         public DbSet<Document> Documents { get; set; }
+        public DbSet<DocumentLine> DocumentLines { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,6 +64,12 @@ namespace FMS.Dal
                 .HasOne<ProductBaseProductVariantType>()
                 .WithMany("ProductBaseProductVariants")
                 .HasForeignKey(pv => new { pv.ProductBaseId, pv.ProductVariantTypeId });
+
+            modelBuilder.Entity<Document>()
+                .HasOne<Location>(d => d.Location)
+                .WithMany()
+                .HasForeignKey(d => d.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

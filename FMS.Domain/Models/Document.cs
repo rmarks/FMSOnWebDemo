@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FMS.Domain.Models
@@ -24,6 +25,9 @@ namespace FMS.Domain.Models
 
         public bool IsClosed { get; set; }
         public DateTime CreatedOn { get; set; }
+
+        public List<DocumentLine> DocumentLines { get; set; }
+
 
         //--- legacy system fields ---
         [MaxLength(2)]

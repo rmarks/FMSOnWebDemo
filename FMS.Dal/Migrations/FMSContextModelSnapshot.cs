@@ -4,16 +4,14 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    [Migration("20210124172829_RefactoredDocumentsModel3")]
-    partial class RefactoredDocumentsModel3
+    partial class FMSContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -413,10 +411,13 @@ namespace FMS.Dal.Migrations
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ToFromDocumentId")
+                    b.Property<int?>("SourceDocumentId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ToFromLocationId")
@@ -426,7 +427,44 @@ namespace FMS.Dal.Migrations
 
                     b.HasIndex("DocumentTypeId");
 
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ToFromLocationId");
+
                     b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.DocumentLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("DocumentLines");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.DocumentType", b =>
@@ -1311,7 +1349,48 @@ namespace FMS.Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FMS.Domain.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Domain.Models.Location", "ToFromLocation")
+                        .WithMany()
+                        .HasForeignKey("ToFromLocationId");
+
                     b.Navigation("DocumentType");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("ToFromLocation");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.DocumentLine", b =>
+                {
+                    b.HasOne("FMS.Domain.Models.Document", "Document")
+                        .WithMany("DocumentLines")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Domain.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Inventory", b =>
@@ -1601,6 +1680,11 @@ namespace FMS.Dal.Migrations
             modelBuilder.Entity("FMS.Domain.Models.DeliveryNote", b =>
                 {
                     b.Navigation("DeliveryNoteLines");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.Document", b =>
+                {
+                    b.Navigation("DocumentLines");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Location", b =>

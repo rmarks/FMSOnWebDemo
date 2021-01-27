@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    [Migration("20210125151152_AddedIndexesToDocumentModel")]
-    partial class AddedIndexesToDocumentModel
+    [Migration("20210127110601_ChangedConstraintLocationIdInDocumentModel")]
+    partial class ChangedConstraintLocationIdInDocumentModel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -434,6 +434,39 @@ namespace FMS.Dal.Migrations
                     b.HasIndex("ToFromLocationId");
 
                     b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.DocumentLine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DocumentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("DocumentLines");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.DocumentType", b =>
@@ -1321,7 +1354,7 @@ namespace FMS.Dal.Migrations
                     b.HasOne("FMS.Domain.Models.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("FMS.Domain.Models.Location", "ToFromLocation")
@@ -1333,6 +1366,33 @@ namespace FMS.Dal.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("ToFromLocation");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.DocumentLine", b =>
+                {
+                    b.HasOne("FMS.Domain.Models.Document", "Document")
+                        .WithMany("DocumentLines")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Domain.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FMS.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Inventory", b =>
@@ -1622,6 +1682,11 @@ namespace FMS.Dal.Migrations
             modelBuilder.Entity("FMS.Domain.Models.DeliveryNote", b =>
                 {
                     b.Navigation("DeliveryNoteLines");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.Document", b =>
+                {
+                    b.Navigation("DocumentLines");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Location", b =>
