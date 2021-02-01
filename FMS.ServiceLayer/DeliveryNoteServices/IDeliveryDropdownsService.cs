@@ -11,15 +11,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
         Task<IDictionary<string, int>> GetLocationsByType(int typeId);
 
-        Task<DeliveryDropdowns> GetOutsourcingReceiptDropdowns();
-        Task<DeliveryDropdowns> GetOutsourcingShipmentDropdowns();
-
-        Task<DeliveryDropdowns> GetProductionReceiptDropdowns();
-        Task<DeliveryDropdowns> GetProductionShipmentDropdowns();
-
-        Task<DeliveryDropdowns> GetPurchaseReceiptDropdowns();
-        Task<DeliveryDropdowns> GetPurchaseShipmentDropdowns();
-
-        Task<DeliveryDropdowns> GetBetweenWarehousesDropdowns();
+        Task<DeliveryDropdowns> GetOneSideReceiptDropdowns();
+        Task<DeliveryDropdowns> GetOneSideShipmentDropdowns();
     }
 }

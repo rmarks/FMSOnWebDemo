@@ -1,11 +1,9 @@
-﻿@page "/ostutarne/{id:int}"
-@page "/ostulahetus/{id:int}"
-@page "/toodangutarne/{id:int}"
-@page "/toodangulahetus/{id:int}"
+﻿@page "/vastuvotuleht/{id:int}"
+@page "/saateleht/{id:int}"
+@page "/ostutarne/{id:int}"
+@page "/ostutagastus/{id:int}"
 @page "/allhanketarne/{id:int}"
-@page "/allhankelahetus/{id:int}"
-@page "/ladudevahelinetarne/{id:int}"
-@page "/ladudevahelinelahetus/{id:int}"
+@page "/allhanketagastus/{id:int}"
 
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
@@ -37,18 +35,24 @@
                 </div>
             </div>
             <div class="col m-3">
-                <div class="form-group row">
-                    <label class="col-2 col-form-label">Saaja</label>
-                    <div class="col-10">
-                        <input class="form-control" value="@deliveryNote.ToLocationName" disabled>
+                @if (!string.IsNullOrEmpty(deliveryNote.ToLocationName))
+                {
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Saaja</label>
+                        <div class="col-10">
+                            <input class="form-control" value="@deliveryNote.ToLocationName" disabled>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-2 col-form-label">Saatja</label>
-                    <div class="col-10">
-                        <input class="form-control" value="@deliveryNote.FromLocationName" disabled>
+                }
+                @if (!string.IsNullOrEmpty(deliveryNote.FromLocationName))
+                {
+                    <div class="form-group row">
+                        <label class="col-2 col-form-label">Saatja</label>
+                        <div class="col-10">
+                            <input class="form-control" value="@deliveryNote.FromLocationName" disabled>
+                        </div>
                     </div>
-                </div>
+                }
             </div>
             <div class="col-3 m-3">
                 <div class="form-group form-check text-right">
@@ -96,7 +100,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        deliveryNote = await ServiceProvider.GetService<IDeliveryNoteService>().GetDeliveryNote(Id);
+        //deliveryNote = await ServiceProvider.GetService<IDeliveryNoteService>().GetDeliveryNote(Id);
+        deliveryNote = await ServiceProvider.GetService<IDeliveryNoteService>().GetDeliveryNoteDocument(Id);
         totalQuantity = deliveryNote.Lines.Sum(l => l.DeliveredQuantity);
     }
 
@@ -105,7 +110,8 @@
         string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
 
         string title = relativePath.Substring(0, relativePath.IndexOf('/'));
-        title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
+        //title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
+        title = char.ToUpper(title.First()) + title.Substring(1).Replace("votu", "võtu");
 
         return title;
     }

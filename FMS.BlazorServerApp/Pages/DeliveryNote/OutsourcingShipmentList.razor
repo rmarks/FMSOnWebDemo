@@ -1,4 +1,4 @@
-﻿@page "/allhankelahetused"
+﻿@page "/allhanketagastused"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 @implements IDisposable
@@ -48,11 +48,11 @@
     private PagedList<DeliveryListItemDto> pagedItems;
     private DeliveryDropdowns dropdowns;
     private DeliveryListOptions options = new DeliveryListOptions { PageSize = 13 };
-    private string title = "Allhanketagastuse lähetused";
+    private string title = "Allhanke tagastused";
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOutsourcingShipmentDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOneSideShipmentDropdowns();
         UpdateList();
 
         NavManager.LocationChanged += HandleLocationChanged;
@@ -80,7 +80,7 @@
 
     private void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"allhankelahetus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        NavManager.NavigateTo($"allhanketagastus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
 
     public void Dispose()

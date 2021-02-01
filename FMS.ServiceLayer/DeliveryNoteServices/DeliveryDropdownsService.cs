@@ -45,7 +45,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
                 .ToDictionaryAsync(l => l.Name, l => l.Id);
         }
 
-        public async Task<DeliveryDropdowns> GetPurchaseReceiptDropdowns()
+        public async Task<DeliveryDropdowns> GetOneSideReceiptDropdowns()
         {
             return new DeliveryDropdowns
             {
@@ -53,55 +53,10 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             };
         }
 
-        public async Task<DeliveryDropdowns> GetPurchaseShipmentDropdowns()
+        public async Task<DeliveryDropdowns> GetOneSideShipmentDropdowns()
         {
             return new DeliveryDropdowns
             {
-                FromLocations = await GetLocationsByTypeCode("VL")
-            };
-        }
-
-        public async Task<DeliveryDropdowns> GetProductionReceiptDropdowns()
-        {
-            return new DeliveryDropdowns
-            {
-                ToLocations = await GetLocationsByTypeCode("VL"),
-                FromLocations = await GetLocationsByTypeCode("TO")
-            };
-
-        }
-
-        public async Task<DeliveryDropdowns> GetProductionShipmentDropdowns()
-        {
-            return new DeliveryDropdowns
-            {
-                FromLocations = await GetLocationsByTypeCode("VL"),
-                ToLocations = await GetLocationsByTypeCode("TO")
-            };
-
-        }
-
-        public async Task<DeliveryDropdowns> GetOutsourcingReceiptDropdowns()
-        {
-            return new DeliveryDropdowns
-            {
-                ToLocations = await GetLocationsByTypeCode("VL")
-            };
-        }
-
-        public async Task<DeliveryDropdowns> GetOutsourcingShipmentDropdowns()
-        {
-            return new DeliveryDropdowns
-            {
-                FromLocations = await GetLocationsByTypeCode("VL")
-            };
-        }
-
-        public async Task<DeliveryDropdowns> GetBetweenWarehousesDropdowns()
-        {
-            return new DeliveryDropdowns
-            {
-                ToLocations = await GetLocationsByTypeCode("VL"),
                 FromLocations = await GetLocationsByTypeCode("VL")
             };
         }

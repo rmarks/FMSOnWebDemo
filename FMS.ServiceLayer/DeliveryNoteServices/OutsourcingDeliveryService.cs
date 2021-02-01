@@ -17,14 +17,14 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
         public PagedList<DeliveryListItemDto> ReceiptFilterPage(DeliveryListOptions options)
         {
-            var queryable = _context.DeliveryNotes
+            var queryable = _context.Documents
                 .AsNoTracking();
 
-            queryable = queryable.Where(d => d.DeliveryDomain.Code == "A" && d.ToLocation.LocationType.Code == "VL");
+            queryable = queryable.Where(d => d.DocumentType.Code == "AT");
 
             if (options.ToLocationId != 0)
             {
-                queryable = queryable.Where(d => d.ToLocationId == options.ToLocationId);
+                queryable = queryable.Where(d => d.LocationId == options.ToLocationId);
             }
 
             if (options.IsClosed != null)
@@ -33,14 +33,14 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             }
 
             return queryable
-                .OrderByDescending(d => d.DeliveryDate)
+                .OrderByDescending(d => d.DocumentDate)
                 .Select(d => new DeliveryListItemDto
                 {
                     DeliveryNoteId = d.Id,
-                    DeliveryNo = d.DeliveryNo,
-                    ToLocationName = d.ToLocation.Name,
+                    DeliveryNo = d.DocumentNo,
+                    ToLocationName = d.Location.Name,
                     FromLocationName = "Allhankijad",
-                    DeliveryDate = d.DeliveryDate,
+                    DeliveryDate = d.DocumentDate,
                     StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);
@@ -48,14 +48,14 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
 
         public PagedList<DeliveryListItemDto> ShipmentFilterPage(DeliveryListOptions options)
         {
-            var queryable = _context.DeliveryNotes
+            var queryable = _context.Documents
                 .AsNoTracking();
 
-            queryable = queryable.Where(d => d.DeliveryDomain.Code == "A" && d.FromLocation.LocationType.Code == "VL");
+            queryable = queryable.Where(d => d.DocumentType.Code == "AG");
 
             if (options.FromLocationId != 0)
             {
-                queryable = queryable.Where(d => d.FromLocationId == options.FromLocationId);
+                queryable = queryable.Where(d => d.LocationId == options.FromLocationId);
             }
 
             if (options.IsClosed != null)
@@ -64,14 +64,14 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             }
 
             return queryable
-                .OrderByDescending(d => d.DeliveryDate)
+                .OrderByDescending(d => d.DocumentDate)
                 .Select(d => new DeliveryListItemDto
                 {
                     DeliveryNoteId = d.Id,
-                    DeliveryNo = d.DeliveryNo,
+                    DeliveryNo = d.DocumentNo,
                     ToLocationName = "Allhankijad",
-                    FromLocationName = d.FromLocation.Name,
-                    DeliveryDate = d.DeliveryDate,
+                    FromLocationName = d.Location.Name,
+                    DeliveryDate = d.DocumentDate,
                     StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);

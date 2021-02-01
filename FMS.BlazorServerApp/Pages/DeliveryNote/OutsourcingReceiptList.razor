@@ -53,7 +53,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOutsourcingReceiptDropdowns();
+        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetOneSideReceiptDropdowns();
         UpdateList();
 
         NavManager.LocationChanged += HandleLocationChanged;

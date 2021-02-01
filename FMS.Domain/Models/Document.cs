@@ -38,5 +38,11 @@ namespace FMS.Domain.Models
 
         [MaxLength(6)]
         public string FMS_skood { get; set; }
+
+        [MaxLength(2)]
+        public string FMS_lkoodv { get; set; }
+
+        [MaxLength(2)]
+        public string FMS_lkoods { get; set; }
     }
 }

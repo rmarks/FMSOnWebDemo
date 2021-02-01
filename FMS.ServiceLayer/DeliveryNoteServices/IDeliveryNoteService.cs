@@ -6,5 +6,6 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
     public interface IDeliveryNoteService
     {
         Task<DeliveryNoteDto> GetDeliveryNote(int id);
+        Task<DeliveryNoteDto> GetDeliveryNoteDocument(int id);
     }
 }

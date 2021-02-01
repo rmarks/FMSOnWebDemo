@@ -1,8 +1,9 @@
 ﻿@page "/laosaatelehed"
 @inject IServiceProvider ServiceProvider
+@inject NavigationManager NavManager
 
 <div class="sidebar p-4">
-    <h3 class="text-center text-white">Saatelehed</h3>
+    <h3 class="text-center text-white">@title</h3>
 
     <DeliveryShipmentListFilter Dropdowns="@dropdowns" Options="@options" OptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
@@ -41,27 +42,43 @@
     DeliveryDropdowns dropdowns;
     PagedList<LocationDeliveryListItemDto> pagedShipments;
     DeliveryListOptions options = new DeliveryListOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
+    string title = "Saatelehed";
 
     protected override async Task OnInitializedAsync()
     {
         dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetWarehouseShipmentDropdowns();
         UpdateList();
+
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
     void UpdateList()
     {
+        NavManager.SetParametersFromQueryString(options);
         pagedShipments = ServiceProvider.GetService<ILocationDeliveryService>().ShipmentFilterPage(options);
-    }
-
-    void HandleItemSelected(LocationDeliveryListItemDto item)
-    {
-
     }
 
     void HandleOptionsChanged(int currentPage = 1)
     {
         options.CurrentPage = currentPage;
 
+        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
+        NavManager.NavigateTo(relativeUri);
+    }
+
+    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
         UpdateList();
+        StateHasChanged();
+    }
+
+    void HandleItemSelected(LocationDeliveryListItemDto item)
+    {
+        NavManager.NavigateTo($"saateleht/{item.DocumentId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+    }
+
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
 }
