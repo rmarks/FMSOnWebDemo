@@ -18,5 +18,9 @@ namespace FMS.Domain.Models
         public int Quantity { get; set; }
 
         public DateTime CreatedOn { get; set; }
+
+
+        //--- legacy system fields ---
+        public int FMS_liikumid { get; set; }
     }
 }

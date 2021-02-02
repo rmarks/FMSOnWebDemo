@@ -15,7 +15,7 @@
     <h3 class="my-3">@title</h3>
 
     <PagedTableControl PagedItems="@pagedWarehouses" TItem="LocationListItemDto" Context="warehouse"
-                       ItemSelected="@((item) => HandleItemSelected(item))"
+                       ItemDblclicked="@((item) => HandleItemSelected(item))"
                        PageChanged="@((cp) => HandleOptionsChanged(cp))">
         <TableHeader>
             <th>Ladu</th>

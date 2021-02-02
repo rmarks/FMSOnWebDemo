@@ -20,8 +20,9 @@
         </nav>
 
         <PagedTableControl PagedItems="@PagedInventory" TItem="InventoryListItemDto" Context="inventory"
-                           ItemSelected="@((item) => HandleItemSelected(item))"
-                           PageChanged="@((cp) => HandleOptionsChanged(cp))">
+                           ItemClicked="@((item) => HandleItemSelected(item))"
+                           PageChanged="@((cp) => HandleOptionsChanged(cp))"
+                           style="cursor: pointer;">
             <TableHeader>
                 <th>Toote kood</th>
                 <th>Toote nimetus</th>

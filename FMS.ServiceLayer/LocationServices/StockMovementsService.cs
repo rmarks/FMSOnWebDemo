@@ -25,44 +25,48 @@ namespace FMS.ServiceLayer.LocationServices
                 {
                     ProductId = p.Id,
                     ProductCode = p.Code,
-                    ProductBaseCode = p.ProductBase.Code
+                    ProductBaseCode = p.ProductBase.Code,
+                    ProductName = p.Name
                 })
                 .FirstOrDefault();
 
-            List<StockMovementEntryDto> invoices = _context.SalesInvoiceLines
-                .AsNoTracking()
-                .Where(s => s.ProductId == productId)
-                .OrderByDescending(s => s.SalesInvoice.InvoiceDate)
-                .Select(s => new StockMovementEntryDto
-                {
-                    DocNo = s.SalesInvoice.InvoiceNo,
-                    DocTypeName = "Müügiarve",
-                    DocPartyName = s.SalesInvoice.Customer.Name,
-                    DocDate = s.SalesInvoice.InvoiceDate,
-                    Quantity = -s.InvoicedQuantity
-                })
-                .ToList();
+            //List<StockMovementEntryDto> invoices = _context.SalesInvoiceLines
+            //    .AsNoTracking()
+            //    .Where(s => s.ProductId == productId)
+            //    .OrderByDescending(s => s.SalesInvoice.InvoiceDate)
+            //    .Select(s => new StockMovementEntryDto
+            //    {
+            //        DocNo = s.SalesInvoice.InvoiceNo,
+            //        DocTypeName = "Müügiarve",
+            //        DocPartyName = s.SalesInvoice.Customer.Name,
+            //        DocDate = s.SalesInvoice.InvoiceDate,
+            //        Quantity = -s.InvoicedQuantity
+            //    })
+            //    .ToList();
 
-            List<StockMovementEntryDto> notes = _context.DeliveryNoteLines
+            List<StockMovementEntryDto> notes = _context.DocumentLines
                 .AsNoTracking()
                 .Where(d => d.ProductId == productId)
-                .OrderByDescending(d => d.DeliveryNote.DeliveryDate)
+                .OrderByDescending(d => d.Document.DocumentDate)
                 .Select(d => new StockMovementEntryDto
                 {
-                    DocNo = d.DeliveryNote.DeliveryNo,
-                    DocTypeName = d.DeliveryNote.FromLocationId == locationId ? "Lähetus" : "Tarne",
-                    DocPartyName = d.DeliveryNote.DeliveryDomain.Name,
-                    DocDate = d.DeliveryNote.DeliveryDate,
-                    Quantity = d.DeliveryNote.FromLocationId == locationId ? -d.DeliveredQuantity : d.DeliveredQuantity
+                    DocNo = d.Document.DocumentNo,
+                    DocTypeName = d.Document.DocumentType.Name,
+                    DocPartyName = d.Document.ToFromLocation.Name ?? d.Document.Customer.Name,
+                    DocDate = d.Document.DocumentDate,
+                    Quantity = d.Document.DocumentType.IOL * d.Quantity
                 })
+                .Take(20)
                 .ToList();
 
-            invoices.AddRange(notes);
+            //invoices.AddRange(notes);
 
-            dto.Movements = invoices
-                .OrderByDescending(i => i.DocDate)
-                .Take(10)
-                .ToList();
+            //dto.Movements = invoices
+            //.OrderByDescending(i => i.DocDate)
+            //.Take(10)
+            //.ToList();
+
+            dto.Movements = notes;
 
             return dto;
         }

@@ -1,14 +1,15 @@
 ﻿@typeparam TItem
 
-<table class="table table-hover">
+<table class="table table-hover" style="cursor: default" @attributes="@AdditionalAttributes">
     <thead class="thead-light">
         <tr>@TableHeader</tr>
     </thead>
     <tbody>
         @foreach (var item in PagedItems.List)
         {
-            <tr class="@(item == selectedItem ? "bg-primary text-white" : "")" style="cursor: default"
-                @onclick="@(() => selectedItem = item)" @ondblclick="@(() => ItemSelected.InvokeAsync(item))">
+            <tr class="@(item == selectedItem ? "bg-primary text-white" : "")"
+                @onclick="@(() => { selectedItem = item; ItemClicked.InvokeAsync(item); })"
+                @ondblclick="@(() => ItemDblclicked.InvokeAsync(item))">
                 @RowTemplate(item)
             </tr>
         }

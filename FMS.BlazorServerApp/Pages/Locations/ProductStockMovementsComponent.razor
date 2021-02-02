@@ -2,9 +2,15 @@
 @using System.IO
 
 <div class="card">
-    <img src="@GetImagePath()" class="card-img-top border align-self-center" style="width: 12.5rem; height: 10rem;" />
+    <div class="d-flex flex-row">
+        <img src="@GetImagePath()" class="card-img-top border" style="width: 12.5rem; height: 10rem;" />
+        <div class="p-3">
+            <h5>@model.ProductCode</h5>
+            <h6>@model.ProductName</h6>
+        </div>
+    </div>
     <div class="card-body">
-        <h5 class="card-title text-center">@model.ProductCode</h5>
+        <h5 class="card-title text-center">Liikumised (max 20)</h5>
         <table class="table table-sm table-striped">
             <tbody>
                 @foreach (var m in model.Movements)

@@ -16,7 +16,7 @@
     else
     {
         <PagedTableControl PagedItems="@pagedShipments" TItem="LocationDeliveryListItemDto" Context="shipment"
-                           ItemSelected="@((item) => HandleItemSelected(item))"
+                           ItemDblclicked="@((item) => HandleItemSelected(item))"
                            PageChanged="@((cp) => HandleOptionsChanged(cp))">
             <TableHeader>
                 <th>Nr.</th>

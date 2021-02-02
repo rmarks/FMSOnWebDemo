@@ -1,5 +1,6 @@
 ﻿using FMS.ServiceLayer.Dtos;
 using Microsoft.AspNetCore.Components;
+using System.Collections.Generic;
 
 namespace FMS.BlazorServerApp.Components
 {
@@ -17,9 +18,15 @@ namespace FMS.BlazorServerApp.Components
         public PagedList<TItem> PagedItems { get; set; }
 
         [Parameter]
-        public EventCallback<TItem> ItemSelected { get; set; }
+        public EventCallback<TItem> ItemDblclicked { get; set; }
+
+        [Parameter]
+        public EventCallback<TItem> ItemClicked { get; set; }
 
         [Parameter] 
         public EventCallback<int> PageChanged { get; set; }
+
+        [Parameter(CaptureUnmatchedValues = true)]
+        public IDictionary<string, object> AdditionalAttributes { get; set; }
     }
 }

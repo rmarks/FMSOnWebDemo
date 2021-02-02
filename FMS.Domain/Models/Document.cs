@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FMS.Domain.Models
 {
@@ -23,6 +24,17 @@ namespace FMS.Domain.Models
 
         public int? SourceDocumentId { get; set; }
 
+        public int? CustomerId { get; set; }
+        public Customer Customer { get; set; }
+
+        public int? BillingAddressId { get; set; }
+        [ForeignKey(nameof(BillingAddressId))]
+        public CustomerAddress BillingAddress { get; set; }
+
+        public int? ShippingAddressId { get; set; }
+        [ForeignKey(nameof(ShippingAddressId))]
+        public CustomerAddress ShippingAddress { get; set; }
+
         public bool IsClosed { get; set; }
         public DateTime CreatedOn { get; set; }
 
@@ -44,5 +56,7 @@ namespace FMS.Domain.Models
 
         [MaxLength(2)]
         public string FMS_lkoods { get; set; }
+
+        public int FMS_dokid { get; set; }
     }
 }

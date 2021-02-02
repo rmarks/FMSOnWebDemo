@@ -22,7 +22,7 @@
 
 
             <PagedTableControl PagedItems="@pagedItems" TItem="DeliveryListItemDto" Context="shipment"
-                               ItemSelected="@((item) => HandleItemSelected(item))"
+                               ItemDblclicked="@((item) => HandleItemSelected(item))"
                                PageChanged="@((cp) => HandleOptionsChanged(cp))">
                 <TableHeader>
                     <th>Nr.</th>
