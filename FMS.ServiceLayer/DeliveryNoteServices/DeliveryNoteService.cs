@@ -54,7 +54,7 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
                     ToLocationName = d.DocumentType.IOL == 1 ? d.Location.Name : d.ToFromLocation.Name,
                     FromLocationName = d.DocumentType.IOL == 1 ? d.ToFromLocation.Name : d.Location.Name,
                     IsClosed = d.IsClosed,
-                    Lines = d.DocumentLines.Select(l => new DeliveryNoteLineDto
+                    Lines = d.DocumentLines.OrderBy(l => l.Product.Code).Select(l => new DeliveryNoteLineDto
                     {
                         Id = l.Id,
                         DeliveryNoteId = l.DocumentId,

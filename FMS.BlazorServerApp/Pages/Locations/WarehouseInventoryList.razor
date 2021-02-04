@@ -1,8 +1,12 @@
 ﻿@page "/ladu/{LocationId:int}"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
+@using FMS.BlazorServerApp.Pages.Product
 
-<div class="sidebar" style="background-color: aliceblue"></div>
+<div class="sidebar py-2 px-4" style="background-color: aliceblue">
+    <h6 class="mt-4">Loendi filter</h6>
+    <ProductFilterComponent Options="@options.ProductFilterOptions" OptionsChanged="@(() => HandleOptionsChanged())" />
+</div>
 
 <div class="main p-3">
     @if (PagedInventory?.List == null)
@@ -91,7 +95,7 @@
         return returnUrl;
     }
 
-    void HandleOptionsChanged(int currentPage)
+    void HandleOptionsChanged(int currentPage = 1)
     {
         options.CurrentPage = currentPage;
         UpdateList();

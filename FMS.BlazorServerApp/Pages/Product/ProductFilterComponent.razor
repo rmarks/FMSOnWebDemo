@@ -1,0 +1,97 @@
+﻿@inject IServiceProvider ServiceProvider 
+
+<div>
+    @if (Options == null || dropdowns == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <div class="form-group">
+            <SelectDictControl class="form-control" Title="Kõik olekud" Values="@dropdowns.ProductStatuses"
+                               @bind-Value="@Options.ProductStatusId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+
+        <div class="form-group">
+            <SelectDictControl class="form-control mb-2" Title="Kõik äriliinid" Values="@dropdowns.BusinessLines"
+                               @bind-Value="@Options.BusinessLineId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+
+            <SelectDictControl class="form-control mb-2" Title="Kõik lähtetüübid" Values="@dropdowns.ProductSourceTypes"
+                               @bind-Value="@Options.ProductSourceTypeId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+
+            <SelectDictControl class="form-control" Title="Kõik sihttüübid" Values="@dropdowns.ProductDestinationTypes"
+                               @bind-Value="@Options.ProductDestinationTypeId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+        
+        <div class="form-group">
+            <SelectDictControl class="form-control mb-2" Title="Kõik materjalid" Values="@dropdowns.ProductMaterials"
+                               @bind-Value="@Options.ProductMaterialId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+
+            <SelectDictControl class="form-control mb-2" Title="Kõik tüübid" Values="@dropdowns.ProductTypes"
+                               @bind-Value="@Options.ProductTypeId" OnChangeCallback="@(() => HandleProductTypeChange())" />
+
+            <SelectDictControl class="form-control" Title="Kõik grupid" Values="@dropdowns.ProductGroups"
+                               @bind-Value="@Options.ProductGroupId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+        
+        <div class="form-group">
+            <SelectDictControl class="form-control mb-2" Title="Kõik kaubamärgid" Values="@dropdowns.ProductBrands"
+                               @bind-Value="@Options.ProductBrandId" OnChangeCallback="@(() => HandleProductBrandChange())" />
+
+            <SelectDictControl class="form-control mb-2" Title="Kõik kollektsioonid" Values="@dropdowns.ProductCollections"
+                               @bind-Value="@Options.ProductCollectionId" OnChangeCallback="@(() => HandleProductCollectionChange())" />
+
+            <SelectDictControl class="form-control" Title="Kõik disainid" Values="@dropdowns.ProductDesigns"
+                               @bind-Value="@Options.ProductDesignId" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        </div>
+    }
+</div>
+
+@code {
+    ProductFilterDropdowns dropdowns;
+
+    [Parameter]
+    public ProductFilterOptions Options { get; set; }
+
+    [Parameter]
+    public EventCallback OptionsChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        dropdowns = await ServiceProvider.GetService<IProductDropdownsService>().GetProductFilterDropdowns();
+    }
+
+    #region event handlers
+    async Task HandleOptionsChanged()
+    {
+        await OptionsChanged.InvokeAsync();
+    }
+
+    async Task HandleProductTypeChange()
+    {
+        Options.ProductGroupId = 0;
+        dropdowns.ProductGroups = await ServiceProvider.GetService<IProductDropdownsService>()
+            .GetProductGroupsByType(Options.ProductTypeId);
+
+        await HandleOptionsChanged();
+    }
+
+    async Task HandleProductBrandChange()
+    {
+        Options.ProductCollectionId = 0;
+        dropdowns.ProductCollections = await ServiceProvider.GetService<IProductDropdownsService>()
+            .GetProductCollectionsByBrand(Options.ProductBrandId);
+
+        await HandleOptionsChanged();
+    }
+
+    async Task HandleProductCollectionChange()
+    {
+        Options.ProductDesignId = 0;
+        dropdowns.ProductDesigns = await ServiceProvider.GetService<IProductDropdownsService>()
+            .GetProductDesignsByCollection(Options.ProductCollectionId);
+
+        await HandleOptionsChanged();
+    }
+    #endregion
+}

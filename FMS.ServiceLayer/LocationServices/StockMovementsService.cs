@@ -46,7 +46,7 @@ namespace FMS.ServiceLayer.LocationServices
 
             List<StockMovementEntryDto> notes = _context.DocumentLines
                 .AsNoTracking()
-                .Where(d => d.ProductId == productId)
+                .Where(d => d.ProductId == productId && d.LocationId == locationId)
                 .OrderByDescending(d => d.Document.DocumentDate)
                 .Select(d => new StockMovementEntryDto
                 {
