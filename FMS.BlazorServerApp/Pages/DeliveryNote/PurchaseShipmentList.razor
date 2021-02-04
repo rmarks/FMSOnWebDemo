@@ -1,4 +1,4 @@
-﻿@page "/ostutagastused"
+﻿@page "/ostulahetused"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
 @implements IDisposable
@@ -49,7 +49,7 @@
     private PagedList<DeliveryListItemDto> pagedItems;
     private DeliveryDropdowns dropdowns;
     private DeliveryListOptions options = new DeliveryListOptions { PageSize = 13 };
-    private string title = "Ostutagastused";
+    private string title = "Ostulähetused";
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,7 +81,7 @@
 
     private void HandleItemSelected(DeliveryListItemDto item)
     {
-        NavManager.NavigateTo($"ostutagastus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        NavManager.NavigateTo($"ostulahetus/{item.DeliveryNoteId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
 
     public void Dispose()

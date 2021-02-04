@@ -1,9 +1,9 @@
 ﻿@page "/vastuvotuleht/{id:int}"
 @page "/saateleht/{id:int}"
 @page "/ostutarne/{id:int}"
-@page "/ostutagastus/{id:int}"
+@page "/ostulahetus/{id:int}"
 @page "/allhanketarne/{id:int}"
-@page "/allhanketagastus/{id:int}"
+@page "/allhankelahetus/{id:int}"
 
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
@@ -110,8 +110,8 @@
         string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
 
         string title = relativePath.Substring(0, relativePath.IndexOf('/'));
-        //title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
-        title = char.ToUpper(title.First()) + title.Substring(1).Replace("votu", "võtu");
+        title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
+        //title = char.ToUpper(title.First()) + title.Substring(1).Replace("votu", "võtu");
 
         return title;
     }
