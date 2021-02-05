@@ -1,75 +1,88 @@
 ﻿@page "/tellimused"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
+@implements IDisposable
 
-<div class="sidebar py-2 px-4">
-    <h3 class="text-center text-white mb-5">Müügitellimused</h3>
+<div class="sidebar p-4">
+    <h3 class="text-center text-white">Müügitellimused</h3>
+
+    <SalesOrderListFilter Options="options" OnOptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
 <div class="main p-3">
-    <table class="table table-hover">
-        <thead class="thead-light">
-            <tr>
-                <th>Tell. nr.</th>
+    @if (pagedOrders?.List == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <PagedTableControl PagedItems="@pagedOrders" TItem="SalesOrderListItemDto" Context="order"
+                           ItemDblclicked="@((item) => HandleItemSelected(item))"
+                           PageChanged="@((cp) => HandleOptionsChanged(cp))">
+            <TableHeader>
+                <th>Nr.</th>
                 <th>Klient</th>
                 <th>Saaja</th>
                 <th>Kuupäev</th>
                 <th>Tarneaeg</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var order in pagedSalesOrders.List)
-            {
-                <tr class="@(order == selectedItem ? "bg-primary text-white" : "")" @onclick="@(() => selectedItem = order)"
-                    @ondblclick="@(() => NavManager.NavigateTo($"/tellimus/{order.OrderId}"))"
-                    style="cursor: default;">
-                    <td>@order.OrderNo</td>
-                    <td>@order.CustomerName</td>
-                    <td>@order.ConsigneeName</td>
-                    <td>@order.OrderDate.ToShortDateString()</td>
-                    <td>@(order.DeliveryDate?.ToShortDateString() ?? String.Empty)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <div class="row">
-        <div class="col">
-            <NavLink class="btn btn-primary" href="/tellimus/uus">Uus tellimus</NavLink>
-        </div>
-        <div class="col-auto">
-            <Pager Result="pagedSalesOrders" PageChanged="PagerPageChanged" />
-        </div>
-        <div class="col text-right">
-            <p class="text-muted">Tellimusi: @pagedSalesOrders.ItemsCount</p>
-        </div>
-    </div>
+                <th>Olek</th>
+            </TableHeader>
+            <RowTemplate>
+                <td style="width: 10%">@order.OrderNo</td>
+                <td style="width: 30%">@order.CustomerName</td>
+                <td style="width: 30%">@order.ConsigneeName</td>
+                <td style="width: 10%">@order.OrderDate.ToShortDateString()</td>
+                <td style="width: 10%">@(order.DeliveryDate?.ToShortDateString() ?? String.Empty)</td>
+                <td style="width: 10%">@order.StatusName</td>
+            </RowTemplate>
+        </PagedTableControl>
+    }
 </div>
 
 @code {
-    private PagedList<SalesOrderListItemDto> pagedSalesOrders;
-    private SalesOrderListItemDto selectedItem;
-
-    public SalesOrderListOptions Options { get; set; } = new SalesOrderListOptions { PageSize = 15, CurrentPage = 1 };
+    PagedList<SalesOrderListItemDto> pagedOrders;
+    SalesOrderListOptions options = new SalesOrderListOptions { PageSize = 14, CurrentPage = 1, IsClosed = false };
 
     protected override void OnInitialized()
     {
         UpdateList();
+
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
     #region helpers
     private void UpdateList()
     {
-        pagedSalesOrders = ServiceProvider.GetService<ISalesOrderListService>().FilterPage(Options);
+        NavManager.SetParametersFromQueryString(options);
+        pagedOrders = ServiceProvider.GetService<ISalesOrderListService>().FilterPage(options);
     }
     #endregion
 
     #region event handlers
-    private void PagerPageChanged(int currentPage)
+    void HandleOptionsChanged(int currentPage = 1)
     {
-        Options.CurrentPage = currentPage;
+        options.CurrentPage = currentPage;
+
+        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
+        NavManager.NavigateTo(relativeUri);
+    }
+
+    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
         UpdateList();
         StateHasChanged();
+    }
+
+    void HandleItemSelected(SalesOrderListItemDto item)
+    {
+        NavManager.NavigateTo($"/tellimus/{item.OrderId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+    }
+    #endregion
+
+    #region IDisposable
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
     #endregion
 }

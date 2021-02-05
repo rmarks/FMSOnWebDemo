@@ -10,5 +10,6 @@ namespace FMS.ServiceLayer.Dtos
         public DateTime? DeliveryDate { get; set; }
         public string CustomerName { get; set; }
         public string ConsigneeName { get; set; }
+        public string StatusName { get; set; }
     }
 }

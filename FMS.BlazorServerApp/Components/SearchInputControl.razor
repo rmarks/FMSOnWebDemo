@@ -1,0 +1,38 @@
+﻿<div class="input-group">
+    <input class="form-control" type="search" placeholder="@PlaceHolder" value="@SearchString" 
+           @onchange="@((e) => SearchString = e.Value.ToString())" @onkeyup="HandleKeyPress" />
+    <div class="input-group-btn">
+        <button class="btn btn-dark" @onclick="HandleSearch">
+            <i class="oi oi-magnifying-glass" title="search" />
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string PlaceHolder { get; set; }
+
+    [Parameter]
+    public string SearchString { get; set; }
+
+    [Parameter]
+    public EventCallback<string> SearchStringChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnSearchCallback { get; set; }
+
+    void HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            HandleSearch();
+        }
+    }
+
+    void HandleSearch()
+    {
+        SearchStringChanged.InvokeAsync(SearchString);
+
+        OnSearchCallback.InvokeAsync();
+    }
+}

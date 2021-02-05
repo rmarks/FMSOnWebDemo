@@ -19,8 +19,23 @@ namespace FMS.ServiceLayer.SalesOrderServices
         {
             var queryable = _context.SalesOrders
                 .AsNoTracking();
-            
-            queryable = queryable.Where(s => !s.IsClosed);
+
+            if (!string.IsNullOrWhiteSpace(options.CustomerNameSearchString))
+            {
+                queryable = queryable.Where(s => s.Customer.Name.Contains(options.CustomerNameSearchString));
+            }
+
+            if (!string.IsNullOrWhiteSpace(options.ConsigneeNameSearchString))
+            {
+                queryable = queryable.Where(s => s.ShippingAddress.IsBilling
+                    ? s.Customer.Name.Contains(options.ConsigneeNameSearchString)
+                    : s.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
+            }
+
+            if (options.IsClosed != null)
+            {
+                queryable = queryable.Where(s => s.IsClosed == options.IsClosed);
+            }
 
             return queryable
                 .OrderByDescending(s => s.OrderNo)
@@ -31,7 +46,8 @@ namespace FMS.ServiceLayer.SalesOrderServices
                     OrderDate = s.OrderDate,
                     DeliveryDate = s.OrderDeliveryDate,
                     CustomerName = s.Customer.Name,
-                    ConsigneeName = s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.Description
+                    ConsigneeName = s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.Description,
+                    StatusName = s.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);
         }

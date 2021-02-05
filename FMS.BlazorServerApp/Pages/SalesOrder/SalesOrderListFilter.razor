@@ -1,0 +1,39 @@
+﻿<div>
+    @if (Options == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <div class="form-group mt-4">
+            <h6 class="text-white">Klient</h6>
+            <SearchInputControl @bind-SearchString="Options.CustomerNameSearchString" PlaceHolder="Kliendi nimi"
+                                OnSearchCallback="HandleOptionsChanged" />
+        </div>
+
+        <div class="form-group mt-4">
+            <h6 class="text-white">Saaja</h6>
+            <SearchInputControl @bind-SearchString="Options.ConsigneeNameSearchString" PlaceHolder="Saaja nimi"
+                                OnSearchCallback="HandleOptionsChanged" />
+        </div>
+
+        <div class="form-group mt-4">
+            <h6 class="text-white">Olek</h6>
+            <DocumentStatusSelectControl class="form-control" @bind-Value="@Options.IsClosed"
+                                         OnChangeCallback="HandleOptionsChanged" />
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public SalesOrderListOptions Options { get; set; }
+
+    [Parameter]
+    public EventCallback OnOptionsChanged { get; set; }
+
+    void HandleOptionsChanged()
+    {
+        OnOptionsChanged.InvokeAsync(Options);
+    }
+}
