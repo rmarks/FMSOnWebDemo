@@ -17,37 +17,38 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
 
         public PagedList<SalesInvoiceListItemDto> FilterPage(SalesInvoiceListOptions options)
         {
-            var queryable = _context.SalesInvoices
-                .AsNoTracking();
+            var queryable = _context.Documents
+                .AsNoTracking()
+                .Where(d => d.DocumentType.Code == options.DocumentTypeCode);
 
-            if (!string.IsNullOrWhiteSpace(options.SearchByCustomerName))
+            if (!string.IsNullOrWhiteSpace(options.CustomerNameSearchString))
             {
-                queryable = queryable.Where(c => c.Customer.Name.ToLower().Contains(options.SearchByCustomerName.ToLower()));
+                queryable = queryable.Where(d => d.Customer.Name.Contains(options.CustomerNameSearchString));
             }
 
-            if (!string.IsNullOrWhiteSpace(options.SearchByConsigneeName))
+            if (!string.IsNullOrWhiteSpace(options.ConsigneeNameSearchString))
             {
-                queryable = queryable.Where(c => c.ShippingAddress.Description.ToLower().Contains(options.SearchByConsigneeName.ToLower()));
+                //queryable = queryable.Where(d => d.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
+                queryable = queryable.Where(d => d.ShippingAddress.IsBilling 
+                    ? d.Customer.Name.Contains(options.ConsigneeNameSearchString)
+                    : d.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
             }
 
-            if (options.InvoiceStatus == InvoiceStatus.Open)
+            if (options.IsClosed != null)
             {
-                queryable = queryable.Where(s => !s.IsClosed);
-            }
-            else if (options.InvoiceStatus == InvoiceStatus.Closed)
-            {
-                queryable = queryable.Where(s => s.IsClosed);
+                queryable = queryable.Where(d => d.IsClosed == options.IsClosed);
             }
 
             return queryable
-                .OrderByDescending(s => s.InvoiceNo)
-                .Select(s => new SalesInvoiceListItemDto
+                .OrderByDescending(d => d.DocumentNo)
+                .Select(d => new SalesInvoiceListItemDto
                 {
-                    InvoiceId = s.Id,
-                    InvoiceNo = s.InvoiceNo,
-                    InvoiceDate = s.InvoiceDate,
-                    CustomerName = s.Customer.Name,
-                    ConsigneeName = s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.Description
+                    InvoiceId = d.Id,
+                    InvoiceNo = d.DocumentNo,
+                    InvoiceDate = d.DocumentDate,
+                    CustomerName = d.Customer.Name,
+                    ConsigneeName = d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.Description,
+                    StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);
         }

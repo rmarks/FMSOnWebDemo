@@ -8,8 +8,9 @@
     else
     {
         <div class="form-group">
+            <h6 class="text-white mt-4">Klient</h6>
             <div class="input-group">
-                <input class="form-control" type="search" placeholder="Kliendi nimi" @bind="Options.SearchByCustomerName" @onkeyup="SearchKeyPress" />
+                <input class="form-control" type="search" placeholder="Kliendi nimi" @bind="Options.CustomerNameSearchString" @onkeyup="SearchKeyPress" />
                 <div class="input-group-btn">
                     <button class="btn btn-dark" @onclick="SearchClick">
                         <i class="oi oi-magnifying-glass" title="search" />
@@ -18,9 +19,10 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group mt-4">
+            <h6 class="text-white">Saaja</h6>
             <div class="input-group">
-                <input class="form-control" type="search" placeholder="Saaja nimi" @bind="Options.SearchByConsigneeName" @onkeyup="SearchKeyPress" />
+                <input class="form-control" type="search" placeholder="Saaja nimi" @bind="Options.ConsigneeNameSearchString" @onkeyup="SearchKeyPress" />
                 <div class="input-group-btn">
                     <button class="btn btn-dark" @onclick="SearchClick">
                         <i class="oi oi-magnifying-glass" title="search" />
@@ -29,20 +31,10 @@
             </div>
         </div>
 
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="Status" id="radio1"
-                   value="@InvoiceStatus.All" @onchange="StatusSelectionChanged" checked="@(Options.InvoiceStatus == InvoiceStatus.All)" />
-            <label class="form-check-label text-white" for="radio1">Kõik olekud</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="Status" id="radio2"
-                   value="@InvoiceStatus.Open" @onchange="StatusSelectionChanged" checked="@(Options.InvoiceStatus == InvoiceStatus.Open)" />
-            <label class="form-check-label text-white" for="radio2">Avatud</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="Status" id="radio3"
-                   value="@InvoiceStatus.Closed" @onchange="StatusSelectionChanged" checked="@(Options.InvoiceStatus == InvoiceStatus.Closed)" />
-            <label class="form-check-label text-white" for="radio3">Suletud</label>
+        <div class="form-group mt-4">
+            <h6 class="text-white">Olek</h6>
+            <DocumentStatusSelectControl class="form-control" @bind-Value="@Options.IsClosed"
+                                         OnChangeCallback="@(() => HandleOptionsChanged())" />
         </div>
     }
 </div>
@@ -63,12 +55,11 @@
 
     private void SearchClick()
     {
-        OptionsChanged.InvokeAsync();
+        HandleOptionsChanged();
     }
 
-    private void StatusSelectionChanged(ChangeEventArgs e)
+    void HandleOptionsChanged()
     {
-        Options.InvoiceStatus = (InvoiceStatus)Enum.Parse(typeof(InvoiceStatus), e.Value.ToString());
         OptionsChanged.InvokeAsync();
     }
     #endregion

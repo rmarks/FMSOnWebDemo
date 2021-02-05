@@ -1,12 +1,13 @@
 ﻿@page "/arved"
+@page "/kreeditarved"
 @inject IServiceProvider ServiceProvider
 @inject NavigationManager NavManager
+@implements IDisposable 
 
-<div class="sidebar py-2 px-4">
-    <h3 class="text-center text-white mb-5">Müügiarved</h3>
+<div class="sidebar p-4">
+    <h3 class="text-center text-white">@title</h3>
 
-    <h6 class="text-white mt-5">Loendi filter</h6>
-    <SalesInvoiceListFilter Options="@Options" OptionsChanged="OnOptionsChanged" />
+    <SalesInvoiceListFilter Options="@Options" OptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
     <div class="main p-3">
@@ -17,6 +18,7 @@
                     <th>Klient</th>
                     <th>Saaja</th>
                     <th>Kuupäev</th>
+                    <th>Olek</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,10 +27,11 @@
                     <tr class="@(invoice == selectedItem ? "bg-primary text-white" : "")" @onclick="@(() => selectedItem = invoice)"
                         @ondblclick="@(() => NavManager.NavigateTo($"/arve/{invoice.InvoiceId}"))"
                         style="cursor: default;">
-                        <td>@invoice.InvoiceNo</td>
-                        <td>@invoice.CustomerName</td>
-                        <td>@invoice.ConsigneeName</td>
-                        <td>@invoice.InvoiceDate.ToShortDateString()</td>
+                        <td style="width: 15%">@invoice.InvoiceNo</td>
+                        <td style="width: 30%">@invoice.CustomerName</td>
+                        <td style="width: 30%">@invoice.ConsigneeName</td>
+                        <td style="width: 15%">@invoice.InvoiceDate.ToShortDateString()</td>
+                        <td style="width: 10%">@invoice.StatusName</td>
                     </tr>
                 }
             </tbody>
@@ -39,7 +42,7 @@
                 <NavLink class="btn btn-primary" href="/arve/uus">Uus arve</NavLink>
             </div>
             <div class="col-auto">
-                <Pager Result="pagedSalesInvoices" PageChanged="PagerPageChanged" />
+                <Pager Result="pagedSalesInvoices" PageChanged="HandleOptionsChanged" />
             </div>
             <div class="col text-right">
                 <p class="text-muted">Tellimusi: @pagedSalesInvoices.ItemsCount</p>
@@ -51,26 +54,56 @@
 @code {
     private PagedList<SalesInvoiceListItemDto> pagedSalesInvoices;
     private SalesInvoiceListItemDto selectedItem;
+    string title = string.Empty;
 
-    public SalesInvoiceListOptions Options { get; set; } = new SalesInvoiceListOptions { PageSize = 15, CurrentPage = 1, InvoiceStatus = InvoiceStatus.Open };
+    public SalesInvoiceListOptions Options { get; set; } = new SalesInvoiceListOptions { PageSize = 14, CurrentPage = 1, IsClosed = false };
 
     protected override void OnInitialized()
     {
+        SetDocumentTypeCodeAndTitle();
+
         UpdateList();
+
+        NavManager.LocationChanged += HandleLocationChanged;
     }
 
     #region helpers
     private void UpdateList()
     {
+        NavManager.SetParametersFromQueryString(Options);
         pagedSalesInvoices = ServiceProvider.GetService<ISalesInvoiceListService>().FilterPage(Options);
+    }
+
+    void SetDocumentTypeCodeAndTitle()
+    {
+        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        if (relativePath.ToLower().Contains("kreeditarved"))
+        {
+            Options.DocumentTypeCode =  "MK";
+            title = "Kreedit-arved";
+        }
+        else
+        {
+            Options.DocumentTypeCode = "MA";
+            title = "Müügiarved";
+        }
     }
     #endregion
 
     #region event handlers
-    private void OnOptionsChanged()
+    void HandleOptionsChanged(int currentPage = 1)
     {
-        Options.CurrentPage = 1;
+        Options.CurrentPage = currentPage;
+        //UpdateList();
+        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(Options);
+        NavManager.NavigateTo(relativeUri);
+    }
+
+    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
         UpdateList();
+        StateHasChanged();
     }
 
     private void PagerPageChanged(int currentPage)
@@ -78,6 +111,13 @@
         Options.CurrentPage = currentPage;
         UpdateList();
         StateHasChanged();
+    }
+    #endregion
+
+    #region IDisposable
+    public void Dispose()
+    {
+        NavManager.LocationChanged -= HandleLocationChanged;
     }
     #endregion
 }

@@ -1,4 +1,6 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+﻿@inject NavigationManager NavManager 
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">FMS</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
         <span class="navbar-toggler-icon"></span>
@@ -15,8 +17,10 @@
                         <a class="dropdown-item" href="tellimused">Müügitellimused</a>
                         <a class="dropdown-item disabled">Müügitagastused</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="arved">Müügiarved</a>
-                        <a class="dropdown-item disabled">Kreedit-arved</a>
+                        <a class="dropdown-item" href="arved" 
+                           @onclick="@(() => NavManager.NavigateTo("arved", true))">Müügiarved</a>
+                        <a class="dropdown-item" href="kreeditarved" 
+                           @onclick="@(() => NavManager.NavigateTo("kreeditarved", true))">Kreedit-arved</a>
                     </div>
                 </div>
             </li>

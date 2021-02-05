@@ -9,5 +9,6 @@ namespace FMS.ServiceLayer.Dtos
         public DateTime InvoiceDate { get; set; }
         public string CustomerName { get; set; }
         public string ConsigneeName { get; set; }
+        public string StatusName { get; set; }
     }
 }
