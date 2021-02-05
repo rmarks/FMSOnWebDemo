@@ -10,50 +10,37 @@
     <SalesInvoiceListFilter Options="@Options" OptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
-    <div class="main p-3">
-        <table class="table table-hover">
-            <thead class="thead-light">
-                <tr>
-                    <th>Arve nr.</th>
-                    <th>Klient</th>
-                    <th>Saaja</th>
-                    <th>Kuupäev</th>
-                    <th>Olek</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var invoice in pagedSalesInvoices.List)
-                {
-                    <tr class="@(invoice == selectedItem ? "bg-primary text-white" : "")" @onclick="@(() => selectedItem = invoice)"
-                        @ondblclick="@(() => NavManager.NavigateTo($"/arve/{invoice.InvoiceId}"))"
-                        style="cursor: default;">
-                        <td style="width: 15%">@invoice.InvoiceNo</td>
-                        <td style="width: 30%">@invoice.CustomerName</td>
-                        <td style="width: 30%">@invoice.ConsigneeName</td>
-                        <td style="width: 15%">@invoice.InvoiceDate.ToShortDateString()</td>
-                        <td style="width: 10%">@invoice.StatusName</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-        <div class="row">
-            <div class="col">
-                <NavLink class="btn btn-primary" href="/arve/uus">Uus arve</NavLink>
-            </div>
-            <div class="col-auto">
-                <Pager Result="pagedSalesInvoices" PageChanged="HandleOptionsChanged" />
-            </div>
-            <div class="col text-right">
-                <p class="text-muted">Tellimusi: @pagedSalesInvoices.ItemsCount</p>
-            </div>
-        </div>
-    </div>
+<div class="main p-3">
+    @if (pagedInvoices?.List == null)
+    {
+        <p class="text-secondary">Loading...</p>
+    }
+    else
+    {
+        <PagedTableControl PagedItems="@pagedInvoices" TItem="SalesInvoiceListItemDto" Context="invoice"
+                           ItemDblclicked="@((item) => HandleItemSelected(item))"
+                           PageChanged="@((cp) => HandleOptionsChanged(cp))">
+            <TableHeader>
+                <th>Nr.</th>
+                <th>Klient</th>
+                <th>Saaja</th>
+                <th>Kuupäev</th>
+                <th>Olek</th>
+            </TableHeader>
+            <RowTemplate>
+                <td style="width: 15%">@invoice.InvoiceNo</td>
+                <td style="width: 30%">@invoice.CustomerName</td>
+                <td style="width: 30%">@invoice.ConsigneeName</td>
+                <td style="width: 15%">@invoice.InvoiceDate.ToShortDateString()</td>
+                <td style="width: 10%">@invoice.StatusName</td>
+            </RowTemplate>
+        </PagedTableControl>
+    }
+</div>
 
 
 @code {
-    private PagedList<SalesInvoiceListItemDto> pagedSalesInvoices;
-    private SalesInvoiceListItemDto selectedItem;
+    private PagedList<SalesInvoiceListItemDto> pagedInvoices;
     string title = string.Empty;
 
     public SalesInvoiceListOptions Options { get; set; } = new SalesInvoiceListOptions { PageSize = 14, CurrentPage = 1, IsClosed = false };
@@ -71,7 +58,7 @@
     private void UpdateList()
     {
         NavManager.SetParametersFromQueryString(Options);
-        pagedSalesInvoices = ServiceProvider.GetService<ISalesInvoiceListService>().FilterPage(Options);
+        pagedInvoices = ServiceProvider.GetService<ISalesInvoiceListService>().FilterPage(Options);
     }
 
     void SetDocumentTypeCodeAndTitle()
@@ -95,7 +82,7 @@
     void HandleOptionsChanged(int currentPage = 1)
     {
         Options.CurrentPage = currentPage;
-        //UpdateList();
+
         string relativeUri = NavManager.GetPathAndQueryStringFromParameters(Options);
         NavManager.NavigateTo(relativeUri);
     }
@@ -106,11 +93,9 @@
         StateHasChanged();
     }
 
-    private void PagerPageChanged(int currentPage)
+    void HandleItemSelected(SalesInvoiceListItemDto item)
     {
-        Options.CurrentPage = currentPage;
-        UpdateList();
-        StateHasChanged();
+        NavManager.NavigateTo($"/arve/{item.InvoiceId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
     }
     #endregion
 
