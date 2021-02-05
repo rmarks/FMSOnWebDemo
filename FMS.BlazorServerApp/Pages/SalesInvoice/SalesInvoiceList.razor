@@ -7,7 +7,7 @@
 <div class="sidebar p-4">
     <h3 class="text-center text-white">@title</h3>
 
-    <SalesInvoiceListFilter Options="@Options" OptionsChanged="@(() => HandleOptionsChanged())" />
+    <SalesInvoiceListFilter Options="@Options" OnOptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
 <div class="main p-3">

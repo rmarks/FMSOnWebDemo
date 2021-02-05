@@ -9,26 +9,14 @@
     {
         <div class="form-group mt-4">
             <h6 class="text-white">Klient</h6>
-            <div class="input-group">
-                <input class="form-control" type="search" placeholder="Kliendi nimi" @bind="Options.CustomerNameSearchString" @onkeyup="SearchKeyPress" />
-                <div class="input-group-btn">
-                    <button class="btn btn-dark" @onclick="SearchClick">
-                        <i class="oi oi-magnifying-glass" title="search" />
-                    </button>
-                </div>
-            </div>
+            <SearchInputControl @bind-SearchString="Options.CustomerNameSearchString" PlaceHolder="Kliendi nimi"
+                                OnSearchCallback="HandleOptionsChanged" />
         </div>
 
         <div class="form-group mt-4">
             <h6 class="text-white">Saaja</h6>
-            <div class="input-group">
-                <input class="form-control" type="search" placeholder="Saaja nimi" @bind="Options.ConsigneeNameSearchString" @onkeyup="SearchKeyPress" />
-                <div class="input-group-btn">
-                    <button class="btn btn-dark" @onclick="SearchClick">
-                        <i class="oi oi-magnifying-glass" title="search" />
-                    </button>
-                </div>
-            </div>
+            <SearchInputControl @bind-SearchString="Options.ConsigneeNameSearchString" PlaceHolder="Saaja nimi"
+                                OnSearchCallback="HandleOptionsChanged" />
         </div>
 
         <div class="form-group mt-4">
@@ -42,25 +30,10 @@
 @code {
     [Parameter] public SalesInvoiceListOptions Options { get; set; }
 
-    [Parameter] public EventCallback OptionsChanged { get; set; }
-
-    #region event handler
-    private void SearchKeyPress(KeyboardEventArgs e)
-    {
-        if (e.Key == "Enter")
-        {
-            SearchClick();
-        }
-    }
-
-    private void SearchClick()
-    {
-        HandleOptionsChanged();
-    }
+    [Parameter] public EventCallback OnOptionsChanged { get; set; }
 
     void HandleOptionsChanged()
     {
-        OptionsChanged.InvokeAsync();
+        OnOptionsChanged.InvokeAsync();
     }
-    #endregion
 }
