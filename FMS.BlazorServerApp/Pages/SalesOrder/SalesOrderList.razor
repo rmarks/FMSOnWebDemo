@@ -1,23 +1,21 @@
 ﻿@page "/tellimused"
-@inject IServiceProvider ServiceProvider
-@inject NavigationManager NavManager
-@implements IDisposable
+@inherits PagedListComponentBase<SalesOrderListItemDto, SalesOrderListOptions>
 
 <div class="sidebar p-4">
     <h3 class="text-center text-white">Müügitellimused</h3>
 
-    <SalesOrderListFilter Options="options" OnOptionsChanged="@(() => HandleOptionsChanged())" />
+    <SalesOrderListFilter Options="Options" OnOptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
 <div class="main p-3">
-    @if (pagedOrders?.List == null)
+    @if (PagedList?.List == null)
     {
         <p class="text-secondary">Loading...</p>
     }
     else
     {
-        <PagedTableControl PagedItems="@pagedOrders" TItem="SalesOrderListItemDto" Context="order"
-                           ItemDblclicked="@((item) => HandleItemSelected(item))"
+        <PagedTableControl PagedItems="@PagedList" TItem="SalesOrderListItemDto" Context="order"
+                           ItemDblclicked="@((item) => HandleItemSelected($"tellimus/{item.OrderId}"))"
                            PageChanged="@((cp) => HandleOptionsChanged(cp))">
             <TableHeader>
                 <th>Nr.</th>
@@ -40,49 +38,11 @@
 </div>
 
 @code {
-    PagedList<SalesOrderListItemDto> pagedOrders;
-    SalesOrderListOptions options = new SalesOrderListOptions { PageSize = 14, CurrentPage = 1, IsClosed = false };
-
     protected override void OnInitialized()
     {
-        UpdateList();
+        Options = new SalesOrderListOptions { PageSize = 14, CurrentPage = 1, IsClosed = false };
+        GetPagedList = (p) => ServiceProvider.GetService<ISalesOrderListService>().FilterPage(p);
 
-        NavManager.LocationChanged += HandleLocationChanged;
+        base.OnInitialized();
     }
-
-    #region helpers
-    private void UpdateList()
-    {
-        NavManager.SetParametersFromQueryString(options);
-        pagedOrders = ServiceProvider.GetService<ISalesOrderListService>().FilterPage(options);
-    }
-    #endregion
-
-    #region event handlers
-    void HandleOptionsChanged(int currentPage = 1)
-    {
-        options.CurrentPage = currentPage;
-
-        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
-        NavManager.NavigateTo(relativeUri);
-    }
-
-    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        UpdateList();
-        StateHasChanged();
-    }
-
-    void HandleItemSelected(SalesOrderListItemDto item)
-    {
-        NavManager.NavigateTo($"/tellimus/{item.OrderId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
-    }
-    #endregion
-
-    #region IDisposable
-    public void Dispose()
-    {
-        NavManager.LocationChanged -= HandleLocationChanged;
-    }
-    #endregion
 }
