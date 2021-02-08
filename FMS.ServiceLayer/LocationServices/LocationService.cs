@@ -27,6 +27,11 @@ namespace FMS.ServiceLayer.LocationServices
             return FilterPage(options, "VL");
         }
 
+        public PagedList<LocationListItemDto> GetCommissionWarehouses(LocationListOptions options)
+        {
+            return FilterPage(options, "KL");
+        }
+
         #region helpers
         private PagedList<LocationListItemDto> FilterPage(LocationListOptions options, string locationTypeCode)
         {

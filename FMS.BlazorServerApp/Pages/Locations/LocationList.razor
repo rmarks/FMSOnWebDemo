@@ -1,0 +1,63 @@
+﻿@page "/valmiskaubalaod"
+@page "/komisjonilaod"
+@inject NavigationManager NavManager
+@inherits PagedListComponentBase<LocationListItemDto, LocationListOptions>
+
+<div class="main">
+    @if (PagedList == null)
+    {
+        <p class="m-2">Loading...</p>
+    }
+    else
+    {
+<div class="container">
+
+    <h3 class="my-3">@title</h3>
+
+    <PagedTableControl PagedItems="@PagedList" TItem="LocationListItemDto" Context="location"
+                       ItemDblclicked="@((item) => HandleItemSelected($"ladu/{item.LocationId}"))"
+                       PageChanged="@((cp) => HandleOptionsChanged(cp))">
+        <TableHeader>
+            <th>Ladu</th>
+            <th style="text-align: right">Tooteid</th>
+            <th style="text-align: right">Laos kokku</th>
+            <th style="text-align: right">Reserv. kokku</th>
+            <th style="text-align: right">Vabu kokku</th>
+        </TableHeader>
+        <RowTemplate>
+            <td style="width: 40%">@location.LocationName</td>
+            <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(location.TotalCount)</td>
+            <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(location.TotalStockQuantity)</td>
+            <td style="width: 15%; text-align: right">@ParseSpaceInsteadOfZero(location.TotalReservedQuantity)</td>
+            <td style="width: 15%; text-align: right">@(ParseSpaceInsteadOfZero(location.TotalStockQuantity - location.TotalReservedQuantity))</td>
+        </RowTemplate>
+    </PagedTableControl>
+
+</div>
+    }
+</div>
+
+
+@code {
+    string title = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        Options = new LocationListOptions { CurrentPage = 1, PageSize = 13 };
+
+        if (NavManager.Uri.ToLower().Contains("valmiskaubalaod"))
+        {
+            title = "Valmiskaubalaod";
+            GetPagedList = (p) => ServiceProvider.GetService<ILocationService>().GetWarehouses(p);
+        }
+        else
+        {
+            title = "Komisjonilaod";
+            GetPagedList = (p) => ServiceProvider.GetService<ILocationService>().GetCommissionWarehouses(p);
+        }
+
+        base.OnInitialized();
+    }
+
+    string ParseSpaceInsteadOfZero(int someInt) => someInt > 0 ? someInt.ToString() : "";
+}
