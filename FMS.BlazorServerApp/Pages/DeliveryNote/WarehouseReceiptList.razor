@@ -1,23 +1,21 @@
 ﻿@page "/laovastuvotulehed"
-@inject IServiceProvider ServiceProvider
-@inject NavigationManager NavManager
-@implements IDisposable
+@inherits PagedListComponentBase<LocationDeliveryListItemDto, DeliveryListOptions> 
 
 <div class="sidebar p-4">
     <h3 class="text-center text-white">@title</h3>
 
-    <DeliveryReceiptListFilter Dropdowns="@dropdowns" Options="@options" OptionsChanged="@(() => HandleOptionsChanged())" />
+    <DeliveryReceiptListFilter Options="@Options" OptionsChanged="@(() => HandleOptionsChanged())" />
 </div>
 
 <div class="main p-3">
-    @if (pagedReceipts?.List == null)
+    @if (PagedList?.List == null)
     {
         <p class="text-secondary">Loading...</p>
     }
     else
     {
-        <PagedTableControl PagedItems="@pagedReceipts" TItem="LocationDeliveryListItemDto" Context="receipt"
-                           ItemDblclicked="@((item) => HandleItemSelected(item))"
+        <PagedTableControl PagedItems="@PagedList" TItem="LocationDeliveryListItemDto" Context="receipt"
+                           ItemDblclicked="@((item) => HandleItemSelected($"vastuvotuleht/{item.DocumentId}"))"
                            PageChanged="@((cp) => HandleOptionsChanged(cp))">
             <TableHeader>
                 <th>Nr.</th>
@@ -40,46 +38,13 @@
 <div class="sidebar"></div>
 
 @code {
-    DeliveryDropdowns dropdowns;
-    PagedList<LocationDeliveryListItemDto> pagedReceipts;
-    DeliveryListOptions options = new DeliveryListOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
     string title = "Vastuvõtulehed";
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        dropdowns = await ServiceProvider.GetService<IDeliveryDropdownsService>().GetWarehouseReceiptDropdowns();
-        UpdateList();
+        Options = new DeliveryListOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
+        GetPagedList = (p) => ServiceProvider.GetService<ILocationDeliveryService>().ReceiptFilterPage(p);
 
-        NavManager.LocationChanged += HandleLocationChanged;
-    }
-
-    void UpdateList()
-    {
-        NavManager.SetParametersFromQueryString(options);
-        pagedReceipts = ServiceProvider.GetService<ILocationDeliveryService>().ReceiptFilterPage(options);
-    }
-
-    void HandleOptionsChanged(int currentPage = 1)
-    {
-        options.CurrentPage = currentPage;
-
-        string relativeUri = NavManager.GetPathAndQueryStringFromParameters(options);
-        NavManager.NavigateTo(relativeUri);
-    }
-
-    void HandleLocationChanged(object sender, LocationChangedEventArgs e)
-    {
-        UpdateList();
-        StateHasChanged();
-    }
-
-    void HandleItemSelected(LocationDeliveryListItemDto item)
-    {
-        NavManager.NavigateTo($"vastuvotuleht/{item.DocumentId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
-    }
-
-    public void Dispose()
-    {
-        NavManager.LocationChanged -= HandleLocationChanged;
+        base.OnInitialized();
     }
 }
