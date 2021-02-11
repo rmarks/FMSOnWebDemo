@@ -111,7 +111,7 @@
 
         string title = relativePath.Substring(0, relativePath.IndexOf('/'));
         title = char.ToUpper(title.First()) + title.Substring(1).Replace("lahetus", "lähetus");
-        //title = char.ToUpper(title.First()) + title.Substring(1).Replace("votu", "võtu");
+        title = char.ToUpper(title.First()) + title.Substring(1).Replace("votu", "võtu");
 
         return title;
     }

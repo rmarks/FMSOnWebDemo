@@ -1,5 +1,4 @@
 ﻿using FMS.Dal;
-using FMS.Domain.Models;
 using FMS.ServiceLayer.Dtos;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -18,19 +17,19 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
 
         public async Task<SalesInvoiceDto> GetInvoice(int id)
         {
-            return await _context.SalesInvoices
+            return await _context.Documents
                 .AsNoTracking()
-                .Where(s => s.Id == id)
-                .Select(s => new SalesInvoiceDto
+                .Where(d => d.Id == id)
+                .Select(d => new SalesInvoiceDto
                 {
-                    SalesInvoiceId = s.Id,
-                    InvoiceNo = s.InvoiceNo,
-                    InvoiceDate = s.InvoiceDate,
-                    CustomerId = s.CustomerId,
-                    CustomerName = s.Customer.Name,
-                    CustomerAddress = $"{s.BillingAddress.Country.Name}\n{s.BillingAddress.City}, {s.BillingAddress.PostCode}\n{s.BillingAddress.Address}",
-                    ConsigneeName = $"{(s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.Description)}",
-                    ConsigneeAddress = $"{s.ShippingAddress.Country.Name}\n{s.ShippingAddress.City}, {s.ShippingAddress.PostCode}\n{s.ShippingAddress.Address}"
+                    SalesInvoiceId = d.Id,
+                    InvoiceNo = d.DocumentNo,
+                    InvoiceDate = d.DocumentDate,
+                    CustomerId = d.CustomerId,
+                    CustomerName = d.Customer.Name,
+                    CustomerAddress = $"{d.BillingAddress.Country.Name}\n{d.BillingAddress.City}, {d.BillingAddress.PostCode}\n{d.BillingAddress.Address}",
+                    ConsigneeName = $"{(d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.Description)}",
+                    ConsigneeAddress = $"{d.ShippingAddress.Country.Name}\n{d.ShippingAddress.City}, {d.ShippingAddress.PostCode}\n{d.ShippingAddress.Address}"
                 })
                 .FirstOrDefaultAsync();
         }

@@ -1,10 +1,211 @@
-﻿@page "/tellimus/{id:int}" 
+﻿@page "/tellimus/{id:int}"
+@inject NavigationManager NavManager
+@inject IServiceProvider ServiceProvider 
 
-<div class="main">
-    <h3 class="text-center">Müügitellimus id: @Id</h3>
+<div class="d-flex flex-column vw-100 px-3">
+    @*<nav class="navbar navbar-dark bg-secondary mb-3">*@
+    <nav class="navbar navbar-light border-bottom">
+        <span class="navbar-brand font-weight-bold">@title</span>
+
+        <div class="d-flex ml-auto">
+            <NavLink class="btn btn-primary" href="@GetReturnUrl()">Tagasi</NavLink>
+        </div>
+    </nav>
+
+    <div class="row my-3 mx-0">
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Tellimuse nr.</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.OrderNo" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Kuupäev</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.OrderDate.ToShortDateString()" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Tarneaeg</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.DeliveryDate?.ToShortDateString()" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Klient</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.CustomerName" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Kliendi aadress</label>
+                <div class="col-8">
+                    <textarea class="form-control" value="@order.CustomerAddress" disabled
+                              style="height: 87px" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Saaja</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.ConsigneeName" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Saaja aadress</label>
+                <div class="col-8">
+                    <textarea class="form-control" value="@order.ConsigneeAddress" disabled
+                              style="height: 87px" />
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Maksetingimus</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.DeliveryTermName" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Makseaeg</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.PaymentDays" disabled>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Soodustus</label>
+                <div class="col-8">
+                    <input class="form-control" value="@order.FixedDiscountPercent" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ScrollableTableControl Items="@order.SalesOrderLines" Context="item" CSSClass="flex-grow-1">
+        <TableHeader>
+            <th>Kood</th>
+            <th>Nimetus</th>
+            <th class="text-right">Hind</th>
+            <th class="text-right">Ale%</th>
+            <th class="text-right">Tellitud</th>
+            <th class="text-right">Tarnitud</th>
+            <th class="text-right">Reserv.</th>
+            <th class="text-right">Puudu</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@item.ProductCode</td>
+            <td>@item.ProductName</td>
+            <td class="text-right">@item.UnitPrice</td>
+            <td class="text-right">@item.LineDiscountPercent</td>
+            <td class="text-right">@item.OrderedQuantity</td>
+            <td class="text-right">@item.InvoicedQuantity</td>
+            <td class="text-right text-primary">@item.ReservedQuantity</td>
+            <td class="text-right">@item.MissingQuantity</td>
+        </RowTemplate>
+        <TableFooter>
+            <th colspan="4" class="text-right">Kogused kokku:</th>
+            <th class="text-right">@totalOrderedQuantity</th>
+            <th class="text-right">@totalInvoicedQuantity</th>
+            <th class="text-right text-primary">@totalReservedQuantity</th>
+            <th class="text-right">@totalMissingQuantity</th>
+        </TableFooter>
+    </ScrollableTableControl>
+
+    <div class="row my-3 mx-0 py-2 bg-secondary">
+        <div class="col">
+            <div class="form-inline justify-content-center">
+                <label class="font-weight-bold text-white">Kokku:</label>
+                <input class="form-control mx-2 text-right font-weight-bold w-25" value="@orderedSum" disabled />
+                <input class="form-control text-right font-weight-bold w-25 text-primary" value="@reservedSum" disabled />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-inline justify-content-center">
+                <label class="font-weight-bold text-white">Kokku alega:</label>
+                <input class="form-control mx-2 text-right font-weight-bold w-25" value="@orderedSumWithDiscount" disabled />
+                <input class="form-control text-right font-weight-bold w-25 text-primary" value="@reservedSumWithDiscount" disabled />
+            </div>
+        </div>
+        <div class="col">
+            <div class="form-inline justify-content-center">
+                <label class="font-weight-bold text-white">Kokku km.-ga:</label>
+                <input class="form-control mx-2 text-right font-weight-bold w-25" value="@orderedSumWithVAT" disabled />
+                <input class="form-control text-right font-weight-bold w-25 text-primary" value="@reservedSumWithVAT" disabled />
+            </div>
+        </div>
+    </div>
 </div>
 
 
 @code {
+    string title = "Müügitellimus";
+    SalesOrderDto order = new SalesOrderDto();
+    int VATPercent = 20; // hiljem mudelisse (order) panna!!!
+
+    #region total fields
+    int totalOrderedQuantity;
+    int totalInvoicedQuantity;
+    int totalReservedQuantity;
+    int totalMissingQuantity;
+    decimal orderedSum;
+    decimal orderedSumWithDiscount;
+    decimal orderedSumWithVAT;
+    decimal invoicedSum;
+    decimal invoicedSumWithDiscount;
+    decimal invoicedSumWithVAT;
+    decimal reservedSum;
+    decimal reservedSumWithDiscount;
+    decimal reservedSumWithVAT;
+    #endregion
+
     [Parameter] public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await ServiceProvider.GetService<ISalesOrderService>().GetOrder(Id);
+        SetTotals();
+    }
+
+    #region helpers
+    void SetTotals()
+    {
+        totalOrderedQuantity = order.SalesOrderLines.Sum(l => l.OrderedQuantity);
+        totalInvoicedQuantity = order.SalesOrderLines.Sum(l => l.InvoicedQuantity);
+        totalReservedQuantity = order.SalesOrderLines.Sum(l => l.ReservedQuantity);
+        totalMissingQuantity = totalOrderedQuantity - totalInvoicedQuantity - totalReservedQuantity;
+
+        orderedSum = order.SalesOrderLines.Sum(l => l.OrderedQuantity * l.UnitPrice);
+        orderedSumWithDiscount = order.SalesOrderLines.Sum(l => l.OrderedQuantity * Math.Round(l.UnitPrice * (1 - l.LineDiscountPercent / 100m), 2));
+        orderedSumWithVAT = orderedSumWithDiscount + Math.Round(orderedSumWithDiscount * VATPercent / 100m, 1);
+
+        invoicedSum = order.SalesOrderLines.Sum(l => l.InvoicedQuantity * l.UnitPrice);
+        invoicedSumWithDiscount = order.SalesOrderLines.Sum(l => l.InvoicedQuantity * Math.Round(l.UnitPrice * (1 - l.LineDiscountPercent / 100m), 2));
+        invoicedSumWithVAT = invoicedSumWithDiscount + Math.Round(invoicedSumWithDiscount * VATPercent / 100m, 1);
+
+        reservedSum = order.SalesOrderLines.Sum(l => l.ReservedQuantity * l.UnitPrice);
+        reservedSumWithDiscount = order.SalesOrderLines.Sum(l => l.ReservedQuantity * Math.Round(l.UnitPrice * (1 - l.LineDiscountPercent / 100m), 2));
+        reservedSumWithVAT = reservedSumWithDiscount + Math.Round(reservedSumWithDiscount * VATPercent / 100m, 1);
+    }
+
+    string GetReturnUrl()
+    {
+        string searchString = "returnurl=";
+        string relativePath = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        string returnUrl = string.Empty;
+        if (relativePath.ToLower().Contains(searchString))
+        {
+            returnUrl = relativePath.Substring(relativePath.ToLower().IndexOf(searchString) + searchString.Length);
+        }
+
+        return returnUrl;
+    }
+    #endregion
 }
