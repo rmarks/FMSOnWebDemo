@@ -22,14 +22,28 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
                 .Where(d => d.Id == id)
                 .Select(d => new SalesInvoiceDto
                 {
-                    SalesInvoiceId = d.Id,
+                    InvoiceId = d.Id,
                     InvoiceNo = d.DocumentNo,
                     InvoiceDate = d.DocumentDate,
-                    CustomerId = d.CustomerId,
                     CustomerName = d.Customer.Name,
                     CustomerAddress = $"{d.BillingAddress.Country.Name}\n{d.BillingAddress.City}, {d.BillingAddress.PostCode}\n{d.BillingAddress.Address}",
                     ConsigneeName = $"{(d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.Description)}",
-                    ConsigneeAddress = $"{d.ShippingAddress.Country.Name}\n{d.ShippingAddress.City}, {d.ShippingAddress.PostCode}\n{d.ShippingAddress.Address}"
+                    ConsigneeAddress = $"{d.ShippingAddress.Country.Name}\n{d.ShippingAddress.City}, {d.ShippingAddress.PostCode}\n{d.ShippingAddress.Address}",
+                    DeliveryTermName = d.DeliveryTermName,
+                    PaymentDays = d.PaymentDays,
+                    FixedDiscountPercent = d.FixedDiscountPercent,
+                    VATPercent = d.VATPercent,
+                    IsClosed = d.IsClosed,
+                    SalesInvoiceLines = d.DocumentLines.Select(l => new SalesInvoiceLineDto
+                    {
+                        Id = l.Id,
+                        ProductCode = l.Product.Code,
+                        ProductName = l.Product.Name,
+                        UnitPrice = l.UnitPrice,
+                        LineDiscountPercent = l.LineDiscountPercent,
+                        Quantity = l.Quantity
+                    })
+                    .ToList()
                 })
                 .FirstOrDefaultAsync();
         }

@@ -95,7 +95,14 @@
 
     void HandleItemSelected(SalesInvoiceListItemDto item)
     {
-        NavManager.NavigateTo($"/arve/{item.InvoiceId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        if (Options.DocumentTypeCode == "MA")
+        {
+            NavManager.NavigateTo($"/arve/{item.InvoiceId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        }
+        else
+        {
+            NavManager.NavigateTo($"/kreeditarve/{item.InvoiceId}?returnUrl={NavManager.ToBaseRelativePath(NavManager.Uri)}");
+        }
     }
     #endregion
 

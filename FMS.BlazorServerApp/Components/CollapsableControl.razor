@@ -1,0 +1,36 @@
+﻿<div class="d-flex @CSSClass">
+    @if (Collapsed)
+    {
+        <button @onclick="@Toggle" class="btn btn-light oi oi-chevron-bottom mr-1" />
+    }
+    else
+    {
+        <button @onclick="@Toggle" class="btn btn-light oi oi-chevron-top mr-1" />
+    }
+
+    @Title
+</div>
+
+@if (!Collapsed)
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter]
+    public bool Collapsed { get; set; } = true;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public RenderFragment Title { get; set; }
+
+    [Parameter]
+    public string CSSClass { get; set; }
+
+    void Toggle()
+    {
+        Collapsed = !Collapsed;
+    }
+}

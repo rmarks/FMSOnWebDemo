@@ -60,13 +60,11 @@ body {
     z-index: 1;
     overflow-y: auto;
     /*height: 400px;*/
-    /*margin: auto;*/
-    margin-bottom: auto;
+    margin: auto;
 }
 
     .table-scroll table {
-        /*margin: auto;*/
-        margin-bottom: auto;
+        margin: auto;
         width: 100%;
         /*border-collapse: separate;*/
         /*border-spacing: 0;*/

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FMS.Domain.Models
 {
@@ -16,6 +17,10 @@ namespace FMS.Domain.Models
         public Product Product { get; set; }
 
         public int Quantity { get; set; }
+
+        [Column(TypeName = "decimal(9,2)")]
+        public decimal UnitPrice { get; set; }
+        public int LineDiscountPercent { get; set; }
 
         public DateTime CreatedOn { get; set; }
 
