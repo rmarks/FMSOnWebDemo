@@ -15,32 +15,6 @@ namespace FMS.ServiceLayer.DeliveryNoteServices
             _context = context;
         }
 
-        public async Task<DeliveryNoteDto> GetDeliveryNote(int id)
-        {
-            return await _context.DeliveryNotes
-                .AsNoTracking()
-                .Where(d => d.Id == id)
-                .Select(d => new DeliveryNoteDto
-                {
-                    Id = d.Id,
-                    DeliveryNo = d.DeliveryNo,
-                    DeliveryDate = d.DeliveryDate,
-                    ToLocationName = d.ToLocation.Name,
-                    FromLocationName = d.FromLocation.Name,
-                    IsClosed = d.IsClosed,
-                    Lines = d.DeliveryNoteLines.Select(l => new DeliveryNoteLineDto
-                    {
-                        Id = l.Id,
-                        DeliveryNoteId = l.DeliveryNoteId,
-                        ProductCode = l.Product.Code,
-                        ProductName = l.Product.Name,
-                        DeliveredQuantity = l.DeliveredQuantity
-                    })
-                    .ToList()
-                })
-                .FirstOrDefaultAsync();
-        }
-
         public async Task<DeliveryNoteDto> GetDeliveryNoteDocument(int id)
         {
             return await _context.Documents

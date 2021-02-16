@@ -42,14 +42,6 @@ namespace FMS.Dal
         public DbSet<SalesOrder> SalesOrders { get; set; }
         public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
 
-        public DbSet<SalesInvoice> SalesInvoices { get; set; }
-        public DbSet<SalesInvoiceLine> SalesInvoiceLines { get; set; }
-
-        public DbSet<DeliveryType> DeliveryTypes { get; set; }
-        public DbSet<DeliveryDomain> DeliveryDomains { get; set; }
-        public DbSet<DeliveryNote> DeliveryNotes { get; set; }
-        public DbSet<DeliveryNoteLine> DeliveryNoteLines { get; set; }
-
         public DbSet<DocumentType> DocumentTypes { get; set; }
         public DbSet<Document> Documents { get; set; }
         public DbSet<DocumentLine> DocumentLines { get; set; }
