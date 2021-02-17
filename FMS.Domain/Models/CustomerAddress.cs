@@ -7,6 +7,12 @@ namespace FMS.Domain.Models
     {
         public int Id { get; set; }
 
+        public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
+
+        [MaxLength(50)]
+        public string ConsigneeName { get; set; }
+
         public int CountryId { get; set; }
         public Country Country { get; set; }
 
@@ -22,15 +28,9 @@ namespace FMS.Domain.Models
         [MaxLength(10)]
         public string PostCode { get; set; }
 
-        [MaxLength(50)]
-        public string Description { get; set; }
-
         public bool IsBilling { get; set; }
 
         public DateTime? CreatedOn { get; set; }
-
-        public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
 
 
         //--- legacy system fields ---

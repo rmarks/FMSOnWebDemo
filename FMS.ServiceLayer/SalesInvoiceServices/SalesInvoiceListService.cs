@@ -31,7 +31,7 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
                 //queryable = queryable.Where(d => d.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
                 queryable = queryable.Where(d => d.ShippingAddress.IsBilling 
                     ? d.Customer.Name.Contains(options.ConsigneeNameSearchString)
-                    : d.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
+                    : d.ShippingAddress.ConsigneeName.Contains(options.ConsigneeNameSearchString));
             }
 
             if (options.IsClosed != null)
@@ -47,7 +47,7 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
                     InvoiceNo = d.DocumentNo,
                     InvoiceDate = d.DocumentDate,
                     CustomerName = d.Customer.Name,
-                    ConsigneeName = d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.Description,
+                    ConsigneeName = d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.ConsigneeName,
                     StatusName = d.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);

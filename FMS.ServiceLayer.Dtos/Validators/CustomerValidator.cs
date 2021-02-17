@@ -56,7 +56,7 @@ namespace FMS.ServiceLayer.Validators
             RuleFor(c => c.Address).NotEmpty().WithMessage(_cantBeEmpty)
                 .MaximumLength(100).WithMessage("Max pikkus 100");
             RuleFor(c => c.PostCode).MaximumLength(10).WithMessage("Max pikkus 10");
-            RuleFor(c => c.Description).MaximumLength(50).WithMessage("Max pikkus 50");
+            RuleFor(c => c.ConsigneeName).MaximumLength(50).WithMessage("Max pikkus 50");
         }
     }
 }

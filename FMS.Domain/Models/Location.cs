@@ -10,11 +10,11 @@ namespace FMS.Domain.Models
         
         [Required, MaxLength(50)]
         public string Name { get; set; }
-        
-        public DateTime? CreatedOn { get; set; }
 
         public int LocationTypeId { get; set; }
         public LocationType LocationType { get; set; }
+
+        public DateTime? CreatedOn { get; set; }
 
         public IList<Inventory> Inventory { get; set; }
 

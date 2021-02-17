@@ -144,7 +144,7 @@
                             @if (IsInViewMode)
                             {
                                 <DataGrid Items="customer.ConsigneeAddresses" class="table" HeaderClass="thead-light">
-                                    <DataGridColumn TRowData="CustomerAddress" Title="Saaja" Expression="c => c.Description" />
+                                    <DataGridColumn TRowData="CustomerAddress" Title="Saaja" Expression="c => c.ConsigneeName" />
                                     <DataGridColumn TRowData="CustomerAddress" Title="Riik" Expression="c => c.Country.Name" />
                                     <DataGridColumn TRowData="CustomerAddress" Title="Maakond" Expression="c => c.County" />
                                     <DataGridColumn TRowData="CustomerAddress" Title="Linn" Expression="c => c.City" />
@@ -156,8 +156,8 @@
                             {
                                 <DataGrid Items="customer.ConsigneeAddresses" class="table" HeaderClass="thead-light">
                                     <DataGridColumn TRowData="CustomerAddress" Title="Saaja" Context="address">
-                                        <InputText class="form-control" @bind-Value="@address.Description" />
-                                        <ValidationMessage For="@(() => address.Description)" />
+                                        <InputText class="form-control" @bind-Value="@address.ConsigneeName" />
+                                        <ValidationMessage For="@(() => address.ConsigneeName)" />
                                     </DataGridColumn>
                                     <DataGridColumn TRowData="CustomerAddress" Title="Riik" Context="address">
                                         <InputSelectInt @bind-Value="address.CountryId" Dict="dropdowns.Countries">

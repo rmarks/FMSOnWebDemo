@@ -27,7 +27,7 @@ namespace FMS.ServiceLayer.SalesInvoiceServices
                     InvoiceDate = d.DocumentDate,
                     CustomerName = d.Customer.Name,
                     CustomerAddress = $"{d.BillingAddress.Country.Name}\n{d.BillingAddress.City}, {d.BillingAddress.PostCode}\n{d.BillingAddress.Address}",
-                    ConsigneeName = $"{(d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.Description)}",
+                    ConsigneeName = $"{(d.ShippingAddress.IsBilling ? d.Customer.Name : d.ShippingAddress.ConsigneeName)}",
                     ConsigneeAddress = $"{d.ShippingAddress.Country.Name}\n{d.ShippingAddress.City}, {d.ShippingAddress.PostCode}\n{d.ShippingAddress.Address}",
                     DeliveryTermName = d.DeliveryTermName,
                     PaymentDays = d.PaymentDays,

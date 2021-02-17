@@ -89,7 +89,7 @@ namespace FMS.ServiceLayer.CustomerServices
                             City = address.City,
                             Address = address.Address,
                             PostCode = address.PostCode,
-                            Description = address.Description
+                            ConsigneeName = address.ConsigneeName
                         };
 
                         existingCustomer.Addresses.Add(newAddress);

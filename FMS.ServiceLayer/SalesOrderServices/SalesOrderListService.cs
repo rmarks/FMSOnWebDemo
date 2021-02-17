@@ -29,7 +29,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
             {
                 queryable = queryable.Where(s => s.ShippingAddress.IsBilling
                     ? s.Customer.Name.Contains(options.ConsigneeNameSearchString)
-                    : s.ShippingAddress.Description.Contains(options.ConsigneeNameSearchString));
+                    : s.ShippingAddress.ConsigneeName.Contains(options.ConsigneeNameSearchString));
             }
 
             if (options.IsClosed != null)
@@ -46,7 +46,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
                     OrderDate = s.OrderDate,
                     DeliveryDate = s.OrderDeliveryDate,
                     CustomerName = s.Customer.Name,
-                    ConsigneeName = s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.Description,
+                    ConsigneeName = s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.ConsigneeName,
                     StatusName = s.IsClosed ? "Suletud" : "Avatud"
                 })
                 .GetPagedList(options.CurrentPage, options.PageSize);
