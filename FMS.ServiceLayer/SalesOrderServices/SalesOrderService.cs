@@ -17,7 +17,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
 
         public async Task<SalesOrderDto> GetOrder(int id)
         {
-            return await _context.SalesOrders
+            return await _context.Orders
                 .AsNoTracking()
                 .Where(s => s.Id == id)
                 .Select(s => new SalesOrderDto
@@ -30,7 +30,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
                     CustomerAddress = $"{s.BillingAddress.Country.Name}\n{s.BillingAddress.City}, {s.BillingAddress.PostCode}\n{s.BillingAddress.Address}",
                     ConsigneeName = $"{(s.ShippingAddress.IsBilling ? s.Customer.Name : s.ShippingAddress.ConsigneeName)}",
                     ConsigneeAddress = $"{s.ShippingAddress.Country.Name}\n{s.ShippingAddress.City}, {s.ShippingAddress.PostCode}\n{s.ShippingAddress.Address}",
-                    DeliveryTermName = s.DeliveryTermName,
+                    DeliveryTermName = s.DeliveryTermText,
                     PaymentDays = s.PaymentDays,
                     FixedDiscountPercent = s.FixedDiscountPercent,
                     VATPercent = s.VATPercent,

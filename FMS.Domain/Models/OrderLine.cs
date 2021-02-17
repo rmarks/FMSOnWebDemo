@@ -1,12 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FMS.Domain.Models
 {
-    public class SalesOrderLine
+    public class OrderLine
     {
         public int Id { get; set; }
 
-        public int SalesOrderId { get; set; }
+        public int OrderId { get; set; }
 
         public int LocationId { get; set; }
         public Location Location { get; set; }
@@ -21,5 +22,11 @@ namespace FMS.Domain.Models
         public int OrderedQuantity { get; set; }
         public int InvoicedQuantity { get; set; }
         public int ReservedQuantity { get; set; }
+
+        public DateTime? CreatedOn { get; set; }
+
+
+        //--- legacy system fields ---
+        public int FMS_tellridaid { get; set; }
     }
 }

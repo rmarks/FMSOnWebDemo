@@ -17,7 +17,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
 
         public PagedList<SalesOrderListItemDto> FilterPage(SalesOrderListOptions options)
         {
-            var queryable = _context.SalesOrders
+            var queryable = _context.Orders
                 .AsNoTracking();
 
             if (!string.IsNullOrWhiteSpace(options.CustomerNameSearchString))

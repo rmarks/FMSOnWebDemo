@@ -38,8 +38,9 @@ namespace FMS.Dal
         public DbSet<LocationType> LocationTypes { get; set; }
         public DbSet<Inventory> Inventory { get; set; }
 
-        public DbSet<SalesOrder> SalesOrders { get; set; }
-        public DbSet<SalesOrderLine> SalesOrderLines { get; set; }
+        public DbSet<OrderType> OrderTypes { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderLine> OrderLines { get; set; }
 
         public DbSet<DocumentType> DocumentTypes { get; set; }
         public DbSet<Document> Documents { get; set; }

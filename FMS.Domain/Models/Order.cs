@@ -5,9 +5,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FMS.Domain.Models
 {
-    public class SalesOrder
+    public class Order
     {
         public int Id { get; set; }
+
+        public int OrderTypeId { get; set; }
+        public OrderType OrderType { get; set; }
 
         [Required, MaxLength(10)]
         public string OrderNo { get; set; }
@@ -19,7 +22,7 @@ namespace FMS.Domain.Models
         public DateTime? ClientOrderDate { get; set; }
         public DateTime? ClientOrderDeliveryDate { get; set; }
 
-        public int CustomerId { get; set; }
+        public int? CustomerId { get; set; }
         public Customer Customer { get; set; }
 
         public int? BillingAddressId { get; set; }
@@ -31,8 +34,8 @@ namespace FMS.Domain.Models
         public CustomerAddress ShippingAddress { get; set; }
 
         public int LocationId { get; set; }
-        public string DeliveryTermName { get; set; }
         public int PaymentDays { get; set; }
+        public string DeliveryTermText { get; set; }
         public int FixedDiscountPercent { get; set; }
         public int VATPercent { get; set; }
 
@@ -40,6 +43,6 @@ namespace FMS.Domain.Models
 
         public DateTime? CreatedOn { get; set; }
 
-        public IList<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
+        public IList<OrderLine> SalesOrderLines { get; set; } = new List<OrderLine>();
     }
 }
