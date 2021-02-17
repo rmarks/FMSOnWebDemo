@@ -22,7 +22,10 @@ namespace FMS.Domain.Models
         public decimal UnitPrice { get; set; }
         public int LineDiscountPercent { get; set; }
 
-        public DateTime CreatedOn { get; set; }
+        public int? OrderLineId { get; set; }
+        public OrderLine OrderLine { get; set; }
+
+        public DateTime? CreatedOn { get; set; }
 
 
         //--- legacy system fields ---

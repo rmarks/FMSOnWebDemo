@@ -14,6 +14,7 @@ namespace FMS.Domain.Models
         public string Name { get; set; }
         
         public int IOL { get; set; }
-        public DateTime CreatedOn { get; set; }
+
+        public DateTime? CreatedOn { get; set; }
     }
 }
