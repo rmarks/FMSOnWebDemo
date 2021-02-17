@@ -74,13 +74,13 @@
                 </div>
 
                 <div class="col p-4">
-                    <div class="form-group">
+                    @*<div class="form-group">
                         <label>Maksetingimus</label>
                         <InputSelectInt @bind-Value="customer.PaymentTermId" Dict="dropdowns.PaymentTerms" Disabled="@IsInViewMode">
                             <option disabled value="0">--Vali maksetingimus--</option>
                         </InputSelectInt>
                         <ValidationMessage For="@(() => customer.PaymentTermId)" />
-                    </div>
+                    </div>*@
                     <div class="form-group">
                         <label>Tarnetingimus</label>
                         <InputText class="form-control" @bind-Value="customer.DeliveryTermText" disabled="@IsInViewMode" />

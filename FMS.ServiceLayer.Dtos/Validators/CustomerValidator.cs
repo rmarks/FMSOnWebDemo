@@ -16,7 +16,7 @@ namespace FMS.ServiceLayer.Validators
             RuleFor(c => c.RegNo).NotEmpty().WithMessage(_cantBeEmpty)
                 .MaximumLength(20).WithMessage("Max pikkus 20");
             RuleFor(c => c.VATNo).MaximumLength(20).WithMessage("Max pikkus 20");
-            RuleFor(c => c.PaymentTermId).NotEmpty().WithMessage(_cantBeEmpty);
+            //RuleFor(c => c.PaymentTermId).NotEmpty().WithMessage(_cantBeEmpty);
             RuleFor(c => c.DeliveryTermText).MaximumLength(50).WithMessage("Max pikkus 50");
 
             RuleForEach(c => c.Contacts).SetValidator(new CustomerContactValidator());

@@ -18,7 +18,7 @@ namespace FMS.ServiceLayer.CustomerServices
         {
             return await _context.Customers
                 .AsNoTracking()
-                .Include(c => c.PaymentTerm)
+                //.Include(c => c.PaymentTerm)
                 .Include(c => c.Addresses).ThenInclude(a => a.Country)
                 .Include(c => c.Contacts)
                 .FirstOrDefaultAsync(c => c.Id == id);

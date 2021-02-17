@@ -12,7 +12,6 @@ namespace FMS.Dal
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddress> CustomerAddresses { get; set; }
         public DbSet<CustomerContact> CustomerContacts { get; set; }
-        public DbSet<PaymentTerm> PaymentTerms { get; set; }
         public DbSet<DeliveryTerm> DeliveryTerms { get; set; }
         public DbSet<Country> Countries { get; set; }
 

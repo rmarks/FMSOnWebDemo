@@ -4,14 +4,16 @@ using FMS.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FMS.Dal.Migrations
 {
     [DbContext(typeof(FMSContext))]
-    partial class FMSContextModelSnapshot : ModelSnapshot
+    [Migration("20210217110703_ChangedFieldToPaymentDaysInCustomerModel")]
+    partial class ChangedFieldToPaymentDaysInCustomerModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,6 +485,29 @@ namespace FMS.Dal.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("LocationTypes");
+                });
+
+            modelBuilder.Entity("FMS.Domain.Models.PaymentTerm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<int>("PaymentDays")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentTerms");
                 });
 
             modelBuilder.Entity("FMS.Domain.Models.Product", b =>

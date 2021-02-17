@@ -38,10 +38,10 @@ namespace FMS.ServiceLayer.CustomerServices
                 queryable = queryable.Where(c => c.Addresses.Any(a => a.IsBilling && a.City.ToLower().Contains(options.SearchByCity.ToLower())));
             }
 
-            if (options.PaymentTermId != 0)
-            {
-                queryable = queryable.Where(c => c.PaymentTermId == options.PaymentTermId);
-            }
+            //if (options.PaymentTermId != 0)
+            //{
+            //    queryable = queryable.Where(c => c.PaymentTermId == options.PaymentTermId);
+            //}
 
             return queryable
                 .Include(c => c.Addresses).ThenInclude(a => a.Country)

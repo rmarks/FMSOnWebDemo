@@ -20,9 +20,8 @@ namespace FMS.Domain.Models
         [MaxLength(20)]
         public string VATNo { get; set; }
 
-        public int PaymentTermId { get; set; }
-        public PaymentTerm PaymentTerm { get; set; }
-
+        public int PaymentDays { get; set; }
+        
         [MaxLength(50)]
         public string DeliveryTermText { get; set; }
 

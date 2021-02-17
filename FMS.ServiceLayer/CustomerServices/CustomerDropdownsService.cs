@@ -22,14 +22,9 @@ namespace FMS.ServiceLayer.CustomerServices
                 .OrderBy(c => c.Name)
                 .ToDictionaryAsync(c => c.Name, c => c.Id);
 
-            var paymentTerms = await _context.PaymentTerms
-                .AsNoTracking()
-                .ToDictionaryAsync(c => c.Name, c => c.Id);
-
             var dropdowns = new CustomerDropdowns
             {
-                Countries = countries,
-                PaymentTerms = paymentTerms
+                Countries = countries
             };
 
             return dropdowns;
