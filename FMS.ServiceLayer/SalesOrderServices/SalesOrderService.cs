@@ -35,7 +35,7 @@ namespace FMS.ServiceLayer.SalesOrderServices
                     FixedDiscountPercent = s.FixedDiscountPercent,
                     VATPercent = s.VATPercent,
                     IsClosed = s.IsClosed,
-                    SalesOrderLines = s.SalesOrderLines.Select(l => new SalesOrderLineDto
+                    SalesOrderLines = s.OrderLines.Select(l => new SalesOrderLineDto
                     {
                         Id = l.Id,
                         ProductCode = l.Product.Code,

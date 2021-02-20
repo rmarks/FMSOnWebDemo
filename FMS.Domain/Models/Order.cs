@@ -43,6 +43,6 @@ namespace FMS.Domain.Models
 
         public DateTime? CreatedOn { get; set; }
 
-        public IList<OrderLine> SalesOrderLines { get; set; } = new List<OrderLine>();
+        public IList<OrderLine> OrderLines { get; set; } = new List<OrderLine>();
     }
 }

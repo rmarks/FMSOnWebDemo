@@ -14,6 +14,9 @@ namespace FMS.Domain.Models
         public int LocationTypeId { get; set; }
         public LocationType LocationType { get; set; }
 
+        public int? CustomerId { get; set; }
+        public Customer CommissionCustomer { get; set; }
+
         public DateTime? CreatedOn { get; set; }
 
         public IList<Inventory> Inventory { get; set; }

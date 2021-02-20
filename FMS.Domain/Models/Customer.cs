@@ -29,6 +29,8 @@ namespace FMS.Domain.Models
 
         public bool IsVAT { get; set; }
 
+        public bool HasCommissionLocation { get; set; }
+
         public DateTime? CreatedOn { get; set; }
 
         public List<CustomerAddress> Addresses { get; set; } = new List<CustomerAddress>();
