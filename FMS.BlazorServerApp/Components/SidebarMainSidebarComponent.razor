@@ -1,0 +1,40 @@
+﻿<div class="d-flex w-100">
+
+    @if (LeftSidebarContent != null)
+    {
+        <div class="overflow-auto bg-light p-4 border-right" style="width: 20%">
+            <h3 class="text-center mb-4">@LeftTitle</h3>
+            @LeftSidebarContent
+        </div>
+    }
+
+    <div class="flex-grow-1 overflow-auto p-4">
+        @MainContent
+    </div>
+
+    @if (RightSidebarContent != null)
+    {
+        <div class="overflow-auto bg-light p-4 border-left" style="width: 20rem">
+            <h3 class="text-center mb-4">@RightTitle</h3>
+            @RightSidebarContent
+        </div>
+    }
+
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment MainContent { get; set; }
+
+    [Parameter]
+    public RenderFragment LeftSidebarContent { get; set; }
+
+    [Parameter]
+    public RenderFragment RightSidebarContent { get; set; }
+
+    [Parameter]
+    public string LeftTitle { get; set; }
+
+    [Parameter]
+    public string RightTitle { get; set; }
+}

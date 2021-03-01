@@ -1,0 +1,45 @@
+﻿<div class="form-group">
+    <h6 class="text-secondary">@Label</h6>
+    <select class="form-control" @attributes="@AdditionalAttributes" value="@Value" @onchange="HandleChange">
+        @if (FirstOption != null)
+        {
+            <option value="0" selected>-- @FirstOption --</option>
+        }
+
+        @foreach (var val in Values)
+        {
+            <option value="@val.Value" selected="@(val.Value == Value)">@val.Key</option>
+        }
+    </select>
+</div>
+
+@code {
+    [Parameter]
+    public IDictionary<string, int> Values { get; set; }
+
+    [Parameter]
+    public int Value { get; set; }
+
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Label { get; set; }
+
+    [Parameter]
+    public string FirstOption { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [Parameter]
+    public EventCallback OnChangeCallback { get; set; }
+
+    private void HandleChange(ChangeEventArgs e)
+    {
+        Value = int.Parse(e.Value.ToString());
+        ValueChanged.InvokeAsync(Value);
+
+        OnChangeCallback.InvokeAsync();
+    }
+}

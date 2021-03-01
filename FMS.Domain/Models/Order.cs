@@ -34,6 +34,8 @@ namespace FMS.Domain.Models
         public CustomerAddress ShippingAddress { get; set; }
 
         public int LocationId { get; set; }
+        public Location Location { get; set; }
+
         public int PaymentDays { get; set; }
         public string DeliveryTermText { get; set; }
         public int FixedDiscountPercent { get; set; }

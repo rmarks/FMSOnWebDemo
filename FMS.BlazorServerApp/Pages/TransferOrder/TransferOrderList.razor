@@ -1,0 +1,62 @@
+﻿@page "/laotellimused"
+@inherits PagedListComponentBase<TransferOrderListItemDto, TransferOrderOptions>
+
+<SidebarMainSidebarComponent LeftTitle="Laotellimused">
+    <LeftSidebarContent>
+        @if (dropdowns == null)
+        {
+            <p class="text-secondary">Loading...</p>
+        }
+        else
+        {
+            <div class="py-2"></div>
+            <SelectControlFormGroup Label="Komisjonilaod" FirstOption="Kõik komisjonilaod"
+                                    Values="@dropdowns.Locations" @bind-Value="@Options.LocationId"
+                                    OnChangeCallback="@(() => HandleOptionsChanged())" />
+
+            <div class="py-2"></div>
+            <SelectControlFormGroupDocStatus @bind-Value="@Options.IsClosed" OnChangeCallback="@(() => HandleOptionsChanged())" />
+        }
+
+    </LeftSidebarContent>
+    <MainContent>
+        @if (PagedList?.List == null)
+        {
+            <p class="text-secondary">Loading...</p>
+        }
+        else
+        {
+            <PagedTableControl PagedItems="@PagedList" TItem="TransferOrderListItemDto" Context="order"
+                               ItemDblclicked="@((item) => HandleItemSelected($"laotellimus/{item.OrderId}"))"
+                               PageChanged="@((cp) => HandleOptionsChanged(cp))">
+                <TableHeader>
+                    <th>Nr.</th>
+                    <th>Kuupäev</th>
+                    <th>Komisjoniladu</th>
+                    <th>Tarneaeg</th>
+                    <th>Olek</th>
+                </TableHeader>
+                <RowTemplate>
+                    <td style="width: 15%">@order.OrderNo</td>
+                    <td style="width: 15%">@order.OrderDate.ToShortDateString()</td>
+                    <td style="width: 30%">@order.LocationName</td>
+                    <td style="width: 15%">@order.DeliveryDate?.ToShortDateString()</td>
+                    <td style="width: 15%">@order.StatusName</td>
+                </RowTemplate>
+            </PagedTableControl>
+        }
+    </MainContent>
+</SidebarMainSidebarComponent>
+
+@code {
+    TransferOrderDropdowns dropdowns;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Options = new TransferOrderOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
+        dropdowns = await ServiceProvider.GetService<ITransferOrderDropdownsService>().GetCommissionTransferOrderDropdowns();
+        GetPagedList = (opts) => ServiceProvider.GetService<ITransferOrderListService>().GetPage(opts);
+
+        base.OnInitialized();
+    }
+}
