@@ -4,5 +4,7 @@
     {
         public int LocationId { get; set; }
         public bool? IsClosed { get; set; }
+
+        public bool IsReturnToList { get; set; }
     }
 }

@@ -8,5 +8,7 @@ namespace FMS.BlazorServerApp.Shared
         public CustomerListOptions CustomerListOptions { get; set; }
 
         public ProductListOptions ProductListOptions { get; set; }
+
+        public TransferOrderOptions TransferOrderOptions { get; set; }
     }
 }

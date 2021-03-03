@@ -1,5 +1,7 @@
 ﻿@page "/laotellimused"
-@inherits PagedListComponentBase<TransferOrderListItemDto, TransferOrderOptions>
+@inject IServiceProvider ServiceProvider
+@inject NavigationManager NavManager
+@inject AppState AppState
 
 <SidebarMainSidebarComponent LeftTitle="Laotellimused">
     <LeftSidebarContent>
@@ -11,24 +13,24 @@
         {
             <div class="py-2"></div>
             <SelectControlFormGroup Label="Komisjonilaod" FirstOption="Kõik komisjonilaod"
-                                    Values="@dropdowns.Locations" @bind-Value="@Options.LocationId"
-                                    OnChangeCallback="@(() => HandleOptionsChanged())" />
+                                    Values="@dropdowns.Locations" @bind-Value="@options.LocationId"
+                                    OnChangeCallback="@HandleOptionsChanged" />
 
             <div class="py-2"></div>
-            <SelectControlFormGroupDocStatus @bind-Value="@Options.IsClosed" OnChangeCallback="@(() => HandleOptionsChanged())" />
+            <SelectControlFormGroupDocStatus @bind-Value="@options.IsClosed" OnChangeCallback="@HandleOptionsChanged" />
         }
-
     </LeftSidebarContent>
+
     <MainContent>
-        @if (PagedList?.List == null)
+        @if (pagedList?.List == null)
         {
             <p class="text-secondary">Loading...</p>
         }
         else
         {
-            <PagedTableControl PagedItems="@PagedList" TItem="TransferOrderListItemDto" Context="order"
+            <PagedTableControl PagedItems="@pagedList" TItem="TransferOrderListItemDto" Context="order"
                                ItemDblclicked="@((item) => HandleItemSelected($"laotellimus/{item.OrderId}"))"
-                               PageChanged="@((cp) => HandleOptionsChanged(cp))">
+                               PageChanged="@HandlePageChanged">
                 <TableHeader>
                     <th>Nr.</th>
                     <th>Kuupäev</th>
@@ -49,14 +51,60 @@
 </SidebarMainSidebarComponent>
 
 @code {
-    TransferOrderDropdowns dropdowns;
+    private TransferOrderDropdowns dropdowns;
+    private TransferOrderOptions options;
+    private PagedList<TransferOrderListItemDto> pagedList;
 
     protected override async Task OnInitializedAsync()
     {
-        Options = new TransferOrderOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
-        dropdowns = await ServiceProvider.GetService<ITransferOrderDropdownsService>().GetCommissionTransferOrderDropdowns();
-        GetPagedList = (opts) => ServiceProvider.GetService<ITransferOrderListService>().GetPage(opts);
+        await LoadDropdowns();
+        InitializeOptions();
 
-        base.OnInitialized();
+        UpdateList();
     }
+
+    #region helpers
+    private void InitializeOptions()
+    {
+        if (AppState.TransferOrderOptions?.IsReturnToList ?? false)
+        {
+            options = AppState.TransferOrderOptions;
+            options.IsReturnToList = false;
+        }
+        else
+        {
+            options = new TransferOrderOptions { CurrentPage = 1, PageSize = 14, IsClosed = false };
+            AppState.TransferOrderOptions = options;
+        }
+    }
+
+    private async Task LoadDropdowns()
+    {
+        dropdowns = await ServiceProvider.GetService<ITransferOrderDropdownsService>().GetCommissionTransferOrderDropdowns();
+    }
+
+    private void UpdateList()
+    {
+        pagedList = ServiceProvider.GetService<ITransferOrderListService>().GetPage(options);
+    }
+    #endregion
+
+    #region event handlers
+    private void HandleOptionsChanged()
+    {
+        options.CurrentPage = 1;
+        UpdateList();
+    }
+
+    private void HandlePageChanged(int selectedPage)
+    {
+        options.CurrentPage = selectedPage;
+        UpdateList();
+    }
+
+    private void HandleItemSelected(string itemUrl)
+    {
+        NavManager.NavigateTo(itemUrl);
+    }
+    #endregion
 }

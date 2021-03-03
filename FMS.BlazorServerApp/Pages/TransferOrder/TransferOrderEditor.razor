@@ -1,0 +1,27 @@
+﻿@page "/laotellimus/{id:int}"
+@inject NavigationManager NavManager
+@inject AppState AppState
+
+<div class="main">
+    <nav class="navbar navbar-light border-bottom">
+        <span class="navbar-brand font-weight-bold">Laotellimus @Id</span>
+
+        <div class="d-flex ml-auto">
+            <button type="button" class="btn btn-primary" @onclick="HandleReturnToList">Tagasi</button>
+        </div>
+    </nav>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    #region event handlers
+    private void HandleReturnToList()
+    {
+        AppState.TransferOrderOptions.IsReturnToList = true;
+
+        NavManager.NavigateTo("laotellimused");
+    }
+    #endregion
+}
