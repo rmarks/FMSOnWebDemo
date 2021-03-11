@@ -1,20 +1,109 @@
 ﻿@page "/laotellimus/{id:int}"
 @inject NavigationManager NavManager
 @inject AppState AppState
+@inject IServiceProvider ServiceProvider
 
-<div class="main">
+<div class="d-flex flex-column vw-100 px-3 bg-light">
     <nav class="navbar navbar-light border-bottom">
-        <span class="navbar-brand font-weight-bold">Laotellimus @Id</span>
+        <span class="navbar-brand font-weight-bold">Laotellimus</span>
 
         <div class="d-flex ml-auto">
             <button type="button" class="btn btn-primary" @onclick="HandleReturnToList">Tagasi</button>
         </div>
     </nav>
+
+    <div class="row bg-white my-3 mx-0 px-3 p-3 shadow">
+        <div class="col-1">
+            <div class="form-group">
+                <label class="text-secondary mb-1">Nr.</label>
+                <input class="form-control" disabled @bind="@order.OrderNo" />
+            </div>
+        </div>
+        <div class="col-1">
+            <div class="form-group">
+                <label class="text-secondary mb-1">Kuupäev</label>
+                <input class="form-control" disabled @bind="@order.OrderDate" @bind:format="dd.mm.yyyy" />
+            </div>
+        </div>
+        <div class="col-1">
+            <div class="form-group">
+                <label class="text-secondary mb-1">Tarneaeg</label>
+                <input class="form-control" disabled @bind="@order.DeliveryDate" @bind:format="dd.mm.yyyy" />
+            </div>
+        </div>
+        <div class="col-2">
+            <SelectControlFormGroup Label="Komisjoniladu" Values="@dropdowns.CommissionLocations"
+                                    Value="order.LocationId" disabled />
+        </div>
+    </div>
+
+    <div class="row bg-white mx-0 px-3 p-3 shadow">
+        <div class="col-2">
+            <SelectControlFormGroup Label="Valmiskaubaladu" Values="@dropdowns.WarehouseLocations"
+                                    Value="warehouseLocationId" />
+        </div>
+    </div>
+
+    <ScrollableTableControl Items="@order.OrderLines" Context="item" CSSClass="flex-grow-1 my-3 shadow">
+        <TableHeader>
+            <th>Ladu</th>
+            <th>Kood</th>
+            <th>Nimetus</th>
+            <th class="text-right">Tellitud</th>
+            <th class="text-right">Tarnitud</th>
+            <th class="text-right">Reserv.</th>
+            <th class="text-right">Puudu</th>
+        </TableHeader>
+        <RowTemplate>
+            <td>@item.LocationName</td>
+            <td>@item.ProductCode</td>
+            <td>@item.ProductName</td>
+            <td class="text-right">@item.OrderedQuantity</td>
+            <td class="text-right">@item.InvoicedQuantity</td>
+            <td class="text-right text-primary">@item.ReservedQuantity</td>
+            <td class="text-right">@item.MissingQuantity</td>
+        </RowTemplate>
+        <TableFooter>
+            <th colspan="3" class="text-right">Kogused kokku:</th>
+            <th class="text-right">@totalOrderedQuantity</th>
+            <th class="text-right">@totalInvoicedQuantity</th>
+            <th class="text-right text-primary">@totalReservedQuantity</th>
+            <th class="text-right">@totalMissingQuantity</th>
+        </TableFooter>
+    </ScrollableTableControl>
 </div>
 
 @code {
+    private TransferOrderDto order = new TransferOrderDto();
+    private TransferOrderDropdowns dropdowns = new TransferOrderDropdowns();
+    private int warehouseLocationId;
+
+    #region total fields
+    int totalOrderedQuantity;
+    int totalInvoicedQuantity;
+    int totalReservedQuantity;
+    int totalMissingQuantity;
+    #endregion
+
     [Parameter]
     public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await ServiceProvider.GetService<ITransferOrderService>().GetOrder(Id);
+        dropdowns = await ServiceProvider.GetService<ITransferOrderDropdownsService>().GetCommissionTransferOrderDropdowns();
+        SetTotals();
+    }
+
+    #region helpers
+    private void SetTotals()
+    {
+        totalOrderedQuantity = order.OrderLines.Sum(l => l.OrderedQuantity);
+        totalInvoicedQuantity = order.OrderLines.Sum(l => l.InvoicedQuantity);
+        totalReservedQuantity = order.OrderLines.Sum(l => l.ReservedQuantity);
+        totalMissingQuantity = totalOrderedQuantity - totalInvoicedQuantity - totalReservedQuantity;
+    }
+    #endregion
 
     #region event handlers
     private void HandleReturnToList()

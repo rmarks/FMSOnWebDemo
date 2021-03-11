@@ -18,11 +18,20 @@ namespace FMS.ServiceLayer.TransferOrderServices
             _context = context;
         }
 
+        public async Task<TransferOrderListDropdowns> GetCommissionTransferOrderListDropdowns()
+        {
+            return new TransferOrderListDropdowns
+            {
+                CommissionLocations = await GetLocationsByTypeCode("KL")
+            };
+        }
+
         public async Task<TransferOrderDropdowns> GetCommissionTransferOrderDropdowns()
         {
             return new TransferOrderDropdowns
             {
-                Locations = await GetLocationsByTypeCode("KL")
+                CommissionLocations = await GetLocationsByTypeCode("KL"),
+                WarehouseLocations = await GetLocationsByTypeCode("VL")
             };
         }
 
