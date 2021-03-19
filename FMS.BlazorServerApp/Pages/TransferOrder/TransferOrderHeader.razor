@@ -1,0 +1,42 @@
+﻿@inject IServiceProvider ServiceProvider
+
+<div class="row">
+    <div class="col-1">
+        <div class="form-group">
+            <label class="text-secondary mb-1">Nr.</label>
+            <input class="form-control" disabled @bind="@order.OrderNo" />
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="form-group">
+            <label class="text-secondary mb-1">Kuupäev</label>
+            <input class="form-control" disabled @bind="@order.OrderDate" @bind:format="dd.MM.yyyy" />
+        </div>
+    </div>
+    <div class="col-1">
+        <div class="form-group">
+            <label class="text-secondary mb-1">Tarneaeg</label>
+            <input class="form-control" disabled @bind="@order.OrderDeliveryDate" @bind:format="dd.MM.yyyy" />
+        </div>
+    </div>
+    <div class="col-2">
+        <SelectControlFormGroup Label="Komisjoniladu" Values="@Dropdowns.CommissionLocations"
+                                Value="order.LocationId" disabled />
+    </div>
+</div>
+
+@code {
+    private TransferOrderHeaderDto order = new TransferOrderHeaderDto();
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public TransferOrderDropdowns Dropdowns { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dropdowns = Dropdowns ?? new TransferOrderDropdowns();
+        order = await ServiceProvider.GetService<ITransferOrderService>().ReadOrderHeaderAsync(Id);
+    }
+}

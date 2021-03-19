@@ -18,6 +18,11 @@
 
             <div class="py-2"></div>
             <SelectControlFormGroupDocStatus @bind-Value="@options.IsClosed" OnChangeCallback="@HandleOptionsChanged" />
+
+            <div class="mt-4 text-right">
+                <button class="btn btn-primary" 
+                        @onclick="@((item) => HandleItemSelected($"laotellimus/uus"))">Uus</button>
+            </div>
         }
     </LeftSidebarContent>
 
