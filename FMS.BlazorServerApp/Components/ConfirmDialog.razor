@@ -13,8 +13,8 @@
                     <p>@ChildContent</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="@(() => HandleConfirm(false))">Ei</button>
-                    <button type="button" class="btn btn-primary" @onclick="@(() => HandleConfirm(true))">Jah</button>
+                    <button type="button" class="btn btn-secondary" @onclick="Close">Ei</button>
+                    <button type="button" class="btn btn-primary" @onclick="HandleConfirm">Jah</button>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
     public RenderFragment ChildContent { get; set; }
 
     [Parameter]
-    public EventCallback<bool> OnConfirm { get; set; }
+    public EventCallback OnConfirm { get; set; }
 
     public void Show()
     {
@@ -44,9 +44,9 @@
         display = false;
     }
 
-    private void HandleConfirm(bool isConfirmed)
+    private void HandleConfirm()
     {
-        OnConfirm.InvokeAsync(isConfirmed);
+        OnConfirm.InvokeAsync();
         Close();
     }
 }

@@ -124,7 +124,7 @@
         }
     </div>
 
-    <ConfirmDialog @ref="@deleteDialog" Title="@("Kustutamine")" OnConfirm="@((p) => HandleDelete(p))">
+    <ConfirmDialog @ref="@deleteDialog" Title="@("Kustutamine")" OnConfirm="HandleDelete">
         Kas kustutame tellimuse?
     </ConfirmDialog>
 </div>
@@ -219,15 +219,12 @@
             isEditMode = !isEditMode;
         }
 
-        private async Task HandleDelete(bool isConfirmed)
+        private async Task HandleDelete()
         {
-            if (isConfirmed)
+            bool isDeleted = await ServiceProvider.GetService<ITransferOrderService>().DeleteOrderAsync(editableOrderHeader.Id);
+            if (isDeleted)
             {
-                bool isDeleted = await ServiceProvider.GetService<ITransferOrderService>().DeleteOrderAsync(editableOrderHeader.Id);
-                if (isDeleted)
-                {
-                    HandleReturnToList();
-                }
+                HandleReturnToList();
             }
         }
         #endregion
